@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$" dumb="true">
       <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
       <excludeFolder url="file://$MODULE_DIR$/.smarttomcat/todolist/conf/Catalina" />
+      <excludeFolder url="file://$MODULE_DIR$/.smarttomcat" />
     </content>
   </component>
   <component name="FacetManager">

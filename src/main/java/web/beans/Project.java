@@ -5,19 +5,15 @@ import java.time.LocalDate;
 public class Project {
     private int id;
     private String name;
-    private boolean favorite;
-    private int userID;
+    private int userId;
     private LocalDate createdAt;
 
     public Project() {
     }
 
-    public Project(int id, String name, boolean favorite, int userID, LocalDate createdAt) {
-        this.id = id;
+    public Project(String name, int userId) {
         this.name = name;
-        this.favorite = favorite;
-        this.userID = userID;
-        this.createdAt = createdAt;
+        this.userId = userId;
     }
 
     public int getId() {
@@ -36,20 +32,12 @@ public class Project {
         this.name = name;
     }
 
-    public boolean isFavorite() {
-        return favorite;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
-    }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUserID(int userId) {
+        this.userId = userId;
     }
 
     public LocalDate getCreatedAt() {
@@ -65,8 +53,7 @@ public class Project {
         return "Project{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", favorite=" + favorite +
-                ", userID=" + userID +
+                ", userId=" + userId +
                 ", createdAt=" + createdAt +
                 '}';
     }

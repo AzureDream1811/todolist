@@ -6,26 +6,24 @@ public class Task {
     private int id;
     private String title;
     private String description;
-    private String priority;
-    private LocalDate dueDate;
     private boolean completed;
-    private LocalDate createdAt;
+    private int priority;
+    private LocalDate dueDate;
     private int projectId;
     private int userId;
+    private LocalDate createdAt;
 
     public Task() {
     }
 
-    public Task(int id, String title, String description, String priority, LocalDate dueDate, boolean completed, LocalDate createdAt, int projectId, int userId) {
-        this.id = id;
+    public Task(String title, String description, boolean completed, int priority, LocalDate dueDate, int userId, int projectId) {
         this.title = title;
         this.description = description;
+        this.completed = completed;
         this.priority = priority;
         this.dueDate = dueDate;
-        this.completed = completed;
-        this.createdAt = createdAt;
-        this.projectId = projectId;
         this.userId = userId;
+        this.projectId = projectId;
     }
 
     public int getId() {
@@ -52,11 +50,11 @@ public class Task {
         this.description = description;
     }
 
-    public String getPriority() {
+    public int getPriority() {
         return priority;
     }
 
-    public void setPriority(String priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
     }
 

@@ -13,26 +13,30 @@ public class DatabaseUtil {
     private static final String DB_PASSWORD;
 
     static {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Failed to load MySQL JDBC driver", e);
+        }
         Properties props = new Properties();
         try (InputStream input = DatabaseUtil.class.getClassLoader()
                 .getResourceAsStream("database.properties")) {
-            
+
             if (input == null) {
                 throw new RuntimeException("database.properties not found in classpath");
             }
-            
+
             props.load(input);
-            
+
             DB_URL = props.getProperty("db.url");
             DB_USER = props.getProperty("db.user");
             DB_PASSWORD = props.getProperty("db.password");
-            
+
             if (DB_URL == null || DB_USER == null || DB_PASSWORD == null) {
                 throw new RuntimeException("Missing required database configuration in database.properties");
             }
-            
-            System.out.println("Successfully loaded database configuration from database.properties");
-            
+
+
         } catch (IOException e) {
             throw new RuntimeException("Error loading database properties", e);
         }
@@ -40,7 +44,9 @@ public class DatabaseUtil {
 
     public static Connection getConnection() throws SQLException {
         try {
-            return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            System.out.println("Connection successful!");
+            return conn;
         } catch (SQLException e) {
             System.err.println("Failed to connect to the database. Please check your connection settings:");
             System.err.println("URL: " + DB_URL);

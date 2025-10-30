@@ -38,7 +38,6 @@ public class UserDAO {
         return null;
     }
 
-/* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
     /**
      * Retrieves a user by their username.
      *
@@ -46,7 +45,6 @@ public class UserDAO {
      * @return the user object if found, null otherwise
      * @throws RuntimeException if an SQL exception occurs
      */
-/* <<<<<<<<<<  7e92a9f4-98f1-4a7d-8f27-b53b07b9e241  >>>>>>>>>>> */
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection connection = DatabaseUtil.getConnection();

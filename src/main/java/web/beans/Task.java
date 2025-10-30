@@ -1,4 +1,4 @@
-package com.entities;
+package web.beans;
 
 import java.time.LocalDate;
 

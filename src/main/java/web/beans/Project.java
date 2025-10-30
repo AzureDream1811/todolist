@@ -1,11 +1,10 @@
-package com.entities;
+package web.beans;
 
 import java.time.LocalDate;
 
 public class Project {
     private int id;
     private String name;
-    private String color;
     private boolean favorite;
     private int userID;
     private LocalDate createdAt;
@@ -13,10 +12,9 @@ public class Project {
     public Project() {
     }
 
-    public Project(int id, String name, String color, boolean favorite, int userID, LocalDate createdAt) {
+    public Project(int id, String name, boolean favorite, int userID, LocalDate createdAt) {
         this.id = id;
         this.name = name;
-        this.color = color;
         this.favorite = favorite;
         this.userID = userID;
         this.createdAt = createdAt;
@@ -36,14 +34,6 @@ public class Project {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 
     public boolean isFavorite() {
@@ -75,7 +65,6 @@ public class Project {
         return "Project{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", color='" + color + '\'' +
                 ", favorite=" + favorite +
                 ", userID=" + userID +
                 ", createdAt=" + createdAt +

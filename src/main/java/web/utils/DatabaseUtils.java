@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DatabaseUtil {
+public class DatabaseUtils {
     private static final String DB_URL;
     private static final String DB_USER;
     private static final String DB_PASSWORD;
@@ -19,7 +19,7 @@ public class DatabaseUtil {
             throw new RuntimeException("Failed to load MySQL JDBC driver", e);
         }
         Properties props = new Properties();
-        try (InputStream input = DatabaseUtil.class.getClassLoader()
+        try (InputStream input = DatabaseUtils.class.getClassLoader()
                 .getResourceAsStream("database.properties")) {
 
             if (input == null) {

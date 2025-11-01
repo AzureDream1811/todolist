@@ -2,11 +2,11 @@ package web.utils;
 
 import java.util.regex.Pattern;
 
-public class ValidationUtil {
+public class ValidationUtils {
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
-    private ValidationUtil() {
+    private ValidationUtils() {
         // Private constructor to prevent instantiation
     }
 

@@ -1,7 +1,7 @@
 package web.dao;
 
 import web.beans.User;
-import web.utils.DatabaseUtil;
+import web.utils.DatabaseUtils;
 
 import java.sql.*;
 
@@ -15,7 +15,7 @@ public class UserDAO {
      */
     public User createUser(User user) {
         String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        try (Connection connection = DatabaseUtil.getConnection();
+        try (Connection connection = DatabaseUtils.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.getUsername());
             statement.setString(3, user.getPassword());
@@ -47,7 +47,7 @@ public class UserDAO {
      */
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
-        try (Connection connection = DatabaseUtil.getConnection();
+        try (Connection connection = DatabaseUtils.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, username);

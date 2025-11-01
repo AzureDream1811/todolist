@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import web.beans.User;
 import web.dao.UserDAO;
-import web.utils.ValidationUtil;
+import web.utils.ValidationUtils;
 
 import java.io.IOException;
 
@@ -31,21 +31,21 @@ public class RegisterServlet extends HttpServlet {
         request.setAttribute("email", email);
         try {
             //Check Validation
-            if (ValidationUtil.areAllNullOrEmpty(username, password, confirmPassword)){
+            if (ValidationUtils.areAllNullOrEmpty(username, password, confirmPassword)){
                 request.setAttribute("error", "Vui lòng điền đầy đủ thông tin");
                 request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
                 return;
             }
 
             //Check email
-            if (!ValidationUtil.isNullOrEmpty(email) && !ValidationUtil.isValidEmail(email)) {
+            if (!ValidationUtils.isNullOrEmpty(email) && !ValidationUtils.isValidEmail(email)) {
                 request.setAttribute("error", "Địa chỉ email không hợp lệ");
                 request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
                 return;
             }
 
             //Check length of password
-            if(!ValidationUtil.isValidPassword(password, 8)){
+            if(!ValidationUtils.isValidPassword(password, 8)){
                 request.setAttribute("error", "Mật khẩu phải có ít nhất 8 kì tự");
                 request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
                 return;

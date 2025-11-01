@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import web.beans.Task;
-import web.utils.DatabaseUtil;
+import web.utils.DatabaseUtils;
 
 public class TaskDAO {
 
@@ -17,8 +17,9 @@ public class TaskDAO {
      */
     public Task createTask(Task task) { //
         String sql = "INSERT INTO tasks (title, description, completed, priority, due_date, user_id, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = DatabaseUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, task.getTitle());
             statement.setString(2, task.getDescription());
             statement.setBoolean(3, task.isCompleted());
@@ -54,7 +55,7 @@ public class TaskDAO {
         String sql = "SELECT * FROM tasks WHERE user_id = ?";
 
         try {
-            Connection connection = DatabaseUtil.getConnection();
+            Connection connection = DatabaseUtils.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();

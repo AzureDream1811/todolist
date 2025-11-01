@@ -1,7 +1,6 @@
 package web.dao;
 
 import web.beans.Project;
-import web.utils.DatabaseUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ public class ProjectDAO {
     public Project createProject(Project project) {
         String sql = "INSERT INTO projects (name, user_id) VALUES (?, ?)";
         try {
-            Connection connection = DatabaseUtils.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, project.getName());
             statement.setInt(2, project.getUserId());
@@ -39,7 +37,6 @@ public class ProjectDAO {
         List<Project> projects = new ArrayList<>();
         String sql = "SELECT * FROM projects WHERE user_id = ?";
         try {
-            Connection connection = DatabaseUtils.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();

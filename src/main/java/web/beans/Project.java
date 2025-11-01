@@ -36,7 +36,7 @@ public class Project {
         return userId;
     }
 
-    public void setUserID(int userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

@@ -13,6 +13,7 @@
 </head>
 <body>
 
+<jsp:useBean id="error" scope="request" type="java.lang.String"/>
 <c:if test="${not empty error}">
     <div style="color: red;">${error}</div>
 </c:if>

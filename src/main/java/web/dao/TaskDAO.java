@@ -17,8 +17,9 @@ public class TaskDAO {
      */
     public Task createTask(Task task) { //
         String sql = "INSERT INTO tasks (title, description, completed, priority, due_date, user_id, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = DatabaseUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection connection = DatabaseUtil.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, task.getTitle());
             statement.setString(2, task.getDescription());
             statement.setBoolean(3, task.isCompleted());

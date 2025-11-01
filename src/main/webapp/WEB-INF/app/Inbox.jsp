@@ -13,7 +13,7 @@
 </head>
 <body>
 <h2>Inbox</h2>
-<form method="post" action="${pageContext.request.contextPath}/app/inbox">
+<form method="get" action="${pageContext.request.contextPath}/app/inbox">
     <table class="task-table">
         <thead>
             <tr>
@@ -37,6 +37,8 @@
             </c:forEach>
         </tbody>
     </table>
+<%--    <jsp:include page="/WEB-INF/component/Add-task.jsp"/>--%>
+
 </form>
 </body>
 </html>

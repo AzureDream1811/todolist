@@ -42,13 +42,14 @@ public class ValidationUtil {
         // Add more password strength requirements here if needed
     }
 
+
     /**
-     * Validates that all provided strings are not null or empty.
+     * Checks if all strings in the given array are null or empty.
      *
-     * @param strings variable number of strings to validate
-     * @return true if all strings are not null and not empty, false otherwise
+     * @param strings the array of strings to check
+     * @return true if all strings are null or empty, false otherwise
      */
-    public static boolean areAllNotEmpty(String... strings) {
+    public static boolean areAllNullOrEmpty(String... strings) {
         if (strings == null) {
             return true;
         }

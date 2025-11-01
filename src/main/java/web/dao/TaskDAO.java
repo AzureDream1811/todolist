@@ -76,7 +76,7 @@ public class TaskDAO {
         task.setId(rs.getInt("id"));
         task.setTitle(rs.getString("title"));
         task.setDescription(rs.getString("description"));
-        task.setCompleted(rs.getBoolean("is_completed"));
+        task.setCompleted(rs.getBoolean("completed"));
         task.setPriority(rs.getInt("priority"));
         Date due = rs.getDate("due_date");
         if (due != null) {

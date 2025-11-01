@@ -17,6 +17,18 @@ public class LoginServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/auth/Login.jsp").forward(request, response);
     }
 
+    /**
+     * Handles the POST request for the login page.
+     * <p>
+     * This method retrieves the username and password from the request and checks if they are valid.
+     * If the credentials are valid, it logs the user in and redirects them to the inbox page.
+     * If the credentials are invalid, it sets an error message and forwards the request back to the login page.
+     *
+     * @param request the HttpServletRequest object containing the request parameters
+     * @param response the HttpServletResponse object to send the response back to the client
+     * @throws ServletException if an exception occurs during the servlet processing
+     * @throws IOException if an exception occurs during the input/output operations
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
@@ -25,7 +37,8 @@ public class LoginServlet extends HttpServlet {
         UserDAO dao = new UserDAO();
         if (dao.authenticate(username, password)) {
             HttpSession session = request.getSession();
-            session.setAttribute("username", username);
+
+            session.setAttribute("currentUser", dao.getUserByUsername(username));
             response.sendRedirect(request.getContextPath() + "/app/inbox");
 
         } else {

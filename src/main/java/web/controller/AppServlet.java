@@ -5,7 +5,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import web.beans.Project;
 import web.beans.Task;
+import web.dao.ProjectDAO;
 import web.dao.TaskDAO;
 import web.beans.User;
 import web.utils.WebUtils;
@@ -15,6 +17,9 @@ import java.util.List;
 
 @WebServlet("/app/*")
 public class AppServlet extends HttpServlet {
+    private final TaskDAO taskDAO = new TaskDAO();
+    private final ProjectDAO projectDAO = new ProjectDAO();
+
     /**
      * Handles the GET request for the app page.
      * <p>
@@ -30,10 +35,10 @@ public class AppServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        User currentUser = WebUtils.validateAndGetUser(request,response);
+        User currentUser = WebUtils.validateAndGetUser(request, response);
         if (currentUser == null) return;
 
-        String action = WebUtils.getActionFormPath(request,response);
+        String action = WebUtils.getActionFormPath(request, response);
         if (action == null) return;
 
         // Route to appropriate handler based on action
@@ -50,15 +55,18 @@ public class AppServlet extends HttpServlet {
 
     private void showInbox(HttpServletRequest request, HttpServletResponse response, User currentUser) throws ServletException, IOException {
         try {
-            TaskDAO taskDAO = new TaskDAO();
+            // pass tasks to jsp
             List<Task> tasks = taskDAO.getTasksByUserId(currentUser.getId());
             request.setAttribute("tasks", tasks);
-            request.getRequestDispatcher("/WEB-INF/app/Inbox.jsp").forward(request, response);
 
-            response.sendRedirect(request.getContextPath() + "/app/inbox");
+            // pass projects to jsp
+            List<Project> projects = projectDAO.getProjectsByUserId(currentUser.getId());
+            request.setAttribute("projects", projects);
+
+            // forward to inbox page
+            request.getRequestDispatcher("/WEB-INF/app/Inbox.jsp").forward(request, response);
         } catch (Exception e) {
-            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/app/Add-task.jsp").forward(request, response);
+            WebUtils.sendError(request, response, "Error loading inbox", "/app/inbox");
         }
 
 

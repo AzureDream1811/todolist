@@ -15,7 +15,8 @@
 <c:if test="${not empty requestScope.error}">
     <p style="color: red">${requestScope.error}</p>
 </c:if>
-<form action="${pageContext.request.contextPath}/app/add-task" method="post">
+<form action="${pageContext.request.contextPath}/tasks" method="post" id="taskForm" onsubmit="return validateForm()">
+    <input type="hidden" name="action" value="create">
     <table>
         <tr>
             <td>
@@ -30,12 +31,13 @@
             </td>
             <td>
                 <label>
-                    <input type="date" name="dueDate">
+                    <input type="date" name="dueDate" pattern="\d{4}-\d{2}-\d{2}">
                 </label>
             </td>
             <td>
                 <label>
                     <select name="priority" id="priority">
+                        <option value="">priority</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -46,8 +48,7 @@
             <td>
                 <label>
                     <select name="projectId">
-                        <option value="">Select project</option>
-                        <option value="0">No Project</option>
+                        <option value="">Project</option>
                         <c:forEach var="project" items="${requestScope.projects}">
                             <option value="${project.id}">${project.name}</option>
                         </c:forEach>
@@ -62,5 +63,16 @@
     </table>
 
 </form>
+
+<script>
+function validateForm() {
+    const title = document.querySelector('input[name="title"]').value.trim();
+    if (!title) {
+        alert('Title is required');
+        return false;
+    }
+    return true;
+}
+</script>
 </body>
 </html>

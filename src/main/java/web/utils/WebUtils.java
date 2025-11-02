@@ -1,5 +1,6 @@
 package web.utils;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -55,5 +56,23 @@ public class WebUtils {
         }
 
         return path.substring(1);
+    }
+
+    /**
+     * Sends an error message to the client by setting the "error" attribute to the request and
+     * redirecting the request to the specified redirect path.
+     *
+     * @param request  the HttpServletRequest object containing the request parameters
+     * @param response the HttpServletResponse object to send the response back to the client
+     * @param message the error message to send to the client
+     * @param redirectPath the path to redirect the request to after sending the error message
+     * @throws ServletException if an exception occurs during the servlet processing
+     * @throws IOException if an exception occurs during the input/output operations
+     */
+    public static void sendError(HttpServletRequest request, HttpServletResponse response,
+                          String message, String redirectPath)
+            throws ServletException, IOException {
+        request.setAttribute("error", message);
+        request.getRequestDispatcher(redirectPath).forward(request, response);
     }
 }

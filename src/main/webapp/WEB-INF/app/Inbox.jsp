@@ -13,32 +13,35 @@
 </head>
 <body>
 <h2>Inbox</h2>
-<form method="get" action="${pageContext.request.contextPath}/app/inbox">
-    <table class="task-table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Priority</th>
-                <th>completed</th>
-                <th>Due Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <jsp:useBean id="tasks" scope="request" type="java.util.List"/>
-            <c:forEach var="task" items="${tasks}">
-                <tr>
-                    <td>${task.title}</td>
-                    <td>${task.description}</td>
-                    <td>${task.priority}</td>
-                    <td>${task.completed}</td>
-                    <td>${task.dueDate}</td>
-                </tr>
-            </c:forEach>
-        </tbody>
-    </table>
-<%--    <jsp:include page="/WEB-INF/component/Add-task.jsp"/>--%>
+<%-- error --%>
+<c:if test="${not empty requestScope.error}">
+    <p style="color: red">${requestScope.error}</p>
+</c:if>
 
-</form>
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Priority</th>
+        <th>Completed</th>
+        <th>Due Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach var="task" items="${requestScope.tasks}">
+        <tr>
+            <td>${task.title}</td>
+            <td>${task.description}</td>
+            <td>${task.priority}</td>
+            <td>${task.completed ? 'Yes' : 'No'}</td>
+            <td>${task.dueDate}</td>
+        </tr>
+    </c:forEach>
+    </tbody>
+</table>
+
+<!-- Add Task Form -->
+<jsp:include page="/WEB-INF/component/AddTask.jsp"/>
 </body>
 </html>

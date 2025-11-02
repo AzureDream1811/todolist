@@ -15,8 +15,9 @@ public class UserDAO {
      */
     public User createUser(User user) {
         String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        try (Connection connection = DatabaseUtils.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, user.getUsername());
             statement.setString(3, user.getPassword());
             statement.setString(2, user.getEmail());
@@ -47,9 +48,9 @@ public class UserDAO {
      */
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
-        try (Connection connection = DatabaseUtils.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
+        try {
+            Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, username);
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.next() ? mapResultSetToUser(rs) : null;

@@ -5,36 +5,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 import web.beans.Task;
-import web.utils.DatabaseUtil;
+import web.utils.DatabaseUtils;
 
 public class TaskDAO {
 
+
     /**
-     * Creates a new task with the given details.
+     * Creates a new task in the database.
      *
      * @param task the task to create
-     * @return the created task if successful, null otherwise
+     * @return true if the task was created successfully, false otherwise
      */
-    public Task createTask(Task task) { //
+    public boolean createTask(Task task) { //
         String sql = "INSERT INTO tasks (title, description, completed, priority, due_date, user_id, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = DatabaseUtil.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, task.getTitle());
             statement.setString(2, task.getDescription());
             statement.setBoolean(3, task.isCompleted());
             statement.setInt(4, task.getPriority());
             statement.setDate(5, task.getDueDate() != null ? Date.valueOf(task.getDueDate()) : null);
             statement.setInt(6, task.getUserId());
-            statement.setInt(7, task.getProjectId());
+            if (task.getProjectId() > 0) {
+                statement.setInt(7, task.getProjectId());
+            } else {
+                statement.setNull(7, Types.INTEGER);
+            }
 
             int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) return null;
+            if (affectedRows == 0) return false;
 
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {
                     task.setId(resultSet.getInt(1));
-                    return task;
+                    return true;
                 }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Task getTaskById(String taskId) {
+        String sql = "SELECT * FROM tasks WHERE id = ?";
+        try {
+            Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, taskId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? mapResultSetToTask(rs) : null;
             }
 
         } catch (SQLException e) {
@@ -54,7 +78,7 @@ public class TaskDAO {
         String sql = "SELECT * FROM tasks WHERE user_id = ?";
 
         try {
-            Connection connection = DatabaseUtil.getConnection();
+            Connection connection = DatabaseUtils.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();

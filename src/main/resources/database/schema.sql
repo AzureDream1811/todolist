@@ -35,7 +35,7 @@ CREATE TABLE tasks (
     priority INT,
     due_date DATE DEFAULT NULL,
     completed_at DATE NULL,
-    project_id BIGINT,
+    project_id BIGINT DEFAULT 0,
     user_id BIGINT,
     created_at DATE DEFAULT (CURRENT_DATE),
     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL,

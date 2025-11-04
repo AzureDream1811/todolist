@@ -10,11 +10,12 @@ import web.dao.UserDAO;
 
 import java.io.IOException;
 
-@WebServlet("/login")
+@WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
+    private final String LOGIN_PAGE = "/WEB-INF/views/auth/Login.jsp";
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/auth/Login.jsp").forward(request, response);
+        request.getRequestDispatcher(LOGIN_PAGE).forward(request, response);
     }
 
     /**
@@ -43,7 +44,7 @@ public class LoginServlet extends HttpServlet {
 
         } else {
             request.setAttribute("error", "Invalid username or password");
-            request.getRequestDispatcher("/WEB-INF/auth/Login.jsp").forward(request, response);
+            request.getRequestDispatcher(LOGIN_PAGE).forward(request, response);
         }
     }
 }

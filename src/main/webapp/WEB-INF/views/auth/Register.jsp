@@ -18,7 +18,7 @@
     <div style="color: red;">${error}</div>
 </c:if>
 
-<form method="post" action="${pageContext.request.contextPath}/register">
+<form method="post" action="${pageContext.request.contextPath}/auth/register">
     <table>
         <tr>
             <td><label for="username"></label>Username</td>

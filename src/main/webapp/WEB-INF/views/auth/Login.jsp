@@ -12,7 +12,7 @@
     <title>Login</title>
 </head>
 <body>
-<form method="post" action="${pageContext.request.contextPath}/login">
+<form method="post" action="${pageContext.request.contextPath}/auth/login">
     <table>
         <tr>
             <td><label for="username"></label>Username</td>
@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <td>
-                <a href="${pageContext.request.contextPath}/register">
+                <a href="${pageContext.request.contextPath}/auth/register">
                     <button type="button">Register</button>
                 </a>
             </td>

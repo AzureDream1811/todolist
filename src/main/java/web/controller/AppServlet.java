@@ -34,15 +34,27 @@ public class AppServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         User currentUser = WebUtils.validateAndGetUser(request, response);
         if (currentUser == null) return;
 
-        String action = WebUtils.getActionFormPath(request, response);
-        if (action == null) return;
+        // Get the path info (part after /app/)
+        String pathInfo = request.getPathInfo();
+        
+        // Default to inbox if no path info
+        if (pathInfo == null || pathInfo.equals("/")) {
+            showInbox(request, response, currentUser);
+            return;
+        }
+        
+        // Remove leading slash and get the first part of the path
+        String[] pathParts = pathInfo.substring(1).split("/");
+        String action = pathParts[0];
 
         // Route to appropriate handler based on action
         switch (action) {
+            case "tasks":
+                request.getRequestDispatcher("/WEB-INF/views/app/AddTask.jsp").forward(request, response);
+                break;
             case "projects":
                 request.getRequestDispatcher("/WEB-INF/views/app/Projects.jsp").forward(request, response);
                 break;

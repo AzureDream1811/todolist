@@ -15,8 +15,7 @@
 <c:if test="${not empty requestScope.error}">
     <p style="color: red">${requestScope.error}</p>
 </c:if>
-<form action="${pageContext.request.contextPath}/tasks" method="post" id="taskForm" onsubmit="return validateForm()">
-    <input type="hidden" name="action" value="create">
+<form action="${pageContext.request.contextPath}/app/tasks/create" method="post" id="taskForm" onsubmit="return validateForm()">
     <table>
         <tr>
             <td>

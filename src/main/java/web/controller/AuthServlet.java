@@ -72,37 +72,32 @@ public class AuthServlet extends HttpServlet {
         try {
             //Check Validation
             if (ValidationUtils.areAllNullOrEmpty(username, password, confirmPassword)) {
-                request.setAttribute("error", "Vui lòng điền đầy đủ thông tin");
-                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
+                WebUtils.sendError(request, response, "Vui lòng điền đầy đủ thông tin", REGISTER_PAGE);
                 return;
             }
 
             //Check email
             if (!ValidationUtils.isNullOrEmpty(email) && !ValidationUtils.isValidEmail(email)) {
-                request.setAttribute("error", "Địa chỉ email không hợp lệ");
-                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
+                WebUtils.sendError(request, response, "Địa chỉ email không hợp lệ", REGISTER_PAGE);
                 return;
             }
 
             //Check length of password
             if (!ValidationUtils.isValidPassword(password, 8)) {
-                request.setAttribute("error", "Mật khẩu phải có ít nhất 8 kì tự");
-                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
+                WebUtils.sendError(request, response, "Mật khẩu phải có ít nhất 8 kì tự", REGISTER_PAGE);
                 return;
             }
 
             //Password match check
             if (!confirmPassword.equals(password)) {
-                request.setAttribute("error", "Mật khẩu không khớp");
-                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
+                WebUtils.sendError(request, response, "Mật khẩu không khớp", REGISTER_PAGE);
                 return;
             }
 
             // CHECK DATABASE AND PROCESS REGISTRATION
             User existingUser = userDAO.getUserByUsername(username);
             if (existingUser != null) {
-                request.setAttribute("error", "Người dùng đã tồn tại");
-                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
+                WebUtils.sendError(request, response, "Người dùng đã tồn tại", REGISTER_PAGE);
                 return;
             }
 
@@ -115,11 +110,10 @@ public class AuthServlet extends HttpServlet {
                 session.setAttribute("user", createdUser);
                 response.sendRedirect(request.getContextPath() + "/app/inbox");
             } else {
-                request.setAttribute("error", "Đăng kí thất bại . Vui lòng thử lại");
-                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
+                WebUtils.sendError(request, response, "Đăng kí thất bại . Vui lòng thử lại", REGISTER_PAGE);
             }
         } catch (Exception e) {
-                WebUtils.sendError(request, response, "Lỗi hệ thống", REGISTER_PAGE);
+            WebUtils.sendError(request, response, "Lỗi hệ thống", REGISTER_PAGE);
 
         }
 
@@ -136,8 +130,7 @@ public class AuthServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/app/inbox");
 
         } else {
-            request.setAttribute("error", "Invalid username or password");
-            request.getRequestDispatcher(LOGIN_PAGE).forward(request, response);
+            WebUtils.sendError(request, response, "Invalid username or password", LOGIN_PAGE);
         }
     }
 }

@@ -16,16 +16,6 @@ public class Task {
     public Task() {
     }
 
-    public Task(String title, String description, boolean completed, int priority, LocalDate dueDate, int projectId, int userId) {
-        this.title = title;
-        this.description = description;
-        this.completed = completed;
-        this.priority = priority;
-        this.dueDate = dueDate;
-        this.projectId = projectId;
-        this.userId = userId;
-    }
-
     public int getId() {
         return id;
     }

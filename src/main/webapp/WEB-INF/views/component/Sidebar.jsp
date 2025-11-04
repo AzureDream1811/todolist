@@ -32,7 +32,7 @@
             </a>
         </li>
         <li class="${param.activePage == 'add-task' ? 'active' : ''}">
-            <a href="${pageContext.request.contextPath}/app/tasks/create">
+            <a href="${pageContext.request.contextPath}/app/tasks">
                 Add Task
             </a>
         </li>

@@ -9,13 +9,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <body>
+<!-- add sidebar-->
+<jsp:include page="/WEB-INF/views/component/Sidebar.jsp">
+    <jsp:param name="active" value="addTask"/>
+</jsp:include>
 <h2>Add New Task</h2>
 
 <%-- error --%>
 <c:if test="${not empty requestScope.error}">
     <p style="color: red">${requestScope.error}</p>
 </c:if>
-<form action="${pageContext.request.contextPath}/app/tasks/create" method="post" id="taskForm" onsubmit="return validateForm()">
+<form action="${pageContext.request.contextPath}/app/tasks" method="post" id="taskForm" onsubmit="return validateForm()">
     <table>
         <tr>
             <td>

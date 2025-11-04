@@ -9,14 +9,17 @@ import jakarta.servlet.http.HttpSession;
 import web.beans.User;
 import web.dao.UserDAO;
 import web.utils.ValidationUtils;
+import web.utils.WebUtils;
 
 import java.io.IOException;
 
-@WebServlet("/register")
+@WebServlet("/auth/register")
 public class RegisterServlet extends HttpServlet {
+    private final String REGISTER_PAGE = "/WEB-INF/views/auth/Register.jsp";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
+        request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
     }
 
     @Override
@@ -33,28 +36,28 @@ public class RegisterServlet extends HttpServlet {
             //Check Validation
             if (ValidationUtils.areAllNullOrEmpty(username, password, confirmPassword)){
                 request.setAttribute("error", "Vui lòng điền đầy đủ thông tin");
-                request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
+                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
                 return;
             }
 
             //Check email
             if (!ValidationUtils.isNullOrEmpty(email) && !ValidationUtils.isValidEmail(email)) {
                 request.setAttribute("error", "Địa chỉ email không hợp lệ");
-                request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
+                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
                 return;
             }
 
             //Check length of password
             if(!ValidationUtils.isValidPassword(password, 8)){
                 request.setAttribute("error", "Mật khẩu phải có ít nhất 8 kì tự");
-                request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
+                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
                 return;
             }
 
             //Password match check
             if (!confirmPassword.equals(password)){
                 request.setAttribute("error", "Mật khẩu không khớp");
-                request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
+                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
                 return;
             }
 
@@ -64,7 +67,7 @@ public class RegisterServlet extends HttpServlet {
             User existingUser = userDAO.getUserByUsername(username);
             if (existingUser != null){
                 request.setAttribute("error", "Người dùng đã tồn tại");
-                request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
+                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
                 return;
             }
 
@@ -78,12 +81,11 @@ public class RegisterServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath()+ "/app/inbox");
             }else {
                 request.setAttribute("error", "Đăng kí thất bại . Vui lòng thử lại");
-                request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
+                request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/auth/Register.jsp").forward(request, response);
+            WebUtils.sendError(request, response, "Lỗi hệ thống", REGISTER_PAGE);
         }
     }
 }

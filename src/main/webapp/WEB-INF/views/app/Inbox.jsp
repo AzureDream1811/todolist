@@ -12,6 +12,12 @@
     <title>Inbox</title>
 </head>
 <body>
+<!-- add sidebar-->
+<jsp:include page="/WEB-INF/views/component/Sidebar.jsp">
+    <jsp:param name="active" value="inbox"/>
+</jsp:include>
+
+<!-- main -->
 <h2>Inbox</h2>
 <%-- error --%>
 <c:if test="${not empty requestScope.error}">
@@ -40,8 +46,5 @@
     </c:forEach>
     </tbody>
 </table>
-
-<!-- Add Task Form -->
-<jsp:include page="/WEB-INF/component/AddTask.jsp"/>
 </body>
 </html>

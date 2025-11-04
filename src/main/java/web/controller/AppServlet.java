@@ -44,7 +44,7 @@ public class AppServlet extends HttpServlet {
         // Route to appropriate handler based on action
         switch (action) {
             case "projects":
-                request.getRequestDispatcher("/WEB-INF/app/Projects.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/app/Projects.jsp").forward(request, response);
                 break;
             case "inbox":
             default:
@@ -64,7 +64,7 @@ public class AppServlet extends HttpServlet {
             request.setAttribute("projects", projects);
 
             // forward to inbox page
-            request.getRequestDispatcher("/WEB-INF/app/Inbox.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/app/Inbox.jsp").forward(request, response);
         } catch (Exception e) {
             WebUtils.sendError(request, response, "Error loading inbox", "/app/inbox");
         }

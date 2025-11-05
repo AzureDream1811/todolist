@@ -111,4 +111,45 @@ public class TaskDAO {
 
         return task;
     }
+
+    public List<Task> getTodayTaskByUserID (int userId){
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed = false";
+
+        try {
+            Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()){
+                Task task = mapResultSetToTask(rs);
+                tasks.add(task);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return tasks;
+    }
+
+    public List<Task> getOverdueTaskByUserID(int userId) {
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date < CURDATE() AND completed = false";
+
+        try (Connection connection = DatabaseUtils.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Task task = mapResultSetToTask(rs);
+                tasks.add(task);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return tasks;
+    }
 }

@@ -37,7 +37,7 @@
         </tr>
         <tr>
             <td>
-                <a href="${pageContext.request.contextPath}/login">
+                <a href="${pageContext.request.contextPath}/auth/login">
                     <button type="button">Login</button>
                 </a>
             </td>

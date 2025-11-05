@@ -122,7 +122,6 @@ public class AppServlet extends HttpServlet {
             String dueDate = request.getParameter("dueDate");
             int priority = Integer.parseInt(request.getParameter("priority"));
             int projectId = Integer.parseInt(request.getParameter("projectId"));
-
             Task task = new Task();
             task.setTitle(title);
             task.setDescription(description.isEmpty() ? null : description);
@@ -137,6 +136,25 @@ public class AppServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/app/inbox");
         } catch (Exception e) {
             WebUtils.sendError(request, response, "Error adding task", "/app/tasks");
+        }
+
+    }
+
+    public void showToday(HttpServletRequest request, HttpServletResponse response, User currentUser) throws ServletException, IOException {
+        try {
+            List<Task> overdueTasks = taskDAO.getOverdueTaskByUserID(currentUser.getId());
+            List<Task> todayTasks = taskDAO.getTodayTaskByUserID(currentUser.getId());
+
+            request.setAttribute("overdueTasks", overdueTasks);
+            request.setAttribute("todayTasks", todayTasks);
+
+            List<Project> projects = projectDAO.getProjectsByUserId(currentUser.getId());
+            request.setAttribute("projects", projects);
+
+            request.getRequestDispatcher("/WEB-INF/views/app/Today.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            WebUtils.sendError(request, response, "Error loading today's tasks", "/app/today");
         }
     }
 }

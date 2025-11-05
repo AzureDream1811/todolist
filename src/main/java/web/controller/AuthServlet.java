@@ -21,16 +21,14 @@ public class AuthServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = WebUtils.getActionFormPath(request, response);
-        if (action == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
+        String pathInfo = request.getPathInfo();
+        String action = (pathInfo == null || pathInfo.equals("/")) ? "/login" : pathInfo;
+        
         switch (action) {
-            case "login":
+            case "/login":
                 request.getRequestDispatcher(LOGIN_PAGE).forward(request, response);
                 break;
-            case "register":
+            case "/register":
                 request.getRequestDispatcher(REGISTER_PAGE).forward(request, response);
                 break;
             default:

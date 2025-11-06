@@ -112,7 +112,7 @@ public class TaskDAO {
         return task;
     }
 
-    public List<Task> getTodayTaskByUserID (int userId){
+    public List<Task> getTodayTaskByUserID(int userId) {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed = false";
 
@@ -122,7 +122,7 @@ public class TaskDAO {
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 Task task = mapResultSetToTask(rs);
                 tasks.add(task);
             }
@@ -150,6 +150,28 @@ public class TaskDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return tasks;
+    }
+
+    public List<Task> getUpcomingTasksByUserId(int userId) {
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date > CURDATE() AND completed = false";
+
+        try {
+            Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Task task = mapResultSetToTask(rs);
+                tasks.add(task);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return tasks;
     }
 }

@@ -19,6 +19,7 @@ import java.util.List;
 @WebServlet({"/app/*"})
 public class AppServlet extends HttpServlet {
     private static final String INBOX_PAGE = "/WEB-INF/views/app/Inbox.jsp";
+    private static final String UPCOMING_PAGE = "/WEB-INF/views/app/Upcoming.jsp";
     private static final String ADD_TASK_PAGE = "/WEB-INF/views/app/AddTask.jsp";
     private static final String PROJECTS_PAGE = "/WEB-INF/views/app/Projects.jsp";
     private final TaskDAO taskDAO = new TaskDAO();
@@ -54,6 +55,9 @@ public class AppServlet extends HttpServlet {
                 break;
             case "projects":
                 request.getRequestDispatcher(PROJECTS_PAGE).forward(request, response);
+                break;
+            case "upcoming":
+                showUpcoming(request, response, currentUser);
                 break;
             case "inbox":
             default:
@@ -155,6 +159,18 @@ public class AppServlet extends HttpServlet {
 
         } catch (Exception e) {
             WebUtils.sendError(request, response, "Error loading today's tasks", "/app/today");
+        }
+    }
+
+    public void showUpcoming(HttpServletRequest request, HttpServletResponse response, User currentUser) throws ServletException, IOException {
+        try {
+            List<Task> upcomingTasks = taskDAO.getUpcomingTasksByUserId(currentUser.getId());
+
+            request.setAttribute("upcomingTasks", upcomingTasks);
+
+            request.getRequestDispatcher(UPCOMING_PAGE).forward(request, response);
+        } catch (Exception e){
+            WebUtils.sendError(request, response, "Error loading upcoming tasks", "/app/upcoming");
         }
     }
 }

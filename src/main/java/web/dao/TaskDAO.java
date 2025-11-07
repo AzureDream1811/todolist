@@ -109,6 +109,9 @@ public class TaskDAO {
             task.setDueDate(null);
         }
 
+        task.setUserId(rs.getInt("user_id"));
+        task.setProjectId(rs.getInt("project_id"));
+
         return task;
     }
 
@@ -116,9 +119,9 @@ public class TaskDAO {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed = false";
 
-        try {
-            Connection connection = DatabaseUtils.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (Connection connection = DatabaseUtils.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
 
@@ -126,8 +129,9 @@ public class TaskDAO {
                 Task task = mapResultSetToTask(rs);
                 tasks.add(task);
             }
+
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return tasks;
     }
@@ -148,7 +152,7 @@ public class TaskDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return tasks;
     }

@@ -19,6 +19,7 @@ import java.util.List;
 @WebServlet({"/app/*"})
 public class AppServlet extends HttpServlet {
     private static final String INBOX_PAGE = "/WEB-INF/views/app/Inbox.jsp";
+    private static final String TODAY_PAGE = "/WEB-INF/views/app/Today.jsp";
     private static final String UPCOMING_PAGE = "/WEB-INF/views/app/Upcoming.jsp";
     private static final String ADD_TASK_PAGE = "/WEB-INF/views/app/AddTask.jsp";
     private static final String PROJECTS_PAGE = "/WEB-INF/views/app/Projects.jsp";
@@ -50,6 +51,9 @@ public class AppServlet extends HttpServlet {
 
         // Route to appropriate handler based on action
         switch (action) {
+            case "today":
+                showToday(request, response, currentUser);
+                break;
             case "tasks":
                 addTaskGet(request, response, currentUser);
                 break;
@@ -144,7 +148,8 @@ public class AppServlet extends HttpServlet {
 
     }
 
-    public void showToday(HttpServletRequest request, HttpServletResponse response, User currentUser) throws ServletException, IOException {
+    public void showToday(HttpServletRequest request, HttpServletResponse response, User currentUser)
+            throws ServletException, IOException {
         try {
             List<Task> overdueTasks = taskDAO.getOverdueTaskByUserID(currentUser.getId());
             List<Task> todayTasks = taskDAO.getTodayTaskByUserID(currentUser.getId());
@@ -155,10 +160,10 @@ public class AppServlet extends HttpServlet {
             List<Project> projects = projectDAO.getProjectsByUserId(currentUser.getId());
             request.setAttribute("projects", projects);
 
-            request.getRequestDispatcher("/WEB-INF/views/app/Today.jsp").forward(request, response);
+            request.getRequestDispatcher(TODAY_PAGE).forward(request, response);
 
         } catch (Exception e) {
-            WebUtils.sendError(request, response, "Error loading today's tasks", "/app/today");
+            WebUtils.sendError(request, response, "Error loading today's tasks", "/app/inbox");
         }
     }
 

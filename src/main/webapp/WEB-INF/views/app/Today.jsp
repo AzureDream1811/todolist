@@ -41,7 +41,7 @@
                             <p>${task.description}</p>
                         </c:if>
                         <p>
-                            Due: <fmt:formatDate value="${task.dueDate}" pattern="MM/dd/yyyy"/>
+                            Due: ${task.dueDate} <!-- ĐÃ SỬA -->
                             | Priority: ${task.priority}
                             | <span style="color: red">OVERDUE</span>
                         </p>
@@ -80,8 +80,6 @@
 
 <br>
 <div>
-    <a href="${pageContext.request.contextPath}/app/inbox">Back to Inbox</a>
-    |
     <a href="${pageContext.request.contextPath}/app/tasks">Add New Task</a>
 </div>
 

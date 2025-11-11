@@ -33,7 +33,6 @@ public class AuthServlet extends HttpServlet {
         break;
       case "/logout":
         logoutHandler(request, response);
-        request.getRequestDispatcher(LOGIN_PAGE).forward(request, response);
         break;
       default:
         response.sendError(HttpServletResponse.SC_NOT_FOUND);

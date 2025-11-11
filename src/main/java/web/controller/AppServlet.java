@@ -22,6 +22,7 @@ public class AppServlet extends HttpServlet {
     private static final String TODAY_PAGE = "/WEB-INF/views/app/Today.jsp";
     private static final String UPCOMING_PAGE = "/WEB-INF/views/app/Upcoming.jsp";
     private static final String ADD_TASK_PAGE = "/WEB-INF/views/app/AddTask.jsp";
+    private static final String COMPLETED_PAGE = "/WEB-INF/views/app/Completed.jsp";
     private static final String PROJECTS_PAGE = "/WEB-INF/views/app/Projects.jsp";
     private final TaskDAO taskDAO = new TaskDAO();
     private final ProjectDAO projectDAO = new ProjectDAO();
@@ -62,6 +63,9 @@ public class AppServlet extends HttpServlet {
                 break;
             case "upcoming":
                 showUpcoming(request, response, currentUser);
+                break;
+            case "completed":
+                showCompletedTask(request, response, currentUser);
                 break;
             case "inbox":
             default:
@@ -176,6 +180,19 @@ public class AppServlet extends HttpServlet {
             request.getRequestDispatcher(UPCOMING_PAGE).forward(request, response);
         } catch (Exception e){
             WebUtils.sendError(request, response, "Error loading upcoming tasks", "/app/upcoming");
+        }
+    }
+
+    public void showCompletedTask(HttpServletRequest request, HttpServletResponse response, User currentUser) throws ServletException, IOException{
+        try {
+            List<Task> completedTasks = taskDAO.getCompletedTaskByUserId(currentUser.getId());
+
+            request.setAttribute("CompletedTasks", completedTasks);
+
+            request.getRequestDispatcher(COMPLETED_PAGE).forward(request, response);
+
+        } catch (Exception e) {
+            WebUtils.sendError(request, response, "Error loading completed tasks", "/app/inbox");
         }
     }
 }

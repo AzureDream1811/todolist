@@ -79,9 +79,5 @@
 </c:choose>
 
 <br>
-<div>
-    <a href="${pageContext.request.contextPath}/app/tasks">Add New Task</a>
-</div>
-
 </body>
 </html>

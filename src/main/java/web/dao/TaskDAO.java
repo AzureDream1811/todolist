@@ -178,4 +178,24 @@ public class TaskDAO {
 
         return tasks;
     }
+
+    public List<Task> getCompletedTaskByUserId (int userId){
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE completed = true AND user_id = ?";
+
+        try (Connection connection = DatabaseUtils.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, userId);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Task task = mapResultSetToTask(rs);
+                tasks.add(task);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tasks;
+    }
 }

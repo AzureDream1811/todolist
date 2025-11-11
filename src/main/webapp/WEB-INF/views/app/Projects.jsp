@@ -19,11 +19,15 @@
 <c:if test="${not empty requestScope.error}">
     <p style="color: red">${requestScope.error}</p>
 </c:if>
-
     <table>
+        <tr><th>Name</th><th>Created</th></tr>
         <c:forEach var="project" items="${requestScope.projects}">
             <tr>
-               <td>${project.name}</td>
+               <td>
+               <a href="${pageContext.request.contextPath}/app/projects?id=${project.id}">
+               ${project.name}
+               </a>
+               </td>
                <td>${project.createdAt}</td>
             </tr>
           </c:forEach>

@@ -24,6 +24,8 @@ public class AppServlet extends HttpServlet {
   private static final String ADD_TASK_PAGE = "/WEB-INF/views/app/AddTask.jsp";
   private static final String COMPLETED_PAGE = "/WEB-INF/views/app/Completed.jsp";
   private static final String PROJECTS_PAGE = "/WEB-INF/views/app/Projects.jsp";
+  private static final String PROJECT_DETAIL_PAGE = "/WEB-INF/views/app/ProjectDetail.jsp";
+
   private final TaskDAO taskDAO = new TaskDAO();
   private final ProjectDAO projectDAO = new ProjectDAO();
 
@@ -209,12 +211,41 @@ public class AppServlet extends HttpServlet {
   private void showProjects(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
+      String idParam = request.getParameter("id");
+      if (idParam != null) {
+        showProjectDetails(request, response, currentUser, Integer.parseInt(idParam));
+        return;
+      }
+
       List<Project> projects = projectDAO.getProjectsByUserId(currentUser.getId());
       request.setAttribute("projects", projects);
-
       request.getRequestDispatcher(PROJECTS_PAGE).forward(request, response);
+
     } catch (Exception e) {
       WebUtils.sendError(request, response, "Error loading projects", "/app/inbox");
+    }
+  }
+
+  private void showProjectDetails(HttpServletRequest request, HttpServletResponse response, User currentUser,
+      int projectId) {
+    try {
+      Project project = projectDAO.getProjectByIdAndUserId(projectId, currentUser.getId());
+      if (project == null) {
+        WebUtils.sendError(request, response, "Project not found", "/app/projects");
+        return;
+      }
+
+      // get tasks for the project and current user
+      List<Task> projectTasks = taskDAO.getTasksByProjectIdAndUserId(projectId, currentUser.getId());
+
+      // set attributes and forward to project detail page
+      request.setAttribute("currentProject", project);
+      request.setAttribute("projectTasks", projectTasks);
+      request.getRequestDispatcher(PROJECT_DETAIL_PAGE).forward(request, response);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+
     }
   }
 }

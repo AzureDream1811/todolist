@@ -11,32 +11,32 @@
 <div>
     <h2>${sessionScope.currentUser.username}</h2>
     <ul>
-        <li class="${param.activePage == 'inbox' ? 'active' : ''}">
+        <li>
             <a href="${pageContext.request.contextPath}/app/inbox">
                 Inbox
             </a>
         </li>
-        <li class="${param.activePage == 'today' ? 'active' : ''}">
+        <li>
             <a href="${pageContext.request.contextPath}/app/today">
                 Today
             </a>
         </li>
-        <li class="${param.activePage == 'upcoming' ? 'active' : ''}">
+        <li>
             <a href="${pageContext.request.contextPath}/app/upcoming">
                 Upcoming
             </a>
         </li>
-        <li class="${param.activePage == 'completed' ? 'active' : ''}">
+        <li>
             <a href="${pageContext.request.contextPath}/app/completed">
-                completed
+                Completed
             </a>
         </li>
-        <li class="${param.activePage == 'add-task' ? 'active' : ''}">
+        <li>
             <a href="${pageContext.request.contextPath}/app/tasks">
                 Add Task
             </a>
         </li>
-        <li class="${param.activePage == 'projects' ? 'active' : ''}">
+        <li>
             <a href="${pageContext.request.contextPath}/app/projects">
                 Projects
             </a>

@@ -41,7 +41,7 @@
                 Projects
             </a>
         </li>
-        <li class="${param.activePage == 'logout' ? 'active' : ''}">
+        <li>
             <a href="${pageContext.request.contextPath}/auth/logout">
                 Logout
             </a>

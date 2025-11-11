@@ -142,5 +142,16 @@ public class AuthServlet extends HttpServlet {
     if (session != null) {
       session.invalidate();
     }
+
+    // prevent caching after logout to prevent going back with back button
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setDateHeader("Expires", 0);
+
+    try {
+      response.sendRedirect(request.getContextPath() + "/auth/login");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

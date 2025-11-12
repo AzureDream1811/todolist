@@ -78,6 +78,10 @@
     </c:otherwise>
 </c:choose>
 
-<br>
+<%-- Include AddTask component với tham số taskType --%>
+<jsp:include page="../component/AddTask.jsp">
+    <jsp:param name="taskType" value="today"/>
+</jsp:include>
+
 </body>
 </html>

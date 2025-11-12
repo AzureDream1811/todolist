@@ -9,10 +9,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <body>
-<!-- add sidebar-->
-<jsp:include page="/WEB-INF/views/component/Sidebar.jsp">
-    <jsp:param name="active" value="addTask"/>
-</jsp:include>
 <h2>Add New Task</h2>
 
 <%-- error --%>
@@ -32,16 +28,28 @@
                     <input type="text" name="description" placeholder="Description">
                 </label>
             </td>
-            <td>
-                <label>
-                    <input type="date" name="dueDate" pattern="\d{4}-\d{2}-\d{2}">
-                </label>
-            </td>
+            <%--Display DueDate depending on taskType--%>
+            <c:choose>
+                <c:when test="${param.taskType == 'today'}">
+                    <input type="hidden" name="dueDate" value="<%= java.time.LocalDate.now() %>">
+                    <td>today</td>
+                </c:when>
+                <c:when test="${param.taskType == 'upcoming'}">
+                    <td>
+                        <input type="date" name="dueDate" pattern="\d{4}-\d{2}-\d{2}">
+                    </td>
+                </c:when>
+                <c:otherwise>
+                    <td>
+                        <input type="date" name="dueDate" pattern="\d{4}-\d{2}-\d{2}">
+                    </td>
+                </c:otherwise>
+            </c:choose>
             <td>
                 <label>
                     <select name="priority" id="priority">
                         <option value="">priority</option>
-                        <option value="1">1</option>
+                        <option value="1" selected>1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
@@ -65,17 +73,11 @@
         </tr>
     </table>
 
-</form>
+    <%-- Hidden fields required for the form --%>
+    <input type="hidden" name="taskType" value="${param.taskType}">
+    <input type="hidden" name="completed" value="false">
+    <input type="hidden" name="projectId" value="0">
 
-<script>
-function validateForm() {
-    const title = document.querySelector('input[name="title"]').value.trim();
-    if (!title) {
-        alert('Title is required');
-        return false;
-    }
-    return true;
-}
-</script>
+</form>
 </body>
 </html>

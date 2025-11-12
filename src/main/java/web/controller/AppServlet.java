@@ -21,7 +21,7 @@ public class AppServlet extends HttpServlet {
   private static final String INBOX_PAGE = "/WEB-INF/views/app/Inbox.jsp";
   private static final String TODAY_PAGE = "/WEB-INF/views/app/Today.jsp";
   private static final String UPCOMING_PAGE = "/WEB-INF/views/app/Upcoming.jsp";
-  private static final String ADD_TASK_PAGE = "/WEB-INF/views/app/AddTask.jsp";
+  private static final String ADD_TASK_PAGE = "/WEB-INF/views/component/AddTask.jsp";
   private static final String COMPLETED_PAGE = "/WEB-INF/views/app/Completed.jsp";
   private static final String PROJECTS_PAGE = "/WEB-INF/views/app/Projects.jsp";
   private static final String PROJECT_DETAIL_PAGE = "/WEB-INF/views/app/ProjectDetail.jsp";
@@ -142,8 +142,14 @@ public class AppServlet extends HttpServlet {
       String description = request.getParameter("description");
       boolean completed = Boolean.parseBoolean(request.getParameter("completed"));
       String dueDate = request.getParameter("dueDate");
-      int priority = Integer.parseInt(request.getParameter("priority"));
-      int projectId = Integer.parseInt(request.getParameter("projectId"));
+      String priorityParam = request.getParameter("priority");
+      int priority = (priorityParam != null && !priorityParam.isEmpty()) ? Integer.parseInt(priorityParam) : 1;
+      String projectIdParam = request.getParameter("projectId");
+      int projectId = (projectIdParam != null && !projectIdParam.isEmpty()) ? Integer.parseInt(projectIdParam) : 0;
+
+//    Get taskType to reDirect to the correct page
+      String taskType = request.getParameter("taskType");
+
       Task task = new Task();
       task.setTitle(title);
       task.setDescription(description.isEmpty() ? null : description);
@@ -155,11 +161,30 @@ public class AppServlet extends HttpServlet {
 
       taskDAO.createTask(task);
 
+      String redirectPath = determineRedirectPath(taskType);
+      response.sendRedirect(request.getContextPath() + redirectPath);
+
       response.sendRedirect(request.getContextPath() + "/app/inbox");
     } catch (Exception e) {
       WebUtils.sendError(request, response, "Error adding task", "/app/tasks");
     }
 
+  }
+
+  private String determineRedirectPath(String taskType) {
+      if(taskType == null || taskType.isEmpty()){
+          return "/app/inbox";//default
+      }
+
+      switch (taskType){
+          case "today":
+              return "/app/today";
+          case "upcoming":
+              return "/app/upcoming";
+          case "inbox":
+          default:
+              return "/app/inbox";
+      }
   }
 
   private void showToday(HttpServletRequest request, HttpServletResponse response, User currentUser)

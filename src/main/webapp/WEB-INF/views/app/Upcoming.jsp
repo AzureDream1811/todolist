@@ -47,5 +47,11 @@
         </table>
     </c:otherwise>
 </c:choose>
+
+<%-- Include AddTask component với tham số taskType --%>
+<jsp:include page="../component/AddTask.jsp">
+    <jsp:param name="taskType" value="upcoming"/>
+</jsp:include>
+
 </body>
 </html>

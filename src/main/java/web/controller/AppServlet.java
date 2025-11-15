@@ -25,6 +25,7 @@ public class AppServlet extends HttpServlet {
   private static final String COMPLETED_PAGE = "/WEB-INF/views/app/Completed.jsp";
   private static final String PROJECTS_PAGE = "/WEB-INF/views/app/Projects.jsp";
   private static final String PROJECT_DETAIL_PAGE = "/WEB-INF/views/app/ProjectDetail.jsp";
+  private static final String DELETE_TASK_PAGE = "/WEB-INF/views/component/DeleteTask.jsp";
 
   private final TaskDAO taskDAO = new TaskDAO();
   private final ProjectDAO projectDAO = new ProjectDAO();
@@ -57,27 +58,30 @@ public class AppServlet extends HttpServlet {
     }
 
     // Route to appropriate handler based on action
-    switch (action) {
-      case "today":
-        showToday(request, response, currentUser);
-        break;
-      case "tasks":
-        addTaskGet(request, response, currentUser);
-        break;
-      case "projects":
-        showProjects(request, response, currentUser);
-        break;
-      case "upcoming":
-        showUpcoming(request, response, currentUser);
-        break;
-      case "completed":
-        showCompletedTask(request, response, currentUser);
-        break;
-      case "inbox":
-      default:
-        showInbox(request, response, currentUser);
-        break;
-    }
+      switch (action) {
+          case "today":
+              showToday(request, response, currentUser);
+              break;
+          case "tasks":
+              addTaskGet(request, response, currentUser);
+              break;
+          case "projects":
+              showProjects(request, response, currentUser);
+              break;
+          case "upcoming":
+              showUpcoming(request, response, currentUser);
+              break;
+          case "completed":
+              showCompletedTask(request, response, currentUser);
+              break;
+          case "delete-task":  // THÊM DÒNG NÀY
+              deleteTaskGet(request, response, currentUser);
+              break;
+          case "inbox":
+          default:
+              showInbox(request, response, currentUser);
+              break;
+      }
   }
 
   @Override
@@ -93,14 +97,17 @@ public class AppServlet extends HttpServlet {
     }
 
     // Route to appropriate handler based on action
-    switch (action) {
-      case "tasks":
-        addTaskPost(request, response, currentUser);
-        break;
-      default:
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        break;
-    }
+      switch (action) {
+          case "tasks":
+              addTaskPost(request, response, currentUser);
+              break;
+          case "delete-task":  // THÊM DÒNG NÀY
+              deleteTaskPost(request, response, currentUser);
+              break;
+          default:
+              response.sendError(HttpServletResponse.SC_NOT_FOUND);
+              break;
+      }
   }
 
   private void showInbox(HttpServletRequest request, HttpServletResponse response, User currentUser)
@@ -272,5 +279,94 @@ public class AppServlet extends HttpServlet {
       e.printStackTrace();
 
     }
+  }
+
+  private void deleteTaskGet (HttpServletRequest request, HttpServletResponse response, User currentUser) throws ServletException, IOException {
+      try {
+          String taskIDParam = request.getParameter("taskID");
+
+          if (taskIDParam == null || taskIDParam.isEmpty()) {
+              WebUtils.sendError(request, response, "Task ID is required", "/app/inbox");
+              return;
+          }
+
+          int taskID = Integer.parseInt(taskIDParam);
+
+          List<Task> tasks = taskDAO.getTaskByIDandUserId(taskID, currentUser.getId());
+
+          if (tasks.isEmpty()) {
+              WebUtils.sendError(request, response, "Task  not found", "/app/inbox");
+              return;
+          }
+
+          Task task = tasks.get(0);
+
+          request.setAttribute("task", task);
+
+          String redirectPath = request.getParameter("redirect");
+          request.setAttribute("redirectPath", redirectPath != null ? redirectPath : "/app/inbox");
+
+          request.getRequestDispatcher(DELETE_TASK_PAGE).forward(request, response);
+      } catch (NumberFormatException e) {
+          WebUtils.sendError(request, response, "Invalid task ID format", "/app/inbox");
+      } catch (Exception e) {
+          WebUtils.sendError(request, response, "Error loading delete tasks page", "/app/inbox");
+      }
+  }
+
+  public void deleteTaskPost (HttpServletRequest request, HttpServletResponse response, User currentUser)throws  ServletException, IOException {
+      try {
+          String taskIDParam = request.getParameter("taskID");
+          String confirm = request.getParameter("confirm");
+
+          //Get taskType to reDirect to the correct page
+          String redirectPath = request.getParameter("redirect");
+
+          if (taskIDParam == null || taskIDParam.isEmpty()) {
+              WebUtils.sendError(request, response, "Task ID is required", "/app/inbox");
+              return;
+          }
+
+          //Check user confirmed deletion
+          if (! "true".equals(confirm)){
+              WebUtils.sendError(request, response, "Invalid confirmation", "/app/inbox");
+              return;
+          }
+
+          int taskID = Integer.parseInt(taskIDParam);
+
+          List<Task> tasks = taskDAO.getTaskByIDandUserId(taskID, currentUser.getId());
+          if (tasks.isEmpty()) {
+              WebUtils.sendError(request, response, "Task not found", "/app/inbox");
+              return;
+          }
+
+          Task task = tasks.get(0);
+
+          boolean success = taskDAO.deleteTask(task);
+
+          if (success) {
+              String finalRedirectPath = determineRedirectPathAfterDelete(redirectPath);
+              response.sendRedirect(request.getContextPath() + finalRedirectPath);
+          }else {
+              WebUtils.sendError(request, response, "Error deleting task", determineRedirectPathAfterDelete(redirectPath));
+          }
+      } catch (Exception e) {
+          WebUtils.sendError(request, response, "Error delete task", "/app/inbox");
+      }
+  }
+
+  private String determineRedirectPathAfterDelete (String currentPagePath) {
+      if (currentPagePath == null || currentPagePath.isEmpty()) {
+          return "/app/inbox";
+      }
+
+      if (currentPagePath.contains("/app/today")){
+          return "/app/today";
+      } else if (currentPagePath.contains("/app/upcoming")) {
+          return "/app/upcoming";
+      }else {
+          return "/app/inbox";
+      }
   }
 }

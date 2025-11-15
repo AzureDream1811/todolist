@@ -28,6 +28,7 @@
 <table>
     <thead>
     <tr>
+        <th>ID</th>
         <th>Title</th>
         <th>Description</th>
         <th>Priority</th>
@@ -38,6 +39,7 @@
     <tbody>
     <c:forEach var="task" items="${requestScope.tasks}">
         <tr>
+            <td>${task.id}</td>
             <td>${task.title}</td>
             <td>${task.description}</td>
             <td>${task.priority}</td>
@@ -50,6 +52,10 @@
 
 <%-- Include AddTask component với tham số taskType --%>
 <jsp:include page="../component/AddTask.jsp">
+    <jsp:param name="taskType" value="inbox"/>
+</jsp:include>
+
+<jsp:include page="../component/DeleteTask.jsp">
     <jsp:param name="taskType" value="inbox"/>
 </jsp:include>
 

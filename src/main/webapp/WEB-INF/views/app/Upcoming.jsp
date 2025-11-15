@@ -1,4 +1,3 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: ducph
@@ -6,6 +5,7 @@
   Time: 7:17 AM
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" isELIgnored="false" %>
 <html>
 <head>
@@ -31,25 +31,37 @@
     </c:when>
     <c:otherwise>
         <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Due Date</th>
+                <th>Priority</th>
+            </tr>
+            </thead>
+            <tbody>
             <c:forEach var="task" items="${requestScope.upcomingTasks}">
                 <tr>
+                    <!-- TẤT CẢ TRONG 1 HÀNG -->
+                    <td>${task.id}</td>
                     <td>${task.title}</td>
-                </tr>
-                <tr>
                     <td>${task.description}</td>
-
-                </tr>
-                <tr>
                     <td>${task.dueDate}</td>
                     <td>${task.priority}</td>
                 </tr>
             </c:forEach>
+            </tbody>
         </table>
     </c:otherwise>
 </c:choose>
 
 <%-- Include AddTask component với tham số taskType --%>
 <jsp:include page="../component/AddTask.jsp">
+    <jsp:param name="taskType" value="upcoming"/>
+</jsp:include>
+
+<jsp:include page="../component/DeleteTask.jsp">
     <jsp:param name="taskType" value="upcoming"/>
 </jsp:include>
 

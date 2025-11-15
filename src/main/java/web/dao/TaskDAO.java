@@ -231,4 +231,44 @@ public class TaskDAO {
     return tasks;
   }
 
+  public List<Task> getTaskByIDandUserId(int taskID, int userID) {
+      List<Task> tasks = new ArrayList<>();
+      String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
+
+      try (Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+          statement.setInt(1, taskID);
+          statement.setInt(2, userID);
+
+          ResultSet rs = statement.executeQuery();
+
+          while (rs.next()){
+              Task task = mapResultSetToTask(rs);
+              tasks.add(task);
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+      return tasks;
+  }
+
+  public boolean deleteTask (Task task) {
+      String sql = "DELETE FROM tasks WHERE id = ? AND user_id = ?";
+
+      try (Connection connection = DatabaseUtils.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)){
+
+          statement.setInt(1, task.getId());
+          statement.setInt(2, task.getUserId());
+
+          int affectRow = statement.executeUpdate();
+          return affectRow > 0;
+
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+      return false;
+  }
+
 }

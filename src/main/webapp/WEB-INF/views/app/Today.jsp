@@ -33,8 +33,16 @@
     </c:when>
     <c:otherwise>
         <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Task Details</th>
+            </tr>
+            </thead>
+            <tbody>
             <c:forEach var="task" items="${overdueTasks}">
                 <tr>
+                    <td>${task.id}</td>
                     <td>
                         <h3>${task.title}</h3>
                         <c:if test="${not empty task.description}">
@@ -48,6 +56,7 @@
                     </td>
                 </tr>
             </c:forEach>
+            </tbody>
         </table>
     </c:otherwise>
 </c:choose>
@@ -60,8 +69,16 @@
     </c:when>
     <c:otherwise>
         <table>
+            <thead>
+            <tr>
+                <th>ID</th>                <!-- THÊM DÒNG NÀY -->
+                <th>Task Details</th>
+            </tr>
+            </thead>
+            <tbody>
             <c:forEach var="task" items="${todayTasks}">
                 <tr>
+                    <td>${task.id}</td>
                     <td>
                         <h3>${task.title}</h3>
                         <c:if test="${not empty task.description}">
@@ -74,12 +91,17 @@
                     </td>
                 </tr>
             </c:forEach>
+            </tbody>
         </table>
     </c:otherwise>
 </c:choose>
 
 <%-- Include AddTask component với tham số taskType --%>
 <jsp:include page="../component/AddTask.jsp">
+    <jsp:param name="taskType" value="today"/>
+</jsp:include>
+
+<jsp:include page="../component/DeleteTask.jsp">
     <jsp:param name="taskType" value="today"/>
 </jsp:include>
 

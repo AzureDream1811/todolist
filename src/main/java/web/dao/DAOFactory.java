@@ -1,5 +1,8 @@
 package web.dao;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -13,11 +16,21 @@ public class DAOFactory {
     private final DataSource dataSource;
 
     private DAOFactory() {
-        MysqlDataSource ds = new MysqlDataSource();
-        ds.setURL("jdbc:mysql://localhost:3306/todolist_db");
-        ds.setUser("root");
-        ds.setPassword("1234");
-        this.dataSource = ds;
+        Properties props = new Properties();
+
+        try (InputStream input = DAOFactory.class.getClassLoader().getResourceAsStream("database.properties")) {
+
+            props.load(input);
+
+            MysqlDataSource ds = new MysqlDataSource();
+            ds.setURL(props.getProperty("db.url"));
+            ds.setUser(props.getProperty("db.user"));
+            ds.setPassword(props.getProperty("db.password"));
+            this.dataSource = ds;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load DB configuration", e);
+        }
     }
 
     public static DAOFactory getInstance() {

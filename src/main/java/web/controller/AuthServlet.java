@@ -1,8 +1,8 @@
 package web.controller;
 
-
 import web.model.User;
-import web.dao.userDAOImpl.UserDAOImpl;
+import web.dao.DAOFactory;
+import web.dao.UserDAO;
 import web.utils.ValidationUtils;
 import web.utils.WebUtils;
 
@@ -18,7 +18,8 @@ import java.io.IOException;
 public class AuthServlet extends HttpServlet {
   private static final String LOGIN_PAGE = "/WEB-INF/views/auth/Login.jsp";
   private static final String REGISTER_PAGE = "/WEB-INF/views/auth/Register.jsp";
-  private final UserDAOImpl userDAOImpl = new UserDAOImpl();
+  private final DAOFactory factory = DAOFactory.getInstance();
+  private final UserDAO userDAO = factory.getUserDAO();
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -63,6 +64,17 @@ public class AuthServlet extends HttpServlet {
     }
   }
 
+/**
+ * Handles the registration process. This method validates the input parameters,
+ * checks for the existence of the user in the database, and processes the registration
+ * if the user does not exist. If the registration is successful, it redirects the user to the inbox page.
+ * If the registration fails, it redirects the user back to the registration page with an error message.
+ * 
+ * @param request  the HttpServletRequest object containing the request parameters
+ * @param response the HttpServletResponse object to send the response back to the client
+ * @throws ServletException if an exception occurs during the servlet processing
+ * @throws IOException      if an exception occurs during the input/output operations
+ */
   private void registerHandler(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String username = request.getParameter("username");
@@ -98,14 +110,14 @@ public class AuthServlet extends HttpServlet {
       }
 
       // CHECK DATABASE AND PROCESS REGISTRATION
-      User existingUser = userDAOImpl.getUserByUsername(username);
+      User existingUser = userDAO.getUserByUsername(username);
       if (existingUser != null) {
         WebUtils.sendError(request, response, "Người dùng đã tồn tại", REGISTER_PAGE);
         return;
       }
 
       User newUser = new User(username, password, email);
-      User createdUser = userDAOImpl.createUser(newUser);
+      User createdUser = userDAO.createUser(newUser);
 
       if (createdUser != null) {
         HttpSession session = request.getSession();
@@ -122,15 +134,27 @@ public class AuthServlet extends HttpServlet {
 
   }
 
+  /**
+   * Handles the login request.
+   * 
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
+
   private void loginHandler(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String username = request.getParameter("username");
     String password = request.getParameter("password");
 
-    if (userDAOImpl.authenticate(username, password)) {
+    if (userDAO.authenticate(username, password)) {
       HttpSession session = request.getSession();
 
-      session.setAttribute("currentUser", userDAOImpl.getUserByUsername(username));
+      session.setAttribute("currentUser", userDAO.getUserByUsername(username));
       response.sendRedirect(request.getContextPath() + "/app/inbox");
 
     } else {
@@ -138,6 +162,20 @@ public class AuthServlet extends HttpServlet {
     }
   }
 
+  /**
+   * Handles the logout request.
+   * <p>
+   * This method invalidates the user session and prevents caching after logout to
+   * prevent going back with the back button.
+   * It then redirects the request to the login page.
+   * <p>
+   * 
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws IOException if an exception occurs during the input/output operations
+   */
   private void logoutHandler(HttpServletRequest request, HttpServletResponse response) {
     HttpSession session = request.getSession(false);
     if (session != null) {

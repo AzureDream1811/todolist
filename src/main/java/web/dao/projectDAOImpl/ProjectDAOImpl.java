@@ -2,13 +2,20 @@ package web.dao.projectDAOImpl;
 
 import web.dao.ProjectDAO;
 import web.model.Project;
-import web.utils.DatabaseUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 public class ProjectDAOImpl implements ProjectDAO {
+
+  private final DataSource ds;
+
+  public ProjectDAOImpl(DataSource ds){
+    this.ds = ds;
+  }
 
   /**
    * Creates a new project in the database.
@@ -20,7 +27,7 @@ public class ProjectDAOImpl implements ProjectDAO {
   public boolean createProject(Project project) {
     String sql = "INSERT INTO projects (name, user_id) VALUES (?, ?)";
     try {
-      Connection connection = DatabaseUtils.getConnection();
+      Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       statement.setString(1, project.getName());
       statement.setInt(2, project.getUserId());
@@ -43,11 +50,18 @@ public class ProjectDAOImpl implements ProjectDAO {
     return false;
   }
 
+  /**
+   * Retrieves a list of projects by the given user ID.
+   *
+   * @param userId the user ID to search for
+   * @return a list of projects associated with the given user ID
+   * @throws RuntimeException if an SQL exception occurs
+   */
   public List<Project> getProjectsByUserId(int userId) {
     List<Project> projects = new ArrayList<>();
     String sql = "SELECT * FROM projects WHERE user_id = ?";
     try {
-      Connection connection = DatabaseUtils.getConnection();
+      Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, userId);
       ResultSet rs = statement.executeQuery();
@@ -64,29 +78,19 @@ public class ProjectDAOImpl implements ProjectDAO {
     return projects;
   }
 
-  /**
-   * Retrieves a project by its ID and user ID.
-   *
-   * @param projectId the project ID to search for
-   * @param userId    the user ID to search for
-   * @return the project object if found, null otherwise
-   * @throws RuntimeException if an SQL exception occurs
-   */
-
-  /************* ✨ Windsurf Command ⭐ *************/
-  /**
-   * Retrieves a project by its ID and user ID.
-   * 
-   * @param projectId the project ID to search for
-   * @param userId    the user ID to search for
-   * @return the project object if found, null otherwise
-   * @throws RuntimeException if an SQL exception occurs
-   */
-  /******* 83cba269-049c-4687-ae88-e6b617e49fba *******/
+  
+/**
+ * Retrieves a project by the given project ID and user ID.
+ * 
+ * @param projectId the project ID to search for
+ * @param userId the user ID to search for
+ * @return the project object if found, null otherwise
+ * @throws RuntimeException if an SQL exception occurs
+ */
   public Project getProjectByIdAndUserId(int projectId, int userId) {
     String sql = "SELECT * FROM projects WHERE id = ? AND user_id = ?";
     try {
-      Connection connection = DatabaseUtils.getConnection();
+      Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, projectId);
       statement.setInt(2, userId);
@@ -102,7 +106,6 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     return null;
   }
-
 
   /**
    * Maps a given ResultSet to a Project object.

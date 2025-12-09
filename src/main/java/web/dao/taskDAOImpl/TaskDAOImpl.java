@@ -4,17 +4,28 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import web.dao.TaskDAO;
 import web.model.Task;
-import web.utils.DatabaseUtils;
 
 public class TaskDAOImpl implements TaskDAO {
 
+  private final DataSource ds;
 
+  public TaskDAOImpl(DataSource ds) {
+    this.ds = ds;
+  }
+
+  /**
+   * Creates a new task in the database.
+   *
+   * @param task the task to create
+   */
   public void createTask(Task task) { //
     String sql = "INSERT INTO tasks (title, description, completed, priority, due_date, user_id, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     try {
-      Connection connection = DatabaseUtils.getConnection();
+      Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       statement.setString(1, task.getTitle());
       statement.setString(2, task.getDescription());
@@ -43,10 +54,18 @@ public class TaskDAOImpl implements TaskDAO {
     }
   }
 
+  /**
+   * Retrieves a task by its ID.
+   *
+   * @param taskId the task ID to search for
+   * @return a task object if found, null otherwise
+   * @throws RuntimeException if an SQL exception occurs
+   */
+
   public Task getTaskById(String taskId) {
     String sql = "SELECT * FROM tasks WHERE id = ?";
     try {
-      Connection connection = DatabaseUtils.getConnection();
+      Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql);
 
       statement.setString(1, taskId);
@@ -72,7 +91,7 @@ public class TaskDAOImpl implements TaskDAO {
     String sql = "SELECT * FROM tasks WHERE user_id = ?";
 
     try {
-      Connection connection = DatabaseUtils.getConnection();
+      Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, userId);
       ResultSet rs = statement.executeQuery();
@@ -89,6 +108,15 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
+  /************* ✨ Windsurf Command ⭐ *************/
+  /**
+   * Maps a given ResultSet to a Task object.
+   * 
+   * @param rs the ResultSet containing the task data
+   * @return the mapped Task object
+   * @throws SQLException if an SQL exception occurs
+   */
+  /******* 1ee865e3-a864-4c90-b50c-7980f261459d *******/
   public Task mapResultSetToTask(ResultSet rs) throws SQLException {
     Task task = new Task();
     task.setId(rs.getInt("id"));
@@ -109,11 +137,17 @@ public class TaskDAOImpl implements TaskDAO {
     return task;
   }
 
+/**
+ * Retrieves a list of tasks by the given user ID which are due today.
+ * 
+ * @param userId the user ID to search for
+ * @return a list of tasks associated with the given user ID which are due today
+ */
   public List<Task> getTodayTaskByUserID(int userId) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed = false";
 
-    try (Connection connection = DatabaseUtils.getConnection();
+    try (Connection connection = ds.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setInt(1, userId);
@@ -130,11 +164,18 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
+
+/**
+ * Retrieves a list of tasks by the given user ID which are overdue.
+ * 
+ * @param userId the user ID to search for
+ * @return a list of tasks associated with the given user ID which are overdue
+ */
   public List<Task> getOverdueTaskByUserID(int userId) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date < CURDATE() AND completed = false";
 
-    try (Connection connection = DatabaseUtils.getConnection();
+    try (Connection connection = ds.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setInt(1, userId);
@@ -151,12 +192,19 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
+/**
+ * Retrieves a list of tasks by the given user ID which are due in the future.
+ * 
+ * @param userId the user ID to search for
+ * @return a list of tasks associated with the given user ID which are due in the future
+ * @throws RuntimeException if an SQL exception occurs
+ */
   public List<Task> getUpcomingTasksByUserId(int userId) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date > CURDATE() AND completed = false";
 
     try {
-      Connection connection = DatabaseUtils.getConnection();
+      Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, userId);
       ResultSet rs = statement.executeQuery();
@@ -185,7 +233,7 @@ public class TaskDAOImpl implements TaskDAO {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE project_id = ? AND user_id = ?";
     try {
-      Connection connection = DatabaseUtils.getConnection();
+      Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setInt(1, projectId);
       statement.setInt(2, userId);
@@ -205,11 +253,18 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
+/**
+ * Retrieves a list of tasks by the given user ID which are completed.
+ * 
+ * @param userId the user ID to search for
+ * @return a list of tasks associated with the given user ID which are completed
+ * @throws RuntimeException if an SQL exception occurs
+ */
   public List<Task> getCompletedTaskByUserId(int userId) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE completed = true AND user_id = ?";
 
-    try (Connection connection = DatabaseUtils.getConnection();
+    try (Connection connection = ds.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
 
       statement.setInt(1, userId);
@@ -225,44 +280,59 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
+/**
+ * Retrieves a list of tasks by the given task ID and user ID.
+ * 
+ * @param taskID the task ID to search for
+ * @param userId    the user ID to search for
+ * @return a list of tasks associated with the given task ID and user ID
+ * @throws RuntimeException if an SQL exception occurs
+ */
   public List<Task> getTaskByIDandUserId(int taskID, int userID) {
-      List<Task> tasks = new ArrayList<>();
-      String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
+    List<Task> tasks = new ArrayList<>();
+    String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
 
-      try (Connection connection = DatabaseUtils.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)) {
+    try (Connection connection = ds.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
 
-          statement.setInt(1, taskID);
-          statement.setInt(2, userID);
+      statement.setInt(1, taskID);
+      statement.setInt(2, userID);
 
-          ResultSet rs = statement.executeQuery();
+      ResultSet rs = statement.executeQuery();
 
-          while (rs.next()){
-              Task task = mapResultSetToTask(rs);
-              tasks.add(task);
-          }
-      } catch (Exception e) {
-          e.printStackTrace();
+      while (rs.next()) {
+        Task task = mapResultSetToTask(rs);
+        tasks.add(task);
       }
-      return tasks;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return tasks;
   }
 
-  public boolean deleteTask (Task task) {
-      String sql = "DELETE FROM tasks WHERE id = ? AND user_id = ?";
+/**
+ * Deletes a task from the database given its ID and user ID.
+ * 
+ * @param task the task object to delete
+ * @return true if the task was successfully deleted, false otherwise
+ * @throws RuntimeException if an SQL exception occurs
+ */
+  public boolean deleteTask(Task task) {
+    String sql = "DELETE FROM tasks WHERE id = ? AND user_id = ?";
 
-      try (Connection connection = DatabaseUtils.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)){
+    try (Connection connection = ds.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
 
-          statement.setInt(1, task.getId());
-          statement.setInt(2, task.getUserId());
+      statement.setInt(1, task.getId());
+      statement.setInt(2, task.getUserId());
 
-          int affectRow = statement.executeUpdate();
-          return affectRow > 0;
+      int affectRow = statement.executeUpdate();
+      return affectRow > 0;
 
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
-      return false;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 
 }

@@ -2,11 +2,19 @@ package web.dao.userDAOImpl;
 
 import web.dao.UserDAO;
 import web.model.User;
-import web.utils.DatabaseUtils;
 
 import java.sql.*;
 
+import javax.sql.DataSource;
+
 public class UserDAOImpl implements UserDAO {
+
+    private final DataSource ds;
+
+    public UserDAOImpl(DataSource ds) {
+        this.ds = ds;
+    }
+
     /**
      * Creates a new user with the given details.
      *
@@ -17,7 +25,7 @@ public class UserDAOImpl implements UserDAO {
     public User createUser(User user) {
         String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try {
-            Connection connection = DatabaseUtils.getConnection();
+            Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, user.getUsername());
             statement.setString(3, user.getPassword());
@@ -50,7 +58,7 @@ public class UserDAOImpl implements UserDAO {
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
         try {
-            Connection connection = DatabaseUtils.getConnection();
+            Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, username);
             try (ResultSet rs = statement.executeQuery()) {

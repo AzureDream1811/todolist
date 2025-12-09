@@ -89,7 +89,7 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
-  private Task mapResultSetToTask(ResultSet rs) throws SQLException {
+  public Task mapResultSetToTask(ResultSet rs) throws SQLException {
     Task task = new Task();
     task.setId(rs.getInt("id"));
     task.setTitle(rs.getString("title"));

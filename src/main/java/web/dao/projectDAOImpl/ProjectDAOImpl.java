@@ -1,5 +1,6 @@
 package web.dao.projectDAOImpl;
 
+import web.dao.ProjectDAO;
 import web.model.Project;
 import web.utils.DatabaseUtils;
 
@@ -7,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectDAOImpl {
+public class ProjectDAOImpl implements ProjectDAO {
 
   /**
    * Creates a new project in the database.
@@ -110,7 +111,7 @@ public class ProjectDAOImpl {
    * @return the mapped Project object
    * @throws SQLException if an SQL exception occurs
    */
-  private Project mapResultSetToProject(ResultSet rs) throws SQLException {
+  public Project mapResultSetToProject(ResultSet rs) throws SQLException {
     Project project = new Project();
     project.setId(rs.getInt("id"));
     project.setName(rs.getString("name"));

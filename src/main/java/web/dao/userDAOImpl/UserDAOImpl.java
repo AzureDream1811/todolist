@@ -1,11 +1,12 @@
-package web.dao.studentDAOImpl;
+package web.dao.userDAOImpl;
 
+import web.dao.UserDAO;
 import web.model.User;
 import web.utils.DatabaseUtils;
 
 import java.sql.*;
 
-public class StudentDAOImpl {
+public class UserDAOImpl implements UserDAO {
     /**
      * Creates a new user with the given details.
      *
@@ -79,7 +80,7 @@ public class StudentDAOImpl {
      * @return the mapped User object
      * @throws SQLException if an SQL exception occurs
      */
-    private User mapResultSetToUser(ResultSet rs) throws SQLException {
+    public User mapResultSetToUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setId(rs.getInt("id"));
         user.setUsername(rs.getString("username"));

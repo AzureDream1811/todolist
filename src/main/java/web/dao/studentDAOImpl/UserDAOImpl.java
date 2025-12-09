@@ -1,11 +1,11 @@
-package web.dao;
+package web.dao.studentDAOImpl;
 
-import web.beans.User;
+import web.model.User;
 import web.utils.DatabaseUtils;
 
 import java.sql.*;
 
-public class UserDAO {
+public class UserDAOImpl {
     /**
      * Creates a new user with the given details.
      *

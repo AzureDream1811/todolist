@@ -1,4 +1,4 @@
-package web.beans;
+package web.model;
 
 
 import java.time.LocalDate;

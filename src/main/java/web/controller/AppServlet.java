@@ -1,17 +1,18 @@
 package web.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import web.beans.Project;
-import web.beans.Task;
-import web.dao.ProjectDAO;
-import web.dao.TaskDAO;
-import web.beans.User;
+
+import web.model.Project;
+import web.model.Task;
+import web.dao.projectDAOImpl.ProjectDAOImpl;
+import web.dao.taskDAOImpl.TaskDAOImpl;
+import web.model.User;
 import web.utils.WebUtils;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -27,8 +28,8 @@ public class AppServlet extends HttpServlet {
   private static final String PROJECT_DETAIL_PAGE = "/WEB-INF/views/app/ProjectDetail.jsp";
   private static final String DELETE_TASK_PAGE = "/WEB-INF/views/component/DeleteTask.jsp";
 
-  private final TaskDAO taskDAO = new TaskDAO();
-  private final ProjectDAO projectDAO = new ProjectDAO();
+  private final TaskDAOImpl taskDAOImpl = new TaskDAOImpl();
+  private final ProjectDAOImpl projectDAO = new ProjectDAOImpl();
 
   /**
    * Handles the GET request for the app page.
@@ -114,7 +115,7 @@ public class AppServlet extends HttpServlet {
       throws ServletException, IOException {
     try {
       // pass tasks to jsp
-      List<Task> tasks = taskDAO.getTasksByUserId(currentUser.getId());
+      List<Task> tasks = taskDAOImpl.getTasksByUserId(currentUser.getId());
       request.setAttribute("tasks", tasks);
 
       // pass projects to jsp
@@ -166,7 +167,7 @@ public class AppServlet extends HttpServlet {
       task.setProjectId(Math.max(projectId, 0));
       task.setUserId(currentUser.getId());
 
-      taskDAO.createTask(task);
+      taskDAOImpl.createTask(task);
 
       String redirectPath = determineRedirectPath(taskType);
       response.sendRedirect(request.getContextPath() + redirectPath);
@@ -197,8 +198,8 @@ public class AppServlet extends HttpServlet {
   private void showToday(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
-      List<Task> overdueTasks = taskDAO.getOverdueTaskByUserID(currentUser.getId());
-      List<Task> todayTasks = taskDAO.getTodayTaskByUserID(currentUser.getId());
+      List<Task> overdueTasks = taskDAOImpl.getOverdueTaskByUserID(currentUser.getId());
+      List<Task> todayTasks = taskDAOImpl.getTodayTaskByUserID(currentUser.getId());
 
       request.setAttribute("overdueTasks", overdueTasks);
       request.setAttribute("todayTasks", todayTasks);
@@ -216,7 +217,7 @@ public class AppServlet extends HttpServlet {
   private void showUpcoming(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
-      List<Task> upcomingTasks = taskDAO.getUpcomingTasksByUserId(currentUser.getId());
+      List<Task> upcomingTasks = taskDAOImpl.getUpcomingTasksByUserId(currentUser.getId());
 
       request.setAttribute("upcomingTasks", upcomingTasks);
 
@@ -229,7 +230,7 @@ public class AppServlet extends HttpServlet {
   private void showCompletedTask(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
-      List<Task> completedTasks = taskDAO.getCompletedTaskByUserId(currentUser.getId());
+      List<Task> completedTasks = taskDAOImpl.getCompletedTaskByUserId(currentUser.getId());
 
       request.setAttribute("CompletedTasks", completedTasks);
 
@@ -268,7 +269,7 @@ public class AppServlet extends HttpServlet {
       }
 
       // get tasks for the project and current user
-      List<Task> projectTasks = taskDAO.getTasksByProjectIdAndUserId(projectId, currentUser.getId());
+      List<Task> projectTasks = taskDAOImpl.getTasksByProjectIdAndUserId(projectId, currentUser.getId());
 
       // set attributes and forward to project detail page
       request.setAttribute("currentProject", project);
@@ -292,7 +293,7 @@ public class AppServlet extends HttpServlet {
 
           int taskID = Integer.parseInt(taskIDParam);
 
-          List<Task> tasks = taskDAO.getTaskByIDandUserId(taskID, currentUser.getId());
+          List<Task> tasks = taskDAOImpl.getTaskByIDandUserId(taskID, currentUser.getId());
 
           if (tasks.isEmpty()) {
               WebUtils.sendError(request, response, "Task  not found", "/app/inbox");
@@ -335,7 +336,7 @@ public class AppServlet extends HttpServlet {
 
           int taskID = Integer.parseInt(taskIDParam);
 
-          List<Task> tasks = taskDAO.getTaskByIDandUserId(taskID, currentUser.getId());
+          List<Task> tasks = taskDAOImpl.getTaskByIDandUserId(taskID, currentUser.getId());
           if (tasks.isEmpty()) {
               WebUtils.sendError(request, response, "Task not found", "/app/inbox");
               return;
@@ -343,7 +344,7 @@ public class AppServlet extends HttpServlet {
 
           Task task = tasks.get(0);
 
-          boolean success = taskDAO.deleteTask(task);
+          boolean success = taskDAOImpl.deleteTask(task);
 
           if (success) {
               String finalRedirectPath = determineRedirectPathAfterDelete(redirectPath);

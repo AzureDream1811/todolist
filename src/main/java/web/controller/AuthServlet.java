@@ -1,23 +1,24 @@
 package web.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import web.beans.User;
-import web.dao.UserDAO;
+
+import web.model.User;
+import web.dao.studentDAOImpl.UserDAOImpl;
 import web.utils.ValidationUtils;
 import web.utils.WebUtils;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/auth/*")
 public class AuthServlet extends HttpServlet {
   private static final String LOGIN_PAGE = "/WEB-INF/views/auth/Login.jsp";
   private static final String REGISTER_PAGE = "/WEB-INF/views/auth/Register.jsp";
-  private final UserDAO userDAO = new UserDAO();
+  private final UserDAOImpl userDAOImpl = new UserDAOImpl();
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -97,14 +98,14 @@ public class AuthServlet extends HttpServlet {
       }
 
       // CHECK DATABASE AND PROCESS REGISTRATION
-      User existingUser = userDAO.getUserByUsername(username);
+      User existingUser = userDAOImpl.getUserByUsername(username);
       if (existingUser != null) {
         WebUtils.sendError(request, response, "Người dùng đã tồn tại", REGISTER_PAGE);
         return;
       }
 
       User newUser = new User(username, password, email);
-      User createdUser = userDAO.createUser(newUser);
+      User createdUser = userDAOImpl.createUser(newUser);
 
       if (createdUser != null) {
         HttpSession session = request.getSession();
@@ -126,10 +127,10 @@ public class AuthServlet extends HttpServlet {
     String username = request.getParameter("username");
     String password = request.getParameter("password");
 
-    if (userDAO.authenticate(username, password)) {
+    if (userDAOImpl.authenticate(username, password)) {
       HttpSession session = request.getSession();
 
-      session.setAttribute("currentUser", userDAO.getUserByUsername(username));
+      session.setAttribute("currentUser", userDAOImpl.getUserByUsername(username));
       response.sendRedirect(request.getContextPath() + "/app/inbox");
 
     } else {

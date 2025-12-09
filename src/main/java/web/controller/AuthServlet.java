@@ -2,7 +2,7 @@ package web.controller;
 
 
 import web.model.User;
-import web.dao.studentDAOImpl.UserDAOImpl;
+import web.dao.studentDAOImpl.StudentDAOImpl;
 import web.utils.ValidationUtils;
 import web.utils.WebUtils;
 
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class AuthServlet extends HttpServlet {
   private static final String LOGIN_PAGE = "/WEB-INF/views/auth/Login.jsp";
   private static final String REGISTER_PAGE = "/WEB-INF/views/auth/Register.jsp";
-  private final UserDAOImpl userDAOImpl = new UserDAOImpl();
+  private final StudentDAOImpl userDAOImpl = new StudentDAOImpl();
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

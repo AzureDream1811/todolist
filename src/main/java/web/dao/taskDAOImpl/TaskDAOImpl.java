@@ -4,18 +4,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import web.dao.TaskDAO;
 import web.model.Task;
 import web.utils.DatabaseUtils;
 
-public class TaskDAOImpl {
+public class TaskDAOImpl implements TaskDAO {
 
-  /**
-   * Creates a new task in the database.
-   *
-   * @param task the task to create
-   * @return true if the task was created successfully, false otherwise
-   */
-  public boolean createTask(Task task) { //
+
+  public void createTask(Task task) { //
     String sql = "INSERT INTO tasks (title, description, completed, priority, due_date, user_id, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     try {
       Connection connection = DatabaseUtils.getConnection();
@@ -34,19 +30,17 @@ public class TaskDAOImpl {
 
       int affectedRows = statement.executeUpdate();
       if (affectedRows == 0)
-        return false;
+        return;
 
       try (ResultSet resultSet = statement.getGeneratedKeys()) {
         if (resultSet.next()) {
           task.setId(resultSet.getInt(1));
-          return true;
         }
       }
 
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    return false;
   }
 
   public Task getTaskById(String taskId) {

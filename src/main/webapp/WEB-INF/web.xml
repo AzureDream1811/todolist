@@ -9,7 +9,7 @@
     
     <!-- Welcome, File List -->
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>webapp/index.jsp</welcome-file>
     </welcome-file-list>
     
     <!-- Session Configuration -->

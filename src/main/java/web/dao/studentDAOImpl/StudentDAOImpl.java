@@ -5,7 +5,7 @@ import web.utils.DatabaseUtils;
 
 import java.sql.*;
 
-public class UserDAOImpl {
+public class StudentDAOImpl {
     /**
      * Creates a new user with the given details.
      *

@@ -23,20 +23,21 @@ public class TaskDAOImpl implements TaskDAO {
    * @param task the task to create
    */
   public void createTask(Task task) { //
-    String sql = "INSERT INTO tasks (title, description, completed, priority, due_date, user_id, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO tasks (title, description, priority, due_date, completed_at, user_id, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     try {
       Connection connection = ds.getConnection();
       PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       statement.setString(1, task.getTitle());
       statement.setString(2, task.getDescription());
-      statement.setBoolean(3, task.isCompleted());
-      statement.setInt(4, task.getPriority());
-      statement.setDate(5, task.getDueDate() != null ? Date.valueOf(task.getDueDate()) : null);
+      statement.setInt(3, task.getPriority());
+      statement.setDate(4, task.getDueDate() != null ? Date.valueOf(task.getDueDate()) : null);
+      statement.setDate(5, task.getCompletedAt() != null ? Date.valueOf(task.getCompletedAt()) : null);
       statement.setInt(6, task.getUserId());
-      if (task.getProjectId() > 0) {
-        statement.setInt(7, task.getProjectId());
+      Integer projectIdObj = task.getProjectIdObject();
+      if (projectIdObj != null && projectIdObj > 0) {
+        statement.setInt(7, projectIdObj);
       } else {
-        statement.setNull(7, Types.INTEGER);
+        statement.setNull(7, Types.BIGINT);
       }
 
       int affectedRows = statement.executeUpdate();
@@ -122,7 +123,6 @@ public class TaskDAOImpl implements TaskDAO {
     task.setId(rs.getInt("id"));
     task.setTitle(rs.getString("title"));
     task.setDescription(rs.getString("description"));
-    task.setCompleted(rs.getBoolean("completed"));
     task.setPriority(rs.getInt("priority"));
     Date due = rs.getDate("due_date");
     if (due != null) {
@@ -131,8 +131,20 @@ public class TaskDAOImpl implements TaskDAO {
       task.setDueDate(null);
     }
 
+    Date completed = rs.getDate("completed_at");
+    if (completed != null) {
+      task.setCompletedAt(completed.toLocalDate());
+    } else {
+      task.setCompletedAt(null);
+    }
+
     task.setUserId(rs.getInt("user_id"));
-    task.setProjectId(rs.getInt("project_id"));
+    Object projObj = rs.getObject("project_id");
+    if (projObj != null) {
+      task.setProjectId(rs.getInt("project_id"));
+    } else {
+      task.setProjectIdObject(null);
+    }
 
     return task;
   }
@@ -145,7 +157,7 @@ public class TaskDAOImpl implements TaskDAO {
  */
   public List<Task> getTodayTaskByUserID(int userId) {
     List<Task> tasks = new ArrayList<>();
-    String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed = false";
+    String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed_at IS NULL";
 
     try (Connection connection = ds.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -173,7 +185,7 @@ public class TaskDAOImpl implements TaskDAO {
  */
   public List<Task> getOverdueTaskByUserID(int userId) {
     List<Task> tasks = new ArrayList<>();
-    String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date < CURDATE() AND completed = false";
+    String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date < CURDATE() AND completed_at IS NULL";
 
     try (Connection connection = ds.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -201,7 +213,7 @@ public class TaskDAOImpl implements TaskDAO {
  */
   public List<Task> getUpcomingTasksByUserId(int userId) {
     List<Task> tasks = new ArrayList<>();
-    String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date > CURDATE() AND completed = false";
+    String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date > CURDATE() AND completed_at IS NULL";
 
     try {
       Connection connection = ds.getConnection();
@@ -262,7 +274,7 @@ public class TaskDAOImpl implements TaskDAO {
  */
   public List<Task> getCompletedTaskByUserId(int userId) {
     List<Task> tasks = new ArrayList<>();
-    String sql = "SELECT * FROM tasks WHERE completed = true AND user_id = ?";
+    String sql = "SELECT * FROM tasks WHERE completed_at IS NOT NULL AND user_id = ?";
 
     try (Connection connection = ds.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {

@@ -26,7 +26,7 @@
           <td>${t.title}</td>
           <td><c:out value='${t.dueDate}'/></td>
           <td>${t.priority}</td>
-          <td><c:out value='${t.completed}'/></td>
+          <td>${t.completedAt != null ? 'Yes' : 'No'}</td>
           <td>${t.createdAt}</td>
         </tr>
       </c:forEach>

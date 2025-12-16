@@ -6,10 +6,10 @@ public class Task {
     private int id;
     private String title;
     private String description;
-    private boolean completed;
     private int priority;
     private LocalDate dueDate;
-    private int projectId;
+    private LocalDate completedAt;
+    private Integer projectId; // nullable
     private int userId;
     private LocalDate createdAt;
 
@@ -56,12 +56,16 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public LocalDate getCompletedAt() {
+        return completedAt;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setCompletedAt(LocalDate completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public boolean isCompleted() {
+        return this.completedAt != null;
     }
 
     public LocalDate getCreatedAt() {
@@ -73,10 +77,18 @@ public class Task {
     }
 
     public int getProjectId() {
-        return projectId;
+        return projectId == null ? 0 : projectId;
     }
 
     public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
+
+    public Integer getProjectIdObject() {
+        return projectId;
+    }
+
+    public void setProjectIdObject(Integer projectId) {
         this.projectId = projectId;
     }
 
@@ -88,18 +100,20 @@ public class Task {
         this.userId = userId;
     }
 
+
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", priority=" + priority +
-                ", dueDate=" + dueDate +
-                ", completed=" + completed +
-                ", createdAt=" + createdAt +
-                ", projectId=" + projectId +
-                ", userId=" + userId +
-                '}';
+        return "{" +
+            " id='" + getId() + "'" +
+            ", title='" + getTitle() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", priority='" + getPriority() + "'" +
+            ", dueDate='" + getDueDate() + "'" +
+            ", completedAt='" + getCompletedAt() + "'" +
+            ", projectId='" + getProjectId() + "'" +
+            ", userId='" + getUserId() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            "}";
     }
+    
 }

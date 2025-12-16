@@ -43,7 +43,7 @@
             <td>${task.title}</td>
             <td>${task.description}</td>
             <td>${task.priority}</td>
-            <td>${task.completed ? 'Yes' : 'No'}</td>
+            <td>${task.completedAt != null ? 'Yes' : 'No'}</td>
             <td>${task.dueDate}</td>
         </tr>
     </c:forEach>

@@ -163,10 +163,18 @@ public class AppServlet extends HttpServlet {
       Task task = new Task();
       task.setTitle(title);
       task.setDescription(description.isEmpty() ? null : description);
-      task.setCompleted(completed);
+      if (completed) {
+        task.setCompletedAt(LocalDate.now());
+      } else {
+        task.setCompletedAt(null);
+      }
       task.setDueDate(dueDate.isEmpty() ? null : LocalDate.parse(dueDate));
       task.setPriority(Math.max(priority, 1));
-      task.setProjectId(Math.max(projectId, 0));
+      if (projectId > 0) {
+        task.setProjectIdObject(projectId);
+      } else {
+        task.setProjectIdObject(null);
+      }
       task.setUserId(currentUser.getId());
 
       taskDAO.createTask(task);

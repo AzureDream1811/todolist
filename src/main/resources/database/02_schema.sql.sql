@@ -1,54 +1,44 @@
-CREATE DATABASE IF NOT EXISTS todolist_db
-DEFAULT CHARACTER SET utf8mb4
-DEFAULT COLLATE utf8mb4_unicode_ci;
-
 USE todolist_db;
 
 -- Users table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     created_at DATE DEFAULT (CURRENT_DATE),
-    role VARCHAR(20) NOT NULL DEFAULT 'USER',
-    INDEX idx_username (username),
-    INDEX idx_email (email)
+	role ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER'
 );
 
 
 -- Projects table
-CREATE TABLE projects (
+CREATE TABLE IF NOT EXISTS projects (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100),
-    user_id BIGINT,
+    name VARCHAR(100) NOT NULL,
+    user_id BIGINT NOT NULL,
     created_at DATE DEFAULT (CURRENT_DATE),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_name (name)
 );
 
--- Seed: create a simple admin account (change password before production)
-INSERT INTO users (username, password, email, role)
-SELECT 'admin', 'admin', 'admin@example.com', 'ADMIN'
-WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');
-
 -- Tasks table
-CREATE TABLE tasks (
+CREATE TABLE IF NOT EXISTS tasks (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255),
+    title VARCHAR(255) NOT NULL,
     description TEXT,
-    completed BOOLEAN DEFAULT FALSE,
-    priority INT,
+    priority TINYINT NOT NULL DEFAULT 2 CHECK (priority BETWEEN 1 AND 3),
     due_date DATE DEFAULT NULL,
     completed_at DATE NULL,
-    project_id BIGINT DEFAULT 0,
-    user_id BIGINT,
+    project_id BIGINT NULL,
+    user_id BIGINT NOT NULL,
     created_at DATE DEFAULT (CURRENT_DATE),
     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_title (title),
-    INDEX idx_completed (completed),
     INDEX idx_priority (priority),
     INDEX idx_due_date (due_date),
-    INDEX idx_completed_at (completed_at)
+    INDEX idx_completed_at (completed_at),
+    INDEX idx_user (user_id),
+	INDEX idx_user_completed (user_id, completed_at),
+	INDEX idx_project (project_id)
 );

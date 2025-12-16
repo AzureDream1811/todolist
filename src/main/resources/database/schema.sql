@@ -11,6 +11,7 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     created_at DATE DEFAULT (CURRENT_DATE),
+    role VARCHAR(20) NOT NULL DEFAULT 'USER',
     INDEX idx_username (username),
     INDEX idx_email (email)
 );
@@ -25,6 +26,11 @@ CREATE TABLE projects (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_name (name)
 );
+
+-- Seed: create a simple admin account (change password before production)
+INSERT INTO users (username, password, email, role)
+SELECT 'admin', 'admin', 'admin@example.com', 'ADMIN'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');
 
 -- Tasks table
 CREATE TABLE tasks (

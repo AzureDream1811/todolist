@@ -39,6 +39,20 @@ public class WebUtils {
     }
 
     /**
+     * Validates that the current user is logged in and has admin role.
+     * Returns the user if admin; otherwise sends 403 and returns null.
+     */
+    public static User validateAdminAndGetUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User currentUser = validateAndGetUser(request, response);
+        if (currentUser == null) return null;
+        if (!currentUser.isAdmin()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return null;
+        }
+        return currentUser;
+    }
+
+    /**
      * Retrieves the action form path from the request.
      * If the path is null or empty, it redirects the request to the inbox page.
      * Otherwise, it returns the path substring from index 1 (to exclude the leading slash).

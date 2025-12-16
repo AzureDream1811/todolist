@@ -9,6 +9,7 @@ public class User {
     private String password;
     private String email;
     private LocalDate createdAt;
+    private String role = "USER";
 
     public User() {
     }
@@ -59,6 +60,18 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isAdmin() {
+        return "ADMIN".equalsIgnoreCase(this.role);
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -67,6 +80,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", createdAt=" + createdAt +
+                ", role='" + role + '\'' +
                 '}';
     }
 }

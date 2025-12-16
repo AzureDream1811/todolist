@@ -359,20 +359,21 @@ public class AppServlet extends HttpServlet {
   }
 
 
-/**
- * Handles the GET request for the project details page.
- * <p>
- * This method fetches the project with the given ID and the tasks associated with the project and the current user.
- * If the project is not found, it sends an error response to the client.
- * If an exception occurs during the processing, it sends an error response to the client.
- *
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @param currentUser the current user
- * @param projectId the project ID to fetch
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+
+  /**
+   * Handles the GET request for the project details page.
+   * <p>
+   * This method fetches the project with the given ID and the current user.
+   * If the project is not found, it sends an error response to the client.
+   * If an exception occurs during the processing, it sends an error response to the client.
+   * 
+   * @param request  the HttpServletRequest object containing the request parameters
+   * @param response the HttpServletResponse object to send the response back to the client
+   * @param currentUser the current user
+   * @param projectId the project ID to search for
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output operations
+   */
   private void showProjectDetails(HttpServletRequest request, HttpServletResponse response, User currentUser,
       int projectId) {
     try {

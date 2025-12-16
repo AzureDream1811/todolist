@@ -83,21 +83,33 @@ A simple task management application built with Java Servlets.
    ```
 
 ### Environment Setup
-1. Copy the example environment file:
-   ```bash
-   # Windows
-   copy .env.example .env
-   
-   # Linux/macOS
-   cp .env.example .env
-   ```
+### Environment Setup
 
-2. Edit `.env` with your database credentials:
-   ```
-   DB_URL=jdbc:mysql://localhost:3306/todolist_db
-   DB_USER=your_username
-   DB_PASSWORD=your_password
-   ```
+This project currently does NOT load `.env` automatically. The application reads database configuration from
+`src/main/resources/database.properties` by default. Update that file when running locally or deploy-time configuration.
+
+If you prefer environment variables instead of `database.properties`, you can set `DB_URL`, `DB_USER`, and
+`DB_PASSWORD` at the OS/Tomcat level and modify the code to read `System.getenv(...)`. `.env` is provided for
+convenience only and is ignored by the application unless you add a dotenv loader.
+
+Examples (optional) — set OS env vars instead of using `.env`:
+
+Windows PowerShell (session only):
+```powershell
+$Env:DB_URL = "jdbc:mysql://localhost:3306/todolist_db"
+$Env:DB_USER = "todolist"
+$Env:DB_PASSWORD = "1234"
+```
+
+Linux/macOS (session only):
+```bash
+export DB_URL="jdbc:mysql://localhost:3306/todolist_db"
+export DB_USER="todolist"
+export DB_PASSWORD="1234"
+```
+
+Keep `.env` in `.gitignore` (already configured). If you want, I can update the app to prefer environment variables with a fallback to
+`database.properties` or add a dotenv loader to read `.env` automatically.
 
 ### Building the Application
 1. Build the WAR file:

@@ -64,17 +64,23 @@ public class AuthServlet extends HttpServlet {
     }
   }
 
-/**
- * Handles the registration process. This method validates the input parameters,
- * checks for the existence of the user in the database, and processes the registration
- * if the user does not exist. If the registration is successful, it redirects the user to the inbox page.
- * If the registration fails, it redirects the user back to the registration page with an error message.
- * 
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+  /**
+   * Handles the registration process. This method validates the input parameters,
+   * checks for the existence of the user in the database, and processes the
+   * registration
+   * if the user does not exist. If the registration is successful, it redirects
+   * the user to the inbox page.
+   * If the registration fails, it redirects the user back to the registration
+   * page with an error message.
+   * 
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
   private void registerHandler(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String username = request.getParameter("username");
@@ -134,28 +140,38 @@ public class AuthServlet extends HttpServlet {
 
   }
 
+  
+
   /**
    * Handles the login request.
    * 
-   * @param request  the HttpServletRequest object containing the request
-   *                 parameters
-   * @param response the HttpServletResponse object to send the response back to
-   *                 the client
+   * This method authenticates the user credentials and logs the user in if
+   * the credentials are valid. If the user is an admin, it redirects
+   * the user to the admin page; otherwise, it redirects the user to the inbox page.
+   * If the credentials are invalid, it sends an error response to the
+   * client.
+   * 
+   * @param request  the HttpServletRequest object containing the request parameters
+   * @param response the HttpServletResponse object to send the response back to the client
    * @throws ServletException if an exception occurs during the servlet processing
-   * @throws IOException      if an exception occurs during the input/output
-   *                          operations
+   * @throws IOException      if an exception occurs during the input/output operations
    */
-
   private void loginHandler(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String username = request.getParameter("username");
     String password = request.getParameter("password");
 
     if (userDAO.authenticate(username, password)) {
+      User user = userDAO.getUserByUsername(username);
       HttpSession session = request.getSession();
+      session.setAttribute("currentUser", user);
 
-      session.setAttribute("currentUser", userDAO.getUserByUsername(username));
-      response.sendRedirect(request.getContextPath() + "/app/inbox");
+      if (user.isAdmin()) {
+        response.sendRedirect(request.getContextPath() + "/admin/users");
+
+      } else {
+        response.sendRedirect(request.getContextPath() + "/app/inbox");
+      }
 
     } else {
       WebUtils.sendError(request, response, "Invalid username or password", LOGIN_PAGE);

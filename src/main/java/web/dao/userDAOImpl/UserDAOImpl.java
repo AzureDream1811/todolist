@@ -30,8 +30,8 @@ public class UserDAOImpl implements UserDAO {
             Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, user.getUsername());
-            statement.setString(3, user.getPassword());
-            statement.setString(2, user.getEmail());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getEmail());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0)
@@ -121,7 +121,17 @@ public class UserDAOImpl implements UserDAO {
         user.setUsername(rs.getString("username"));
         user.setEmail(rs.getString("email"));
         user.setPassword(rs.getString("password"));
-        user.setCreatedAt(rs.getDate("created_at").toLocalDate());
+        Date created = rs.getDate("created_at");
+        if (created != null) {
+            user.setCreatedAt(created.toLocalDate());
+        }
+        // populate role if present in the resultset
+        try {
+            String role = rs.getString("role");
+            if (role != null) user.setRole(role);
+        } catch (SQLException ignored) {
+            // column might not exist in older schemas - ignore
+        }
         return user;
     }
 

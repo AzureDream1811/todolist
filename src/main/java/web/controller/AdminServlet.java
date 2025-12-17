@@ -18,8 +18,8 @@ import web.utils.WebUtils;
 
 @WebServlet("/admin/*")
 public class AdminServlet extends HttpServlet {
-    private static final String ADMIN_USERS_PAGE = "/WEB-INF/views/admin/users.jsp";
-    private static final String ADMIN_TASKS_PAGE = "/WEB-INF/views/admin/tasks.jsp";
+    private static final String ADMIN_USERS_PAGE = "/WEB-INF/views/admin/Users.jsp";
+    private static final String ADMIN_TASKS_PAGE = "/WEB-INF/views/admin/Tasks.jsp";
     DAOFactory factory = DAOFactory.getInstance();
     UserDAO userDAO = factory.getUserDAO();
     TaskDAO taskDAO = factory.getTaskDAO();
@@ -53,19 +53,20 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
-    private void getTasks(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        List<Task> tasks = taskDAO.getAllTasks();
-        request.setAttribute("users", tasks);
-        request.getRequestDispatcher(ADMIN_TASKS_PAGE).forward(request, response);
-    }
-
     private void getUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<User> users = userDAO.getAllUsers();
         request.setAttribute("users", users);
         request.getRequestDispatcher(ADMIN_USERS_PAGE).forward(request, response);
     }
+
+    private void getTasks(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Task> tasks = taskDAO.getAllTasks();
+        request.setAttribute("tasks", tasks);
+        request.getRequestDispatcher(ADMIN_TASKS_PAGE).forward(request, response);
+    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

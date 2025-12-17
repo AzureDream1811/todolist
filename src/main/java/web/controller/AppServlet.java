@@ -53,6 +53,11 @@ public class AppServlet extends HttpServlet {
     if (currentUser == null)
       return;
 
+    if (currentUser.isAdmin()) {
+      response.sendRedirect(request.getContextPath() + "/admin");
+      return;
+    }
+
     String action = WebUtils.getActionFormPath(request, response);
     if (action == null) {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -76,7 +81,7 @@ public class AppServlet extends HttpServlet {
       case "completed":
         showCompletedTask(request, response, currentUser);
         break;
-      case "delete-task": // THÊM DÒNG NÀY
+      case "delete-task":
         deleteTaskGet(request, response, currentUser);
         break;
       case "inbox":

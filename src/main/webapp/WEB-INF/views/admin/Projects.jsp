@@ -40,6 +40,12 @@
                         <td>${project.name}</td>
                         <td>${project.userId}</td>
                         <td>${project.createdAt}</td>
+                        <td>
+                            <form action="${pageContext.request.contextPath}/admin/projects/delete" method="post">
+                                <input type="hidden" name="projectId" value="${project.id}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>

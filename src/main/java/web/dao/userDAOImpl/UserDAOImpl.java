@@ -71,6 +71,25 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    @Override
+    public User getUserById(int id) {
+        String sql = "SELECT * FROM users WHERE users.id = ?";
+        try (
+                Connection connection = ds.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                return resultSet.next() ? mapResultSetToUser(resultSet) : null;
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching user by id", e);
+
+        }
+
+    }
+
     /**
      * Authenticates a user by checking their username and password.
      *
@@ -92,8 +111,7 @@ public class UserDAOImpl implements UserDAO {
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users";
-        try (
-                Connection connection = ds.getConnection();
+        try (Connection connection = ds.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql);) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -128,11 +146,25 @@ public class UserDAOImpl implements UserDAO {
         // populate role if present in the resultset
         try {
             String role = rs.getString("role");
-            if (role != null) user.setRole(role);
+            if (role != null)
+                user.setRole(role);
         } catch (SQLException ignored) {
             // column might not exist in older schemas - ignore
         }
         return user;
+    }
+
+    @Override
+    public void deleteUserById(int id) {
+        String sql = "DELETE FROM users WHERE users.id = ?";
+        try (Connection connection = ds.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);) {
+            statement.setInt(1, id);
+            statement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

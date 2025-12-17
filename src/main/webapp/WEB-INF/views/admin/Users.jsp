@@ -42,6 +42,12 @@
                     <td>${user.email}</td>
                     <td>${user.createdAt}</td>
                     <td>${user.role}</td>
+                    <td>
+                        <form action="${pageContext.request.contextPath}/admin/users/delete" method="post">
+                            <input type="hidden" name="userId" value="${user.id}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>

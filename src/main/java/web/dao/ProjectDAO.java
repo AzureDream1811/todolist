@@ -8,9 +8,15 @@ import java.util.List;
 
 public interface ProjectDAO {
     boolean createProject(Project project);
+
     List<Project> getProjectsByUserId(int userId);
+
     Project getProjectByIdAndUserId(int projectId, int userId);
+
     List<Project> getAllProjects();
+
+    void deleteProjectById(int id);
+
     Project mapResultSetToProject(ResultSet rs) throws SQLException;
 
 }

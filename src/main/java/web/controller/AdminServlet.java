@@ -150,6 +150,10 @@ public class AdminServlet extends HttpServlet {
                 deleteTask(request);
                 response.sendRedirect(request.getContextPath() + "/admin/tasks");
                 break;
+            case "projects/delete":
+                deleteProject(request);
+                response.sendRedirect(request.getContextPath() + "/admin/projects");
+                break;
 
             default:
                 System.out.println("Action not found: " + action);
@@ -159,7 +163,7 @@ public class AdminServlet extends HttpServlet {
 
     }
 
-    private void deleteTask(HttpServletRequest request) throws ServletException, IOException {
+    private void deleteTask(HttpServletRequest request) {
         String taskIdStr = request.getParameter("taskId");
         if (taskIdStr == null || taskIdStr.isBlank()) {
             request.setAttribute("error", "missing taskId");
@@ -171,14 +175,55 @@ public class AdminServlet extends HttpServlet {
             taskDAO.deleteTaskById(taskId);
         } catch (NumberFormatException e) {
             request.setAttribute("error", "invalid task ID");
-        } catch (Exception e){
+        } catch (Exception e) {
             request.setAttribute("error", "failed to delete task");
         }
     }
 
+    private void deleteProject(HttpServletRequest request) {
+        String projectIdStr = request.getParameter("projectId");
+        if (projectIdStr == null || projectIdStr.isBlank()) {
+            request.setAttribute("error", "missing project ID");
+            return;
+        }
+
+        try {
+            int projectId = Integer.parseInt(projectIdStr);
+            projectDAO.deleteProjectById(projectId);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "invalid project ID");
+        } catch (Exception e) {
+            request.setAttribute("error", "failed to delete project");
+        }
+    }
+
     private void deleteUser(HttpServletRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+        String userIdStr = request.getParameter("userId");
+        if (userIdStr == null || userIdStr.isBlank()) {
+            request.setAttribute("error", "missing user ID");
+            return;
+        }
+
+        try {
+            int userId = Integer.parseInt(userIdStr);
+            User user = userDAO.getUserById(userId);
+            if (user == null) {
+                request.setAttribute("error", "user not found");
+                return;
+            }
+
+            if (user.getRole().equalsIgnoreCase("admin")) {
+                request.setAttribute("error", "cannot delete admin");
+                return;
+            }
+
+            userDAO.deleteUserById(userId);
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "invalid user ID");
+        } catch (Exception e) {
+            request.setAttribute("error", "failed to delete user");
+        }
     }
 
     private void demoteUser(HttpServletRequest request) {

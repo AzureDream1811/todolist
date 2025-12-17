@@ -147,4 +147,17 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     return projects;
   }
+
+  @Override
+  public void deleteProjectById(int id) {
+    String sql = "DELETE FROM projects WHERE projects.id = ?";
+    try (
+        Connection connection = ds.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);) {
+      statement.setInt(1, id);
+      statement.executeUpdate();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

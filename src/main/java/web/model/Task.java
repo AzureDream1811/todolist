@@ -64,10 +64,6 @@ public class Task {
         this.completedAt = completedAt;
     }
 
-    public boolean isCompleted() {
-        return this.completedAt != null;
-    }
-
     public LocalDate getCreatedAt() {
         return createdAt;
     }

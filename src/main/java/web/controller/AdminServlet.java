@@ -62,6 +62,22 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles the GET request for the users page.
+     * <p>
+     * This method retrieves all users from the database and passes them to the
+     * jsp.
+     * If an exception occurs during the processing, it sends an error response to
+     * the client.
+     *
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back to
+     *                 the client
+     * @throws ServletException if an exception occurs during the servlet processing
+     * @throws IOException      if an exception occurs during the input/output
+     *                          operations
+     */
     private void getUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<User> users = userDAO.getAllUsers();
@@ -69,14 +85,31 @@ public class AdminServlet extends HttpServlet {
         request.getRequestDispatcher(ADMIN_USERS_PAGE).forward(request, response);
     }
 
-    
-    private void getTasks(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+     * Handles the GET request for the tasks page.
+     * <p>
+     * This method retrieves all tasks from the database and passes them to the
+     * jsp.
+     * If an exception occurs during the processing, it sends an error response to
+     * the client.
+     *
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back to
+     *                 the client
+     * @throws ServletException if an exception occurs during the servlet processing
+     * @throws IOException      if an exception occurs during the input/output
+     *                          operations
+     */
+    private void getTasks(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         List<Task> tasks = taskDAO.getAllTasks();
         request.setAttribute("tasks", tasks);
         request.getRequestDispatcher(ADMIN_TASKS_PAGE).forward(request, response);
     }
 
-    private void getProjects(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void getProjects(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         List<Project> projects = projectDAO.getAllProjects();
         request.setAttribute("projects", projects);
         request.getRequestDispatcher(ADMIN_PROJECTS_PAGE).forward(request, response);
@@ -92,26 +125,65 @@ public class AdminServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
         String action = (pathInfo == null || pathInfo.equals("/")) ? "/" : pathInfo;
 
+        // Remove leading slash if present for consistent matching
+        if (action.startsWith("/")) {
+            action = action.substring(1);
+        }
+
         switch (action) {
             case "users/promote":
                 promoteUser(request);
+                response.sendRedirect(request.getContextPath() + "/admin/users");
                 break;
+
             case "users/demote":
-                promoteUser(request);
+                demoteUser(request);
+                response.sendRedirect(request.getContextPath() + "/admin/users");
                 break;
+
             case "users/delete":
                 deleteUser(request);
+                response.sendRedirect(request.getContextPath() + "/admin/users");
                 break;
+
+            case "tasks/delete":
+                deleteTask(request);
+                response.sendRedirect(request.getContextPath() + "/admin/tasks");
+                break;
+
             default:
+                System.out.println("Action not found: " + action);
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 break;
         }
 
     }
 
+    private void deleteTask(HttpServletRequest request) throws ServletException, IOException {
+        String taskIdStr = request.getParameter("taskId");
+        if (taskIdStr == null || taskIdStr.isBlank()) {
+            request.setAttribute("error", "missing taskId");
+            return;
+        }
+
+        try {
+            int taskId = Integer.parseInt(taskIdStr);
+            taskDAO.deleteTaskById(taskId);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "invalid task ID");
+        } catch (Exception e){
+            request.setAttribute("error", "failed to delete task");
+        }
+    }
+
     private void deleteUser(HttpServletRequest request) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+    }
+
+    private void demoteUser(HttpServletRequest request) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'demoteUser'");
     }
 
     private void promoteUser(HttpServletRequest request) {

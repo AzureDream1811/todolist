@@ -140,21 +140,23 @@ public class AuthServlet extends HttpServlet {
 
   }
 
-  
-
   /**
    * Handles the login request.
    * 
    * This method authenticates the user credentials and logs the user in if
    * the credentials are valid. If the user is an admin, it redirects
-   * the user to the admin page; otherwise, it redirects the user to the inbox page.
+   * the user to the admin page; otherwise, it redirects the user to the inbox
+   * page.
    * If the credentials are invalid, it sends an error response to the
    * client.
    * 
-   * @param request  the HttpServletRequest object containing the request parameters
-   * @param response the HttpServletResponse object to send the response back to the client
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
    * @throws ServletException if an exception occurs during the servlet processing
-   * @throws IOException      if an exception occurs during the input/output operations
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
    */
   private void loginHandler(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

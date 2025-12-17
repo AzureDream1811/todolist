@@ -149,12 +149,12 @@ public class TaskDAOImpl implements TaskDAO {
     return task;
   }
 
-/**
- * Retrieves a list of tasks by the given user ID which are due today.
- * 
- * @param userId the user ID to search for
- * @return a list of tasks associated with the given user ID which are due today
- */
+  /**
+   * Retrieves a list of tasks by the given user ID which are due today.
+   * 
+   * @param userId the user ID to search for
+   * @return a list of tasks associated with the given user ID which are due today
+   */
   public List<Task> getTodayTaskByUserID(int userId) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed_at IS NULL";
@@ -176,13 +176,12 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
-
-/**
- * Retrieves a list of tasks by the given user ID which are overdue.
- * 
- * @param userId the user ID to search for
- * @return a list of tasks associated with the given user ID which are overdue
- */
+  /**
+   * Retrieves a list of tasks by the given user ID which are overdue.
+   * 
+   * @param userId the user ID to search for
+   * @return a list of tasks associated with the given user ID which are overdue
+   */
   public List<Task> getOverdueTaskByUserID(int userId) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date < CURDATE() AND completed_at IS NULL";
@@ -204,13 +203,14 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
-/**
- * Retrieves a list of tasks by the given user ID which are due in the future.
- * 
- * @param userId the user ID to search for
- * @return a list of tasks associated with the given user ID which are due in the future
- * @throws RuntimeException if an SQL exception occurs
- */
+  /**
+   * Retrieves a list of tasks by the given user ID which are due in the future.
+   * 
+   * @param userId the user ID to search for
+   * @return a list of tasks associated with the given user ID which are due in
+   *         the future
+   * @throws RuntimeException if an SQL exception occurs
+   */
   public List<Task> getUpcomingTasksByUserId(int userId) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date > CURDATE() AND completed_at IS NULL";
@@ -265,13 +265,13 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
-/**
- * Retrieves a list of tasks by the given user ID which are completed.
- * 
- * @param userId the user ID to search for
- * @return a list of tasks associated with the given user ID which are completed
- * @throws RuntimeException if an SQL exception occurs
- */
+  /**
+   * Retrieves a list of tasks by the given user ID which are completed.
+   * 
+   * @param userId the user ID to search for
+   * @return a list of tasks associated with the given user ID which are completed
+   * @throws RuntimeException if an SQL exception occurs
+   */
   public List<Task> getCompletedTaskByUserId(int userId) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE completed_at IS NOT NULL AND user_id = ?";
@@ -292,14 +292,14 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
-/**
- * Retrieves a list of tasks by the given task ID and user ID.
- * 
- * @param taskID the task ID to search for
- * @param userId    the user ID to search for
- * @return a list of tasks associated with the given task ID and user ID
- * @throws RuntimeException if an SQL exception occurs
- */
+  /**
+   * Retrieves a list of tasks by the given task ID and user ID.
+   * 
+   * @param taskID the task ID to search for
+   * @param userId the user ID to search for
+   * @return a list of tasks associated with the given task ID and user ID
+   * @throws RuntimeException if an SQL exception occurs
+   */
   public List<Task> getTaskByIdAndUserId(int taskID, int userID) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
@@ -322,13 +322,13 @@ public class TaskDAOImpl implements TaskDAO {
     return tasks;
   }
 
-/**
- * Deletes a task from the database given its ID and user ID.
- * 
- * @param task the task object to delete
- * @return true if the task was successfully deleted, false otherwise
- * @throws RuntimeException if an SQL exception occurs
- */
+  /**
+   * Deletes a task from the database given its ID and user ID.
+   * 
+   * @param task the task object to delete
+   * @return true if the task was successfully deleted, false otherwise
+   * @throws RuntimeException if an SQL exception occurs
+   */
   public boolean deleteTask(Task task) {
     String sql = "DELETE FROM tasks WHERE id = ? AND user_id = ?";
 
@@ -345,6 +345,31 @@ public class TaskDAOImpl implements TaskDAO {
       e.printStackTrace();
     }
     return false;
+  }
+
+/**
+ * Retrieves a list of all tasks in the database.
+ * 
+ * @return a list of all tasks in the database
+ * @throws RuntimeException if an SQL exception occurs
+ */
+  @Override
+  public List<Task> getAllTasks() {
+    List<Task> tasks = new ArrayList<>();
+    String sql = "SELECT * FROM tasks";
+
+    try (Connection connection = ds.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
+      ResultSet resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        Task task = mapResultSetToTask(resultSet);
+        tasks.add(task);
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return tasks;
   }
 
 }

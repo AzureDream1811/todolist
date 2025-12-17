@@ -4,6 +4,8 @@ import web.dao.UserDAO;
 import web.model.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -31,9 +33,9 @@ public class UserDAOImpl implements UserDAO {
             statement.setString(3, user.getPassword());
             statement.setString(2, user.getEmail());
 
-
             int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) return null;
+            if (affectedRows == 0)
+                return null;
 
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {
@@ -82,6 +84,31 @@ public class UserDAOImpl implements UserDAO {
     }
 
     /**
+     * Retrieves a list of all users in the database.
+     *
+     * @return a list of all users in the database
+     */
+    @Override
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users";
+        try (
+                Connection connection = ds.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                User user = mapResultSetToUser(resultSet);
+                users.add(user);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return users;
+    }
+
+    /**
      * Maps a given ResultSet to a User object.
      *
      * @param rs the ResultSet containing the user data
@@ -97,4 +124,5 @@ public class UserDAOImpl implements UserDAO {
         user.setCreatedAt(rs.getDate("created_at").toLocalDate());
         return user;
     }
+
 }

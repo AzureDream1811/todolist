@@ -1,6 +1,5 @@
 package web.controller;
 
-
 import web.model.Project;
 import web.model.Task;
 import web.dao.DAOFactory;
@@ -18,7 +17,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
-@WebServlet({ "/app/*" })
+@WebServlet("/app/*")
 public class AppServlet extends HttpServlet {
   private static final String INBOX_PAGE = "/WEB-INF/views/app/Inbox.jsp";
   private static final String TODAY_PAGE = "/WEB-INF/views/app/Today.jsp";
@@ -61,30 +60,30 @@ public class AppServlet extends HttpServlet {
     }
 
     // Route to appropriate handler based on action
-      switch (action) {
-          case "today":
-              showToday(request, response, currentUser);
-              break;
-          case "tasks":
-              addTaskGet(request, response, currentUser);
-              break;
-          case "projects":
-              showProjects(request, response, currentUser);
-              break;
-          case "upcoming":
-              showUpcoming(request, response, currentUser);
-              break;
-          case "completed":
-              showCompletedTask(request, response, currentUser);
-              break;
-          case "delete-task":  // THÊM DÒNG NÀY
-              deleteTaskGet(request, response, currentUser);
-              break;
-          case "inbox":
-          default:
-              showInbox(request, response, currentUser);
-              break;
-      }
+    switch (action) {
+      case "today":
+        showToday(request, response, currentUser);
+        break;
+      case "tasks":
+        addTaskGet(request, response, currentUser);
+        break;
+      case "projects":
+        showProjects(request, response, currentUser);
+        break;
+      case "upcoming":
+        showUpcoming(request, response, currentUser);
+        break;
+      case "completed":
+        showCompletedTask(request, response, currentUser);
+        break;
+      case "delete-task": // THÊM DÒNG NÀY
+        deleteTaskGet(request, response, currentUser);
+        break;
+      case "inbox":
+      default:
+        showInbox(request, response, currentUser);
+        break;
+    }
   }
 
   @Override
@@ -100,31 +99,35 @@ public class AppServlet extends HttpServlet {
     }
 
     // Route to appropriate handler based on action
-      switch (action) {
-          case "tasks":
-              addTaskPost(request, response, currentUser);
-              break;
-          case "delete-task":  // THÊM DÒNG NÀY
-              deleteTaskPost(request, response, currentUser);
-              break;
-          default:
-              response.sendError(HttpServletResponse.SC_NOT_FOUND);
-              break;
-      }
+    switch (action) {
+      case "tasks":
+        addTaskPost(request, response, currentUser);
+        break;
+      case "delete-task": // THÊM DÒNG NÀY
+        deleteTaskPost(request, response, currentUser);
+        break;
+      default:
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        break;
+    }
   }
 
-
-/**
- * Handles the GET request for the inbox page.
- * <p>
- * This method fetches the tasks and projects of the current user and passes them to the jsp.
- * If an exception occurs during the processing, it sends an error response to the client.
- *
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+  /**
+   * Handles the GET request for the inbox page.
+   * <p>
+   * This method fetches the tasks and projects of the current user and passes
+   * them to the jsp.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   *
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
 
   private void showInbox(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
@@ -144,17 +147,22 @@ public class AppServlet extends HttpServlet {
     }
   }
 
-/**
- * Handles the GET request for the add task page.
- * <p>
- * This method fetches the projects of the current user and passes them to the jsp.
- * If an exception occurs during the processing, it sends an error response to the client.
- *
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+  /**
+   * Handles the GET request for the add task page.
+   * <p>
+   * This method fetches the projects of the current user and passes them to the
+   * jsp.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   *
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
   private void addTaskGet(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
@@ -167,18 +175,22 @@ public class AppServlet extends HttpServlet {
     }
   }
 
-/**
- * Handles the POST request for the add task page.
- * <p>
- * This method validates the input parameters and creates a new task.
- * If the task is created successfully, it redirects the user to the inbox page.
- * If an exception occurs during the processing, it sends an error response to the client.
- *
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+  /**
+   * Handles the POST request for the add task page.
+   * <p>
+   * This method validates the input parameters and creates a new task.
+   * If the task is created successfully, it redirects the user to the inbox page.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   *
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
   private void addTaskPost(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
@@ -222,44 +234,49 @@ public class AppServlet extends HttpServlet {
 
   }
 
-/**
- * Determines the redirect path based on the task type.
- * If the task type is null or empty, it returns the default path /app/inbox.
- * Otherwise, it returns the path corresponding to the task type.
- * For example, if the task type is "today", it returns "/app/today".
- * If the task type is not recognized, it returns the default path /app/inbox.
- * 
- * @param taskType the task type to determine the redirect path
- * @return the redirect path based on the task type
- */
+  /**
+   * Determines the redirect path based on the task type.
+   * If the task type is null or empty, it returns the default path /app/inbox.
+   * Otherwise, it returns the path corresponding to the task type.
+   * For example, if the task type is "today", it returns "/app/today".
+   * If the task type is not recognized, it returns the default path /app/inbox.
+   * 
+   * @param taskType the task type to determine the redirect path
+   * @return the redirect path based on the task type
+   */
   private String determineRedirectPath(String taskType) {
-      if(taskType == null || taskType.isEmpty()){
-          return "/app/inbox";//default
-      }
+    if (taskType == null || taskType.isEmpty()) {
+      return "/app/inbox";// default
+    }
 
-      switch (taskType){
-          case "today":
-              return "/app/today";
-          case "upcoming":
-              return "/app/upcoming";
-          case "inbox":
-          default:
-              return "/app/inbox";
-      }
+    switch (taskType) {
+      case "today":
+        return "/app/today";
+      case "upcoming":
+        return "/app/upcoming";
+      case "inbox":
+      default:
+        return "/app/inbox";
+    }
   }
 
-/**
- * Handles the GET request for the today's tasks page.
- * <p>
- * This method fetches the overdue tasks and today's tasks of the current user and passes them to the jsp.
- * It also fetches the projects of the current user and passes them to the jsp.
- * If an exception occurs during the processing, it sends an error response to the client.
- * 
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+  /**
+   * Handles the GET request for the today's tasks page.
+   * <p>
+   * This method fetches the overdue tasks and today's tasks of the current user
+   * and passes them to the jsp.
+   * It also fetches the projects of the current user and passes them to the jsp.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   * 
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
   private void showToday(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
@@ -279,17 +296,22 @@ public class AppServlet extends HttpServlet {
     }
   }
 
-/**
- * Handles the GET request for the upcoming tasks page.
- * <p>
- * This method fetches the upcoming tasks of the current user and passes them to the jsp.
- * If an exception occurs during the processing, it sends an error response to the client.
- * 
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+  /**
+   * Handles the GET request for the upcoming tasks page.
+   * <p>
+   * This method fetches the upcoming tasks of the current user and passes them to
+   * the jsp.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   * 
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
   private void showUpcoming(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
@@ -303,17 +325,22 @@ public class AppServlet extends HttpServlet {
     }
   }
 
-/**
- * Handles the GET request for the completed tasks page.
- * <p>
- * This method fetches the completed tasks of the current user and passes them to the jsp.
- * If an exception occurs during the processing, it sends an error response to the client.
- * 
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+  /**
+   * Handles the GET request for the completed tasks page.
+   * <p>
+   * This method fetches the completed tasks of the current user and passes them
+   * to the jsp.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   * 
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
   private void showCompletedTask(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
@@ -328,18 +355,24 @@ public class AppServlet extends HttpServlet {
     }
   }
 
-/**
- * Handles the GET request for the projects page.
- * <p>
- * This method fetches the projects of the current user and passes them to the jsp.
- * If the id parameter is not null, it redirects the request to the project details page.
- * If an exception occurs during the processing, it sends an error response to the client.
- * 
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
+  /**
+   * Handles the GET request for the projects page.
+   * <p>
+   * This method fetches the projects of the current user and passes them to the
+   * jsp.
+   * If the id parameter is not null, it redirects the request to the project
+   * details page.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   * 
+   * @param request  the HttpServletRequest object containing the request
+   *                 parameters
+   * @param response the HttpServletResponse object to send the response back to
+   *                 the client
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
   private void showProjects(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
@@ -358,21 +391,23 @@ public class AppServlet extends HttpServlet {
     }
   }
 
-
-
   /**
    * Handles the GET request for the project details page.
    * <p>
    * This method fetches the project with the given ID and the current user.
    * If the project is not found, it sends an error response to the client.
-   * If an exception occurs during the processing, it sends an error response to the client.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
    * 
-   * @param request  the HttpServletRequest object containing the request parameters
-   * @param response the HttpServletResponse object to send the response back to the client
+   * @param request     the HttpServletRequest object containing the request
+   *                    parameters
+   * @param response    the HttpServletResponse object to send the response back
+   *                    to the client
    * @param currentUser the current user
-   * @param projectId the project ID to search for
+   * @param projectId   the project ID to search for
    * @throws ServletException if an exception occurs during the servlet processing
-   * @throws IOException      if an exception occurs during the input/output operations
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
    */
   private void showProjectDetails(HttpServletRequest request, HttpServletResponse response, User currentUser,
       int projectId) {
@@ -397,129 +432,143 @@ public class AppServlet extends HttpServlet {
     }
   }
 
-    /**
-     * Handles the GET request for the delete task page.
-     * <p>
-     * This method fetches the task with the given ID and the current user.
-     * If the task is not found, it sends an error response to the client.
-     * If an exception occurs during the processing, it sends an error response to the client.
-     * 
-     * @param request  the HttpServletRequest object containing the request parameters
-     * @param response the HttpServletResponse object to send the response back to the client
-     * @param currentUser the current user
-     * @throws ServletException if an exception occurs during the servlet processing
-     * @throws IOException      if an exception occurs during the input/output operations
-     */
-  private void deleteTaskGet (HttpServletRequest request, HttpServletResponse response, User currentUser) throws ServletException, IOException {
-      try {
-          String taskIDParam = request.getParameter("taskID");
+  /**
+   * Handles the GET request for the delete task page.
+   * <p>
+   * This method fetches the task with the given ID and the current user.
+   * If the task is not found, it sends an error response to the client.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   * 
+   * @param request     the HttpServletRequest object containing the request
+   *                    parameters
+   * @param response    the HttpServletResponse object to send the response back
+   *                    to the client
+   * @param currentUser the current user
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
+  private void deleteTaskGet(HttpServletRequest request, HttpServletResponse response, User currentUser)
+      throws ServletException, IOException {
+    try {
+      String taskIDParam = request.getParameter("taskID");
 
-          if (taskIDParam == null || taskIDParam.isEmpty()) {
-              WebUtils.sendError(request, response, "Task ID is required", "/app/inbox");
-              return;
-          }
-
-          int taskID = Integer.parseInt(taskIDParam);
-
-          List<Task> tasks = taskDAO.getTaskByIdAndUserId(taskID, currentUser.getId());
-
-          if (tasks.isEmpty()) {
-              WebUtils.sendError(request, response, "Task  not found", "/app/inbox");
-              return;
-          }
-
-          Task task = tasks.get(0);
-
-          request.setAttribute("task", task);
-
-          String redirectPath = request.getParameter("redirect");
-          request.setAttribute("redirectPath", redirectPath != null ? redirectPath : "/app/inbox");
-
-          request.getRequestDispatcher(DELETE_TASK_PAGE).forward(request, response);
-      } catch (NumberFormatException e) {
-          WebUtils.sendError(request, response, "Invalid task ID format", "/app/inbox");
-      } catch (Exception e) {
-          WebUtils.sendError(request, response, "Error loading delete tasks page", "/app/inbox");
+      if (taskIDParam == null || taskIDParam.isEmpty()) {
+        WebUtils.sendError(request, response, "Task ID is required", "/app/inbox");
+        return;
       }
+
+      int taskID = Integer.parseInt(taskIDParam);
+
+      List<Task> tasks = taskDAO.getTaskByIdAndUserId(taskID, currentUser.getId());
+
+      if (tasks.isEmpty()) {
+        WebUtils.sendError(request, response, "Task  not found", "/app/inbox");
+        return;
+      }
+
+      Task task = tasks.get(0);
+
+      request.setAttribute("task", task);
+
+      String redirectPath = request.getParameter("redirect");
+      request.setAttribute("redirectPath", redirectPath != null ? redirectPath : "/app/inbox");
+
+      request.getRequestDispatcher(DELETE_TASK_PAGE).forward(request, response);
+    } catch (NumberFormatException e) {
+      WebUtils.sendError(request, response, "Invalid task ID format", "/app/inbox");
+    } catch (Exception e) {
+      WebUtils.sendError(request, response, "Error loading delete tasks page", "/app/inbox");
+    }
   }
 
-/**
- * Handles the POST request for the delete task page.
- * <p>
- * This method takes the task ID and confirmation parameters from the request.
- * If the task ID is null or empty, it sends an error response to the client.
- * If the confirmation parameter is not "true", it sends an error response to the client.
- * If the task ID is found, it deletes the task and redirects the user to the appropriate page based on the redirect path.
- * If an exception occurs during the processing, it sends an error response to the client.
- * 
- * @param request  the HttpServletRequest object containing the request parameters
- * @param response the HttpServletResponse object to send the response back to the client
- * @param currentUser the current user
- * @throws ServletException if an exception occurs during the servlet processing
- * @throws IOException      if an exception occurs during the input/output operations
- */
-  public void deleteTaskPost (HttpServletRequest request, HttpServletResponse response, User currentUser)throws  ServletException, IOException {
-      try {
-          String taskIDParam = request.getParameter("taskID");
-          String confirm = request.getParameter("confirm");
+  /**
+   * Handles the POST request for the delete task page.
+   * <p>
+   * This method takes the task ID and confirmation parameters from the request.
+   * If the task ID is null or empty, it sends an error response to the client.
+   * If the confirmation parameter is not "true", it sends an error response to
+   * the client.
+   * If the task ID is found, it deletes the task and redirects the user to the
+   * appropriate page based on the redirect path.
+   * If an exception occurs during the processing, it sends an error response to
+   * the client.
+   * 
+   * @param request     the HttpServletRequest object containing the request
+   *                    parameters
+   * @param response    the HttpServletResponse object to send the response back
+   *                    to the client
+   * @param currentUser the current user
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output
+   *                          operations
+   */
+  public void deleteTaskPost(HttpServletRequest request, HttpServletResponse response, User currentUser)
+      throws ServletException, IOException {
+    try {
+      String taskIDParam = request.getParameter("taskID");
+      String confirm = request.getParameter("confirm");
 
-          //Get taskType to reDirect to the correct page
-          String redirectPath = request.getParameter("redirect");
+      // Get taskType to reDirect to the correct page
+      String redirectPath = request.getParameter("redirect");
 
-          if (taskIDParam == null || taskIDParam.isEmpty()) {
-              WebUtils.sendError(request, response, "Task ID is required", "/app/inbox");
-              return;
-          }
-
-          //Check user confirmed deletion
-          if (! "true".equals(confirm)){
-              WebUtils.sendError(request, response, "Invalid confirmation", "/app/inbox");
-              return;
-          }
-
-          int taskID = Integer.parseInt(taskIDParam);
-
-          List<Task> tasks = taskDAO.getTaskByIdAndUserId(taskID, currentUser.getId());
-          if (tasks.isEmpty()) {
-              WebUtils.sendError(request, response, "Task not found", "/app/inbox");
-              return;
-          }
-
-          Task task = tasks.get(0);
-
-          boolean success = taskDAO.deleteTask(task);
-
-          if (success) {
-              String finalRedirectPath = determineRedirectPathAfterDelete(redirectPath);
-              response.sendRedirect(request.getContextPath() + finalRedirectPath);
-          }else {
-              WebUtils.sendError(request, response, "Error deleting task", determineRedirectPathAfterDelete(redirectPath));
-          }
-      } catch (Exception e) {
-          WebUtils.sendError(request, response, "Error delete task", "/app/inbox");
+      if (taskIDParam == null || taskIDParam.isEmpty()) {
+        WebUtils.sendError(request, response, "Task ID is required", "/app/inbox");
+        return;
       }
+
+      // Check user confirmed deletion
+      if (!"true".equals(confirm)) {
+        WebUtils.sendError(request, response, "Invalid confirmation", "/app/inbox");
+        return;
+      }
+
+      int taskID = Integer.parseInt(taskIDParam);
+
+      List<Task> tasks = taskDAO.getTaskByIdAndUserId(taskID, currentUser.getId());
+      if (tasks.isEmpty()) {
+        WebUtils.sendError(request, response, "Task not found", "/app/inbox");
+        return;
+      }
+
+      Task task = tasks.get(0);
+
+      boolean success = taskDAO.deleteTask(task);
+
+      if (success) {
+        String finalRedirectPath = determineRedirectPathAfterDelete(redirectPath);
+        response.sendRedirect(request.getContextPath() + finalRedirectPath);
+      } else {
+        WebUtils.sendError(request, response, "Error deleting task", determineRedirectPathAfterDelete(redirectPath));
+      }
+    } catch (Exception e) {
+      WebUtils.sendError(request, response, "Error delete task", "/app/inbox");
+    }
   }
 
-/**
- * Determines the redirect path after deleting a task.
- * If the current page path is null or empty, it returns the inbox page.
- * If the current page path contains "/app/today", it returns the today page.
- * If the current page path contains "/app/upcoming", it returns the upcoming page.
- * Otherwise, it returns the inbox page.
- * @param currentPagePath the current page path
- * @return the redirect path after deleting a task
- */
-  private String determineRedirectPathAfterDelete (String currentPagePath) {
-      if (currentPagePath == null || currentPagePath.isEmpty()) {
-          return "/app/inbox";
-      }
+  /**
+   * Determines the redirect path after deleting a task.
+   * If the current page path is null or empty, it returns the inbox page.
+   * If the current page path contains "/app/today", it returns the today page.
+   * If the current page path contains "/app/upcoming", it returns the upcoming
+   * page.
+   * Otherwise, it returns the inbox page.
+   * 
+   * @param currentPagePath the current page path
+   * @return the redirect path after deleting a task
+   */
+  private String determineRedirectPathAfterDelete(String currentPagePath) {
+    if (currentPagePath == null || currentPagePath.isEmpty()) {
+      return "/app/inbox";
+    }
 
-      if (currentPagePath.contains("/app/today")){
-          return "/app/today";
-      } else if (currentPagePath.contains("/app/upcoming")) {
-          return "/app/upcoming";
-      }else {
-          return "/app/inbox";
-      }
+    if (currentPagePath.contains("/app/today")) {
+      return "/app/today";
+    } else if (currentPagePath.contains("/app/upcoming")) {
+      return "/app/upcoming";
+    } else {
+      return "/app/inbox";
+    }
   }
 }

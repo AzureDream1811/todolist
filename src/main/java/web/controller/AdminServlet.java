@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import web.dao.DAOFactory;
+import web.dao.ProjectDAO;
 import web.dao.TaskDAO;
 import web.dao.UserDAO;
+import web.model.Project;
 import web.model.Task;
 import web.model.User;
 import web.utils.WebUtils;
@@ -20,9 +22,11 @@ import web.utils.WebUtils;
 public class AdminServlet extends HttpServlet {
     private static final String ADMIN_USERS_PAGE = "/WEB-INF/views/admin/Users.jsp";
     private static final String ADMIN_TASKS_PAGE = "/WEB-INF/views/admin/Tasks.jsp";
+    private static final String ADMIN_PROJECTS_PAGE = "/WEB-INF/views/admin/Projects.jsp";
     DAOFactory factory = DAOFactory.getInstance();
     UserDAO userDAO = factory.getUserDAO();
     TaskDAO taskDAO = factory.getTaskDAO();
+    ProjectDAO projectDAO = factory.getProjectDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,6 +48,11 @@ public class AdminServlet extends HttpServlet {
             case "/tasks":
                 getTasks(request, response);
                 break;
+
+            case "/projects":
+                getProjects(request, response);
+                break;
+
             case "/":
                 response.sendRedirect(request.getContextPath() + "/admin/users");
                 break;
@@ -60,13 +69,18 @@ public class AdminServlet extends HttpServlet {
         request.getRequestDispatcher(ADMIN_USERS_PAGE).forward(request, response);
     }
 
-    private void getTasks(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    
+    private void getTasks(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Task> tasks = taskDAO.getAllTasks();
         request.setAttribute("tasks", tasks);
         request.getRequestDispatcher(ADMIN_TASKS_PAGE).forward(request, response);
     }
 
+    private void getProjects(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Project> projects = projectDAO.getAllProjects();
+        request.setAttribute("projects", projects);
+        request.getRequestDispatcher(ADMIN_PROJECTS_PAGE).forward(request, response);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

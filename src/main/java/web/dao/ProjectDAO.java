@@ -10,6 +10,7 @@ public interface ProjectDAO {
     boolean createProject(Project project);
     List<Project> getProjectsByUserId(int userId);
     Project getProjectByIdAndUserId(int projectId, int userId);
+    List<Project> getAllProjects();
     Project mapResultSetToProject(ResultSet rs) throws SQLException;
 
 }

@@ -13,7 +13,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
   private final DataSource ds;
 
-  public ProjectDAOImpl(DataSource ds){
+  public ProjectDAOImpl(DataSource ds) {
     this.ds = ds;
   }
 
@@ -78,15 +78,14 @@ public class ProjectDAOImpl implements ProjectDAO {
     return projects;
   }
 
-  
-/**
- * Retrieves a project by the given project ID and user ID.
- * 
- * @param projectId the project ID to search for
- * @param userId the user ID to search for
- * @return the project object if found, null otherwise
- * @throws RuntimeException if an SQL exception occurs
- */
+  /**
+   * Retrieves a project by the given project ID and user ID.
+   * 
+   * @param projectId the project ID to search for
+   * @param userId    the user ID to search for
+   * @return the project object if found, null otherwise
+   * @throws RuntimeException if an SQL exception occurs
+   */
   public Project getProjectByIdAndUserId(int projectId, int userId) {
     String sql = "SELECT * FROM projects WHERE id = ? AND user_id = ?";
     try {
@@ -121,5 +120,31 @@ public class ProjectDAOImpl implements ProjectDAO {
     project.setUserId(rs.getInt("user_id"));
     project.setCreatedAt(rs.getDate("created_at").toLocalDate());
     return project;
+  }
+
+  /**
+   * Retrieves a list of all projects in the database.
+   *
+   * @return a list of all projects in the database
+   * @throws RuntimeException if an SQL exception occurs
+   */
+  @Override
+  public List<Project> getAllProjects() {
+    List<Project> projects = new ArrayList<>();
+    String sql = "SELECT * FROM projects";
+    try (
+        Connection connection = ds.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);) {
+      ResultSet resultSet = statement.executeQuery();
+      while (resultSet.next()) {
+        Project project = mapResultSetToProject(resultSet);
+        projects.add(project);
+
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return projects;
   }
 }

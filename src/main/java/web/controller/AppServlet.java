@@ -421,7 +421,7 @@ public class AppServlet extends HttpServlet {
 
           int taskID = Integer.parseInt(taskIDParam);
 
-          List<Task> tasks = taskDAO.getTaskByIDandUserId(taskID, currentUser.getId());
+          List<Task> tasks = taskDAO.getTaskByIdAndUserId(taskID, currentUser.getId());
 
           if (tasks.isEmpty()) {
               WebUtils.sendError(request, response, "Task  not found", "/app/inbox");
@@ -479,7 +479,7 @@ public class AppServlet extends HttpServlet {
 
           int taskID = Integer.parseInt(taskIDParam);
 
-          List<Task> tasks = taskDAO.getTaskByIDandUserId(taskID, currentUser.getId());
+          List<Task> tasks = taskDAO.getTaskByIdAndUserId(taskID, currentUser.getId());
           if (tasks.isEmpty()) {
               WebUtils.sendError(request, response, "Task not found", "/app/inbox");
               return;

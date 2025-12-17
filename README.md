@@ -67,7 +67,7 @@ A simple task management application built with Java Servlets.
 ### Prerequisites
 - Java 17 or higher
 - MySQL 8.0 or higher
-- Apache Tomcat 10.x
+- Apache Tomcat 9.x
 - Maven 3.8+
 
 ### Database Setup

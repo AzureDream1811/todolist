@@ -300,7 +300,7 @@ public class TaskDAOImpl implements TaskDAO {
  * @return a list of tasks associated with the given task ID and user ID
  * @throws RuntimeException if an SQL exception occurs
  */
-  public List<Task> getTaskByIDandUserId(int taskID, int userID) {
+  public List<Task> getTaskByIdAndUserId(int taskID, int userID) {
     List<Task> tasks = new ArrayList<>();
     String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
 

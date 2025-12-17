@@ -16,6 +16,6 @@ public interface TaskDAO {
     List<Task> getUpcomingTasksByUserId(int userId);
     List<Task> getTasksByProjectIdAndUserId(int projectId, int userId);
     List<Task> getCompletedTaskByUserId(int userId);
-    List<Task> getTaskByIDandUserId(int taskID, int userID);
+    List<Task> getTaskByIdAndUserId(int taskID, int userID);
     boolean deleteTask (Task task);
 }

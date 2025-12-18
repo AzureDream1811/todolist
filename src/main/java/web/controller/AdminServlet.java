@@ -163,6 +163,19 @@ public class AdminServlet extends HttpServlet {
 
     }
 
+    /**
+     * Deletes a task from the database given its ID.
+     * <p>
+     * This method takes the task ID parameter from the request and deletes the task
+     * with the given ID from the database. If the task ID is null or empty, it
+     * sets the error attribute to "missing taskId" and returns. If the task
+     * ID is invalid, it sets the error attribute to "invalid task ID" and
+     * returns. If an exception occurs during the deletion, it sets the
+     * error attribute to "failed to delete task" and returns.
+     * 
+     * @param request the HttpServletRequest object containing the request
+     *                parameters
+     */
     private void deleteTask(HttpServletRequest request) {
         String taskIdStr = request.getParameter("taskId");
         if (taskIdStr == null || taskIdStr.isBlank()) {
@@ -180,6 +193,20 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Deletes a project from the database given its ID.
+     * <p>
+     * This method takes the project ID parameter from the request and deletes the
+     * project
+     * with the given ID from the database. If the project ID is null or empty, it
+     * sets the error attribute to "missing project ID" and returns. If the project
+     * ID is invalid, it sets the error attribute to "invalid project ID" and
+     * returns. If an exception occurs during the deletion, it sets the
+     * error attribute to "failed to delete project" and returns.
+     * 
+     * @param request the HttpServletRequest object containing the request
+     *                parameters
+     */
     private void deleteProject(HttpServletRequest request) {
         String projectIdStr = request.getParameter("projectId");
         if (projectIdStr == null || projectIdStr.isBlank()) {
@@ -197,6 +224,21 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Deletes a user from the database given its ID.
+     * <p>
+     * This method takes the user ID parameter from the request and deletes the user
+     * with the given ID from the database. If the user ID is null or empty, it
+     * sets the error attribute to "missing user ID" and returns. If the user ID is
+     * invalid, it sets the error attribute to "invalid user ID" and returns. If
+     * the user is an admin, it sets the error attribute to "cannot delete admin"
+     * and
+     * returns. If an exception occurs during the deletion, it sets the error
+     * attribute to "failed to delete user" and returns.
+     * 
+     * @param request the HttpServletRequest object containing the request
+     *                parameters
+     */
     private void deleteUser(HttpServletRequest request) {
         String userIdStr = request.getParameter("userId");
         if (userIdStr == null || userIdStr.isBlank()) {
@@ -226,14 +268,75 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Demotes a user from the database given its ID.
+     * <p>
+     * This method takes the user ID parameter from the request and demotes the user
+     * with the given ID from the database. If the user ID is null or empty, it
+     * sets the error attribute to "missing user ID" and returns. If the user ID is
+     * invalid, it sets the error attribute to "invalid user ID" and returns. If
+     * an exception occurs during the demotion, it sets the error attribute to
+     * "failed to demote user" and returns.
+     * 
+     * @param request the HttpServletRequest object containing the request
+     *                parameters
+     */
     private void demoteUser(HttpServletRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'demoteUser'");
+        String userIdStr = request.getParameter("userId");
+        if (userIdStr == null || userIdStr.isBlank()) {
+            request.setAttribute("error", "missing user ID");
+            return;
+        }
+
+        try {
+            int userId = Integer.parseInt(userIdStr);
+            User user = userDAO.getUserById(userId);
+            if (user == null) {
+                request.setAttribute("error", "user not found");
+            }
+
+            userDAO.demoteUser(userId);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid user ID");
+        } catch (Exception e) {
+            request.setAttribute("error", "failed to demote user");
+        }
     }
 
+    /**
+     * Promotes a user from the database given its ID.
+     * <p>
+     * This method takes the user ID parameter from the request and promotes the
+     * user
+     * with the given ID from the database. If the user ID is null or empty, it
+     * sets the error attribute to "missing user ID" and returns. If the user ID is
+     * invalid, it sets the error attribute to "invalid user ID" and returns. If
+     * an exception occurs during the promotion, it sets the error attribute to
+     * "failed to promote user" and returns.
+     * 
+     * @param request the HttpServletRequest object containing the request
+     *                parameters
+     */
     private void promoteUser(HttpServletRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'promoteUser'");
+        String userIdStr = request.getParameter("userId");
+        if (userIdStr == null || userIdStr.isBlank()) {
+            request.setAttribute("error", "missing user ID");
+            return;
+        }
+
+        try {
+            int userId = Integer.parseInt(userIdStr);
+            User user = userDAO.getUserById(userId);
+            if (user == null) {
+                request.setAttribute("error", "user not found");
+            }
+
+            userDAO.promoteUser(userId);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid user ID");
+        } catch (Exception e) {
+            request.setAttribute("error", "failed to promote user");
+        }
     }
 
 }

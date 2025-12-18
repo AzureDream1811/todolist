@@ -19,5 +19,9 @@ public interface UserDAO {
 
     void deleteUserById(int id);
 
+    void demoteUser(int id);
+
+    void promoteUser(int id);
+
     User mapResultSetToUser(ResultSet rs) throws SQLException;
 }

@@ -154,10 +154,58 @@ public class UserDAOImpl implements UserDAO {
         return user;
     }
 
+    /**
+     * Deletes a user by their ID.
+     *
+     * @param id the ID of the user to delete
+     * @throws RuntimeException if an SQL exception occurs
+     */
     @Override
     public void deleteUserById(int id) {
         String sql = "DELETE FROM users WHERE users.id = ?";
         try (Connection connection = ds.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);) {
+            statement.setInt(1, id);
+            statement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Demotes a user by their ID.
+     * Sets the user's role to USER.
+     *
+     * @param id the ID of the user to demote
+     * @throws RuntimeException if an SQL exception occurs
+     */
+    @Override
+    public void demoteUser(int id) {
+        String sql = "UPDATE users SET role = 'USER' WHERE users.id = ?";
+        try (
+                Connection connection = ds.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);) {
+            statement.setInt(1, id);
+            statement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Promotes a user by their ID.
+     * Sets the user's role to ADMIN.
+     * 
+     * @param id the ID of the user to promote
+     * @throws RuntimeException if an SQL exception occurs
+     */
+    @Override
+    public void promoteUser(int id) {
+        String sql = "UPDATE users SET role = 'ADMIN' WHERE users.id = ?";
+        try (
+                Connection connection = ds.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql);) {
             statement.setInt(1, id);
             statement.executeUpdate();

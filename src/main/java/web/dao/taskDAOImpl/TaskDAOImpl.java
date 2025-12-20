@@ -87,7 +87,9 @@ public class TaskDAOImpl implements TaskDAO {
      * Maps a given ResultSet to a Task object.
      *
      * @param rs the ResultSet containing the task data
+     * 
      * @return the mapped Task object
+     * 
      * @throws SQLException if an SQL exception occurs
      */
 
@@ -140,7 +142,7 @@ public class TaskDAOImpl implements TaskDAO {
         String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed_at IS NULL";
 
         try (Connection connection = ds.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
@@ -167,7 +169,7 @@ public class TaskDAOImpl implements TaskDAO {
         String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date < CURDATE() AND completed_at IS NULL";
 
         try (Connection connection = ds.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
@@ -188,7 +190,7 @@ public class TaskDAOImpl implements TaskDAO {
      *
      * @param userId the user ID to search for
      * @return a list of tasks associated with the given user ID which are due in
-     * the future
+     *         the future
      * @throws RuntimeException if an SQL exception occurs
      */
     public List<Task> getUpcomingTasksByUserId(int userId) {
@@ -257,7 +259,7 @@ public class TaskDAOImpl implements TaskDAO {
         String sql = "SELECT * FROM tasks WHERE completed_at IS NOT NULL AND user_id = ?";
 
         try (Connection connection = ds.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
@@ -285,7 +287,7 @@ public class TaskDAOImpl implements TaskDAO {
         String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
 
         try (Connection connection = ds.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, taskID);
             statement.setInt(2, userID);
@@ -313,7 +315,7 @@ public class TaskDAOImpl implements TaskDAO {
         String sql = "DELETE FROM tasks WHERE id = ? AND user_id = ?";
 
         try (Connection connection = ds.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, task.getId());
             statement.setInt(2, task.getUserId());
@@ -339,7 +341,7 @@ public class TaskDAOImpl implements TaskDAO {
         String sql = "SELECT * FROM tasks";
 
         try (Connection connection = ds.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Task task = mapResultSetToTask(resultSet);
@@ -352,6 +354,12 @@ public class TaskDAOImpl implements TaskDAO {
         return tasks;
     }
 
+    /**
+     * Deletes a task from the database given its ID.
+     * 
+     * @param id the task ID to delete
+     * @throws RuntimeException if an SQL exception occurs
+     */
     @Override
     public void deleteTaskById(int id) {
         String sql = "DELETE FROM tasks WHERE tasks.id = ?";
@@ -364,6 +372,79 @@ public class TaskDAOImpl implements TaskDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Updates a task in the database.
+     *
+     * @param task the task to update
+     * @throws RuntimeException if an SQL exception occurs
+     */
+    @Override
+    public void updateTask(Task task) {
+        String sql = "UPDATE tasks SET description = ?, priority = ?, due_date = ?, completed_at = ?, project_id = ? WHERE id = ?";
+
+        try (
+                Connection connection = ds.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);) {
+            ps.setString(1, task.getDescription());
+            ps.setInt(2, task.getPriority());
+
+            // due_date (nullable)
+            if (task.getDueDate() != null) {
+                ps.setDate(3, java.sql.Date.valueOf(task.getDueDate()));
+            } else {
+                ps.setNull(3, java.sql.Types.DATE);
+            }
+
+            // completed_at (nullable)
+            if (task.getCompletedAt() != null) {
+                ps.setDate(4, java.sql.Date.valueOf(task.getCompletedAt()));
+            } else {
+                ps.setNull(4, java.sql.Types.DATE);
+            }
+
+            // project_id (nullable)
+            if (task.getProjectIdObject() != null) {
+                ps.setInt(5, task.getProjectId());
+            } else {
+                ps.setNull(5, java.sql.Types.BIGINT);
+            }
+
+            ps.setInt(6, task.getId());
+
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new RuntimeException("Update failed: task not found");
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Retrieves a task by the given task ID.
+     * 
+     * @param id the task ID to search for
+     * @return the task object if found, null otherwise
+     * @throws RuntimeException if an SQL exception occurs
+     */
+    @Override
+    public Task getTaskById(int id) {
+        String sql = "SELECT * FROM tasks WHERE tasks.id = ?";
+        try (
+                Connection connection = ds.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return mapResultSetToTask(resultSet);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

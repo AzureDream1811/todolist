@@ -27,7 +27,13 @@ public interface TaskDAO {
 
     boolean deleteTask(Task task);
 
+    Task getTaskById(int id);
+    
     void deleteTaskById(int id);
 
+    void updateTask(Task task);
+
     Task mapResultSetToTask(ResultSet rs) throws SQLException;
+
+
 }

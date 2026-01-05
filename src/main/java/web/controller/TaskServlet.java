@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import web.dao.DAOFactory;
 import web.dao.TaskDAO;
 import web.model.Task;
+import web.model.User;
+import web.utils.EmailUtils;
+import web.utils.WebUtils;
 
 @WebServlet("/tasks/*")
 public class TaskServlet extends HttpServlet {
@@ -95,6 +98,10 @@ public class TaskServlet extends HttpServlet {
      * @throws ServletException if an exception occurs during the servlet processing
      */
     private void updateTask(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 1. Sử dụng WebUtils để lấy user an toàn
+        User currentUser = WebUtils.validateAndGetUser(request, response);
+        if (currentUser == null) return; // Nếu chưa login, WebUtils đã tự redirect về trang login
+
         Task task = new Task();
         task.setId(Integer.parseInt(request.getParameter("id")));
         task.setDescription(request.getParameter("description"));
@@ -116,6 +123,18 @@ public class TaskServlet extends HttpServlet {
         }
 
         taskDAO.updateTask(task);
+
+        // 2. Gửi Email (đã có user an toàn từ bước 1)
+        if (currentUser.getEmail() != null && !currentUser.getEmail().isEmpty()) {
+            EmailUtils.sendEmailAsync(
+                    currentUser.getEmail(),
+                    "Cập nhật công việc thành công",
+                    "<h3>Thông báo TodoList</h3>" +
+                            "<p>Bạn vừa cập nhật Task: <b>" + task.getDescription() + "</b></p>"
+            );
+        }
+
+        // 3. Chuyển hướng trang
 
         response.sendRedirect(request.getContextPath() + "/tasks/detail?taskId=" + task.getId());
     }

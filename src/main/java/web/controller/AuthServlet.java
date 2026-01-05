@@ -125,12 +125,18 @@ public class AuthServlet extends HttpServlet {
       User newUser = new User(username, password, email);
       User createdUser = userDAO.createUser(newUser);
 
-      if (createdUser != null) {
-        HttpSession session = request.getSession();
-        session.setAttribute("userName", username);
-        session.setAttribute("user", createdUser);
-        response.sendRedirect(request.getContextPath() + "/app/inbox");
-      } else {
+        if (createdUser != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("currentUser", createdUser); // Lưu user để lấy email sau này
+
+            // Gửi email chào mừng ngầm (Async)
+            String subject = "Chào mừng bạn đến với TodoList!";
+            String content = "<h2>Chúc mừng " + username + "!</h2>"
+                    + "<p>Bạn đã đăng ký tài khoản thành công. Hãy bắt đầu quản lý công việc ngay nhé!</p>";
+            web.utils.EmailUtils.sendEmailAsync(email, subject, content);
+
+            response.sendRedirect(request.getContextPath() + "/app/inbox");
+        } else {
         WebUtils.sendError(request, response, "Đăng kí thất bại . Vui lòng thử lại", REGISTER_PAGE);
       }
     } catch (Exception e) {
@@ -159,25 +165,40 @@ public class AuthServlet extends HttpServlet {
    *                          operations
    */
   private void loginHandler(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    String username = request.getParameter("username");
-    String password = request.getParameter("password");
+          throws ServletException, IOException {
+      String username = request.getParameter("username");
+      String password = request.getParameter("password");
 
-    if (userDAO.authenticate(username, password)) {
-      User user = userDAO.getUserByUsername(username);
-      HttpSession session = request.getSession();
-      session.setAttribute("currentUser", user);
+      if (userDAO.authenticate(username, password)) {
+          User user = userDAO.getUserByUsername(username);
+          HttpSession session = request.getSession();
+          session.setAttribute("currentUser", user);
 
-      if (user.isAdmin()) {
-        response.sendRedirect(request.getContextPath() + "/admin/users");
+          // --- BẮT ĐẦU LOGIC GỬI EMAIL KHI ĐĂNG NHẬP ---
+          if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+              web.dao.TaskDAO taskDAO = factory.getTaskDAO();
+              java.time.LocalDate today = java.time.LocalDate.now();
 
+              // Lấy dữ liệu task giống như logic trong Scheduler
+              java.util.List<web.model.Task> overdue = taskDAO.getOverdueTaskByUserID(user.getId());
+              java.util.List<web.model.Task> todayTasks = taskDAO.getTodayTaskByUserID(user.getId());
+              java.util.List<web.model.Task> tomorrow = taskDAO.getTasksDueOn(user.getId(), today.plusDays(1));
+
+              // Nếu có task thì gửi mail thông báo
+              if (!overdue.isEmpty() || !todayTasks.isEmpty() || !tomorrow.isEmpty()) {
+                  web.utils.EmailUtils.sendTaskReminder(user, overdue, todayTasks, tomorrow);
+              }
+          }
+          // --- KẾT THÚC LOGIC ---
+
+          if (user.isAdmin()) {
+              response.sendRedirect(request.getContextPath() + "/admin/users");
+          } else {
+              response.sendRedirect(request.getContextPath() + "/app/inbox");
+          }
       } else {
-        response.sendRedirect(request.getContextPath() + "/app/inbox");
+          WebUtils.sendError(request, response, "Invalid username or password", LOGIN_PAGE);
       }
-
-    } else {
-      WebUtils.sendError(request, response, "Invalid username or password", LOGIN_PAGE);
-    }
   }
 
   /**
@@ -194,7 +215,7 @@ public class AuthServlet extends HttpServlet {
    *                 the client
    * @throws IOException if an exception occurs during the input/output operations
    */
-  private void logoutHandler(HttpServletRequest request, HttpServletResponse response) {
+  private void logoutHandler(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     HttpSession session = request.getSession(false);
     if (session != null) {
       session.invalidate();
@@ -208,7 +229,7 @@ public class AuthServlet extends HttpServlet {
     try {
       response.sendRedirect(request.getContextPath() + "/auth/login");
     } catch (IOException e) {
-      e.printStackTrace();
+        e.printStackTrace();
     }
   }
 }

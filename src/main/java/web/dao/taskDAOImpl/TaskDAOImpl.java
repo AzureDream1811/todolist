@@ -447,4 +447,22 @@ public class TaskDAOImpl implements TaskDAO {
         return null;
     }
 
+    // Thêm vào TaskDAOImpl.java
+    public List<Task> getTasksDueOn(int userId, java.time.LocalDate date) {
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = ? AND completed_at IS NULL";
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            statement.setDate(2, java.sql.Date.valueOf(date));
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                tasks.add(mapResultSetToTask(rs)); // Tận dụng hàm map có sẵn của bạn
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tasks;
+    }
 }

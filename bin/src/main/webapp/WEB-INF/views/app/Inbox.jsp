@@ -1,0 +1,63 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: ducph
+  Date: 11/1/2025
+  Time: 11:49 AM
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<html>
+<head>
+    <title>Inbox</title>
+</head>
+<body>
+<!-- add sidebar-->
+<jsp:include page="/WEB-INF/views/component/Sidebar.jsp">
+    <jsp:param name="active" value="inbox"/>
+</jsp:include>
+
+<!-- main -->
+<h2>Inbox</h2>
+<%-- error --%>
+<c:if test="${not empty requestScope.error}">
+    <p style="color: red">${requestScope.error}</p>
+</c:if>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Priority</th>
+        <th>Completed</th>
+        <th>Due Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach var="task" items="${requestScope.tasks}">
+        <tr>
+            <td>${task.id}</td>
+            <td>${task.title}</td>
+            <td>${task.description}</td>
+            <td>${task.priority}</td>
+            <td>${task.completedAt != null ? 'Yes' : 'No'}</td>
+            <td>${task.dueDate}</td>
+        </tr>
+    </c:forEach>
+    </tbody>
+</table>
+
+<%-- Include AddTask component với tham số taskType --%>
+<jsp:include page="../component/AddTask.jsp">
+    <jsp:param name="taskType" value="inbox"/>
+</jsp:include>
+
+<jsp:include page="../component/DeleteTask.jsp">
+    <jsp:param name="taskType" value="inbox"/>
+</jsp:include>
+
+</body>
+</html>

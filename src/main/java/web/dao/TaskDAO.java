@@ -35,5 +35,5 @@ public interface TaskDAO {
 
     Task mapResultSetToTask(ResultSet rs) throws SQLException;
 
-
+    List<Task> getTasksDueOn(int userId, java.time.LocalDate date);
 }

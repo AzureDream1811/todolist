@@ -93,7 +93,11 @@ public class AppServlet extends HttpServlet {
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    User currentUser = WebUtils.validateAndGetUser(request, response);
+      // THÊM DÒNG NÀY ĐẦU TIÊN: Thiết lập đọc dữ liệu từ Form là UTF-8
+      request.setCharacterEncoding("UTF-8");
+      response.setCharacterEncoding("UTF-8");
+
+      User currentUser = WebUtils.validateAndGetUser(request, response);
     if (currentUser == null)
       return;
 
@@ -229,10 +233,19 @@ public class AppServlet extends HttpServlet {
 
       taskDAO.createTask(task);
 
+      if (currentUser.getEmail() != null) {
+          String mailContent = "<h3>Bạn vừa thêm một công việc mới!</h3>" +
+                  "<p>Tiêu đề: <b>" + title + "</b></p>" +
+                  "<p>Nội dung: <b>"+ description + "<p><b>" +
+                  "<p>Hạn chót: " + (dueDate.isEmpty() ? "Không có" : dueDate) + "</p>";
+
+          web.utils.EmailUtils.sendEmailAsync(currentUser.getEmail(), "Thông báo Task mới", mailContent);
+      }
+
       String redirectPath = determineRedirectPath(taskType);
       response.sendRedirect(request.getContextPath() + redirectPath);
-
-      response.sendRedirect(request.getContextPath() + "/app/inbox");
+      return;
+      //response.sendRedirect(request.getContextPath() + "/app/inbox");
     } catch (Exception e) {
       WebUtils.sendError(request, response, "Error adding task", "/app/tasks");
     }
@@ -544,6 +557,7 @@ public class AppServlet extends HttpServlet {
       if (success) {
         String finalRedirectPath = determineRedirectPathAfterDelete(redirectPath);
         response.sendRedirect(request.getContextPath() + finalRedirectPath);
+        return;
       } else {
         WebUtils.sendError(request, response, "Error deleting task", determineRedirectPathAfterDelete(redirectPath));
       }

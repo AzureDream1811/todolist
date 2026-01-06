@@ -46,14 +46,6 @@
                 Logout
             </a>
         </li>
-        <c:if test="${sessionScope.currentUser != null && sessionScope.currentUser.admin}">
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/users">Admin: Users</a>
-            </li>
-            <li>
-                <a href="${pageContext.request.contextPath}/admin/tasks">Admin: Tasks</a>
-            </li>
-        </c:if>
     </ul>
 </div>
 </body>

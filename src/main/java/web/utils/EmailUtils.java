@@ -67,9 +67,9 @@ public class EmailUtils {
             message.setContent(body, "text/html; charset=UTF-8");
 
             Transport.send(message);
-            System.out.println("==> Đã gửi email thành công đến: " + toEmail);
+            System.out.println("==> Email sent successfully to: " + toEmail);
         } catch (MessagingException e) {
-            System.err.println("==> Lỗi gửi Email: " + e.getMessage());
+            System.err.println("==> Email sending error: " + e.getMessage());
         }
     }
     /**
@@ -84,22 +84,22 @@ public class EmailUtils {
         StringBuilder sb = new StringBuilder();
         sb.append("<div>");
         sb.append("<h1>Chào ").append(user.getUsername()).append(",</h1>");
-        sb.append("<p>Đây là tóm tắt danh sách công việc cần lưu ý của bạn.</p>");
+        sb.append("<p>This is a summary of your to-do list.</p>");
         if (!overdue.isEmpty()) {
-            renderTaskSection(sb, "🔴 Công việc quá hạn", overdue, true);
+            renderTaskSection(sb, "🔴 Overdue work", overdue, true);
         }
         if (!today.isEmpty()) {
-            renderTaskSection(sb, "📅 Hôm nay (Trước 0h)", today, false);
+            renderTaskSection(sb, "📅 Today (Before midnight)", today, false);
         }
         if (!tomorrow.isEmpty()) {
             String tomorrowDate = java.time.LocalDate.now().plusDays(1).toString();
-            renderTaskSection(sb, "🟢 Ngày mai", tomorrow, false);
+            renderTaskSection(sb, "🟢 Tomorrow", tomorrow, false);
         }
-        sb.append("<div><a href='http://localhost:8080/todolist_war_exploded/'>Xem chi tiết tại hệ thống</a></div>");
-        sb.append("<p>Chúc bạn một ngày làm việc hiệu quả!</p>");
+        sb.append("<div><a href='http://localhost:8080/todolist_war_exploded/'>See details in the system</a></div>");
+        sb.append("<p>Have a productive workday!</p>");
         sb.append("</div>");
 
-        sendEmailAsync(user.getEmail(), "Thông báo công việc - " + user.getUsername(), sb.toString());
+        sendEmailAsync(user.getEmail(), "Job announcement - " + user.getUsername(), sb.toString());
     }
     /**
      * Renders a specific section of the task list in HTML format.

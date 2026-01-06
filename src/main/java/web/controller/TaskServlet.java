@@ -128,9 +128,9 @@ public class TaskServlet extends HttpServlet {
         if (currentUser.getEmail() != null && !currentUser.getEmail().isEmpty()) {
             EmailUtils.sendEmailAsync(
                     currentUser.getEmail(),
-                    "Cập nhật công việc thành công",
-                    "<h3>Thông báo TodoList</h3>" +
-                            "<p>Bạn vừa cập nhật Task: <b>" + task.getDescription() + "</b></p>"
+                    "Task updated successfully",
+                    "<h3>TodoList Announcement</h3>" +
+                            "<p>You have just updated the Task: <b>" + task.getDescription() + "</b></p>"
             );
         }
         response.sendRedirect(request.getContextPath() + "/tasks/detail?taskId=" + task.getId());

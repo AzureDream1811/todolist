@@ -45,7 +45,7 @@ public class TaskReminderScheduler implements ServletContextListener {
             }
         }, initialDelay, 24, TimeUnit.HOURS);
 
-        System.out.println("==> [System] Scheduler khởi động. Email gửi sau " + initialDelay + " giây.");
+        System.out.println("==> [System] Scheduler starts. Email will be sent later. " + initialDelay + " second");
     }
 
     /**
@@ -54,7 +54,7 @@ public class TaskReminderScheduler implements ServletContextListener {
      * If any relevant tasks are found, it invokes EmailUtils to dispatch a reminder email.
      */
     private void executeDailyReminder() {
-        System.out.println("==> [TaskScheduler] Đang quét Task hàng ngày...");
+        System.out.println("==> [TaskScheduler] Scanning daily tasks...");
         TaskDAO taskDAO = DAOFactory.getInstance().getTaskDAO();
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
 
@@ -97,7 +97,7 @@ public class TaskReminderScheduler implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
         if (scheduler != null) {
             scheduler.shutdownNow();
-            System.out.println("==> [System] Task scheduler đã dừng.");
+            System.out.println("==> [System] Task scheduler has stopped");
         }
     }
 }

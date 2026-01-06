@@ -234,10 +234,10 @@ public class AppServlet extends HttpServlet {
       taskDAO.createTask(task);
 
       if (currentUser.getEmail() != null) {
-          String mailContent = "<h3>Bạn vừa thêm một công việc mới!</h3>" +
-                  "<p>Tiêu đề: <b>" + title + "</b></p>" +
-                  "<p>Nội dung: <b>"+ description + "<p><b>" +
-                  "<p>Hạn chót: " + (dueDate.isEmpty() ? "Không có" : dueDate) + "</p>";
+          String mailContent = "<h3>You've just added a new job!</h3>" +
+                  "<p>Title: <b>" + title + "</b></p>" +
+                  "<p>Description: <b>"+ description + "<p><b>" +
+                  "<p>Due date: " + (dueDate.isEmpty() ? "Don't have" : dueDate) + "</p>";
 
           web.utils.EmailUtils.sendEmailAsync(currentUser.getEmail(), "Thông báo Task mới", mailContent);
       }

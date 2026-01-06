@@ -97,28 +97,28 @@ public class AuthServlet extends HttpServlet {
 
         try {
             if (ValidationUtils.areAllNullOrEmpty(username, password, confirmPassword)) {
-                WebUtils.sendError(request, response, "Vui lòng điền đầy đủ thông tin", REGISTER_PAGE);
+                WebUtils.sendError(request, response, "Please fill in all the information", REGISTER_PAGE);
                 return;
             }
 
             if (!ValidationUtils.isNullOrEmpty(email) && !ValidationUtils.isValidEmail(email)) {
-                WebUtils.sendError(request, response, "Địa chỉ email không hợp lệ", REGISTER_PAGE);
+                WebUtils.sendError(request, response, "Invalid email address", REGISTER_PAGE);
                 return;
             }
 
             if (!ValidationUtils.isValidPassword(password, 8)) {
-                WebUtils.sendError(request, response, "Mật khẩu phải có ít nhất 8 kì tự", REGISTER_PAGE);
+                WebUtils.sendError(request, response, "The password must have at least 8 characters", REGISTER_PAGE);
                 return;
             }
 
             if (!confirmPassword.equals(password)) {
-                WebUtils.sendError(request, response, "Mật khẩu không khớp", REGISTER_PAGE);
+                WebUtils.sendError(request, response, "Password doesn't match", REGISTER_PAGE);
                 return;
             }
 
             User existingUser = userDAO.getUserByUsername(username);
             if (existingUser != null) {
-                WebUtils.sendError(request, response, "Người dùng đã tồn tại", REGISTER_PAGE);
+                WebUtils.sendError(request, response, "The user already exists", REGISTER_PAGE);
                 return;
             }
 
@@ -129,17 +129,17 @@ public class AuthServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("currentUser", createdUser);
 
-                String subject = "Chào mừng bạn đến với TodoList!";
-                String content = "<h2>Chúc mừng " + username + "!</h2>"
-                        + "<p>Bạn đã đăng ký tài khoản thành công. Hãy bắt đầu quản lý công việc ngay nhé!</p>";
+                String subject = "Welcome to TodoList!";
+                String content = "<h2>Congratulations " + username + "!</h2>"
+                        + "<p>You have successfully registered an account. Start managing your tasks now!</p>";
                 web.utils.EmailUtils.sendEmailAsync(email, subject, content);
 
                 response.sendRedirect(request.getContextPath() + "/app/inbox");
             } else {
-                WebUtils.sendError(request, response, "Đăng kí thất bại . Vui lòng thử lại", REGISTER_PAGE);
+                WebUtils.sendError(request, response, "Registration failed. Please try again", REGISTER_PAGE);
             }
         } catch (Exception e) {
-            WebUtils.sendError(request, response, "Lỗi hệ thống", REGISTER_PAGE);
+            WebUtils.sendError(request, response, "System error", REGISTER_PAGE);
         }
     }
 

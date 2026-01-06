@@ -21,21 +21,14 @@ public class WebUtils {
      * @throws IOException if an exception occurs during the input/output operations
      */
     public static User validateAndGetUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
 
-        if (session == null) {
+        if (session == null || session.getAttribute("currentUser") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return null;
         }
 
-        User currentUser = (User) session.getAttribute("currentUser");
-
-        if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return null;
-        }
-
-        return currentUser;
+        return (User) session.getAttribute("currentUser");
     }
 
     /**
@@ -44,9 +37,11 @@ public class WebUtils {
      */
     public static User validateAdminAndGetUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User currentUser = validateAndGetUser(request, response);
+
         if (currentUser == null) return null;
+
         if (!currentUser.isAdmin()) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập");
             return null;
         }
         return currentUser;

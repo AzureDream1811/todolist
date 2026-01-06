@@ -194,7 +194,7 @@ public class AuthServlet extends HttpServlet {
    *                 the client
    * @throws IOException if an exception occurs during the input/output operations
    */
-  private void logoutHandler(HttpServletRequest request, HttpServletResponse response) {
+  private void logoutHandler(HttpServletRequest request, HttpServletResponse response) throws IOException{
     HttpSession session = request.getSession(false);
     if (session != null) {
       session.invalidate();

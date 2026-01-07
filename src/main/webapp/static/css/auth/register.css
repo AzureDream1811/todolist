@@ -1,0 +1,183 @@
+/* =========================================== */
+/* REGISTER PAGE SPECIFIC STYLES               */
+/* =========================================== */
+
+/* Thông báo lỗi */
+.error-message {
+    background: rgba(239, 68, 68, 0.1); /* */
+    color: #dc2626; /* */
+    padding: 12px 20px; /* */
+    border-radius: 12px; /* */
+    border-left: 4px solid #dc2626; /* */
+    margin-bottom: 25px; /* */
+    font-size: 14px; /* */
+    font-weight: 500; /* */
+    text-align: center; /* */
+}
+
+.welcome-title {
+    margin-bottom: 0;
+}
+
+.register-form {
+    width: 100%; /* */
+}
+
+.form-group {
+    margin-bottom: 20px; /* Tăng khoảng cách giữa các ô */
+}
+
+.form-label {
+    display: block; /* */
+    margin-bottom: 8px; /* */
+    font-weight: 600; /* */
+    color: var(--text-main); /* */
+    font-size: 15px; /* */
+}
+
+/* TẤT CẢ FILE NHẬP LIỆU MÀU VÀNG NHẠT */
+.form-input {
+    width: 100%; /* */
+    padding: 14px 18px; /* */
+    margin: 10px 0 0 0;
+    border: 1.5px solid rgba(0, 0, 0, 0.1); /* */
+    border-radius: 16px; /* */
+    font-size: 16px; /* */
+    background-color: #fffde1 !important; /* Ép màu vàng nhạt đồng nhất cho Email, Password, Confirm */
+    transition: all 0.3s ease; /* */
+    font-family: inherit; /* */
+}
+
+.form-input:focus {
+    outline: none; /* */
+    border-color: var(--color-deep-purple); /* */
+    background-color: #ffffff !important; /* Chuyển sang trắng khi focus để dễ nhìn */
+    box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.15); /* */
+    transform: translateY(-1px); /* */
+}
+
+/* NÚT ĐĂNG KÝ GIỐNG LOGIN (TÍM TRÀN VIỀN) */
+.button-section {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.btn-register-main {
+    width: 100%; /* Tràn viền giống nút Đăng nhập */
+    background-color: var(--color-deep-purple); /* */
+    color: white; /* */
+    border: none; /* */
+    padding: 14px; /* */
+    border-radius: 25px; /* */
+    font-weight: 700; /* */
+    font-size: 16px; /* */
+    cursor: pointer; /* */
+    transition: transform 0.2s, background-color 0.2s; /* */
+}
+
+.btn-register-main:hover {
+    background-color: #7e22ce; /* */
+    transform: translateY(-2px); /* */
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+}
+
+/* LINK ĐĂNG NHẬP DẠNG CHỮ */
+.login-prompt {
+    text-align: left;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.login-link-prompt {
+    color: var(--color-deep-purple);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.login-link-prompt:hover {
+    text-decoration: underline;
+}
+
+/* ĐƯỜNG KẺ "OR" ĐỂ ĐỒNG BỘ VỚI LOGIN */
+.divider-with-text {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+}
+
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.divider-or {
+    padding: 0 15px;
+    color: #8e8e8e;
+    font-size: 14px;
+}
+
+/*google*/
+.btn-google {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    padding: 12px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-google:hover {
+    background-color: #f8fafc;
+}
+
+.google-icon {
+    color: #4285f4;
+    margin-left: 20px;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.btn-text {
+    margin-left: 6px;
+}
+
+/* Điều khoản */
+.terms-section {
+    margin-top: 20px;
+}
+
+.terms-text {
+    font-size: 12px; /* */
+    color: var(--text-secondary); /* */
+    text-align: center; /* */
+    line-height: 1.5; /* */
+}
+
+.terms-link {
+    color: var(--color-deep-purple); /* */
+    text-decoration: none; /* */
+    font-weight: 600; /* */
+}
+
+.terms-link:hover {
+    text-decoration: underline; /* */
+}
+
+/* Hiệu ứng mờ dần khi hiện form */
+.auth-form-container {
+    animation: fadeInUp ease-out; /* */
+    padding: 20px 30px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); } /* */
+    to { opacity: 1; transform: translateY(0); } /* */
+}

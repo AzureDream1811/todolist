@@ -10,7 +10,7 @@
 
 <div id="addTaskModal" class="task-modal">
     <div class="task-modal-content">
-        <form action="${pageContext.request.contextPath}/app/tasks" method="post" id="taskForm">
+        <form action="${pageContext.request.contextPath}/tasks/add" method="post" id="taskForm">
             <div class="task-input-section">
                 <input type="text" name="title" class="input-title" placeholder="Task name" required>
                 <textarea name="description" class="input-desc" placeholder="Description"></textarea>

@@ -43,7 +43,13 @@
 
                 <%-- BẮT BUỘC PHẢI CÓ VÒNG LẶP NÀY --%>
                 <c:forEach var="task" items="${requestScope.tasks}">
-                    <div class="task-item" id="task-row-${task.id}">
+                    <div class="task-item" id="task-row-${task.id}"
+                         data-task-id="${task.id}"
+                         data-task-title="${task.title}"
+                         data-task-description="${task.description}"
+                         data-task-due-date="${task.dueDate}"
+                         data-task-priority="${task.priority}"
+                         data-task-project-id="${task.projectIdObject != null ? task.projectIdObject : 0}">
                             <%-- Nút hoàn thành task --%>
                         <button type="button" class="task-check-btn" title="Mark as complete"
                                 onclick="handleComplete(${task.id})"></button>
@@ -67,10 +73,16 @@
                             </c:if>
                         </div>
 
-                        <button type="button" class="task-remove-btn" title="Delete task"
-                                onclick="handleDelete(${task.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div class="task-actions">
+                            <button type="button" class="task-edit-btn" title="Edit task"
+                                    onclick="handleEdit(${task.id})">
+                                <i class="fas fa-pencil"></i>
+                            </button>
+                            <button type="button" class="task-remove-btn" title="Delete task"
+                                    onclick="handleDelete(${task.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 </c:forEach>
             </div>
@@ -97,6 +109,9 @@
         </jsp:include>
     </div>
 </div>
+
+<%-- Edit Task Modal --%>
+<jsp:include page="../component/EditTask.jsp"/>
 
 <script>
     function handleComplete(taskId) {
@@ -217,6 +232,19 @@
                 console.error("Lỗi kết nối:", error);
                 alert("Lỗi kết nối. Vui lòng thử lại!");
             });
+    }
+
+    // Handle edit task
+    function handleEdit(taskId) {
+        const taskRow = document.getElementById('task-row-' + taskId);
+        if (taskRow) {
+            const title = taskRow.dataset.taskTitle;
+            const description = taskRow.dataset.taskDescription;
+            const dueDate = taskRow.dataset.taskDueDate;
+            const priority = taskRow.dataset.taskPriority;
+            const projectId = taskRow.dataset.taskProjectId;
+            openEditTaskModal(taskId, title, description, dueDate, priority, projectId);
+        }
     }
 </script>
 </body>

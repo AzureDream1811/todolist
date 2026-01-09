@@ -161,6 +161,72 @@
     font-size: 14px;
 }
 
+/* Task actions container */
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    margin-left: auto;
+}
+
+.task-item:hover .task-actions {
+    opacity: 1;
+}
+
+/* Edit button */
+.task-edit-btn {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 8px 10px;
+    transition: all 0.2s ease;
+}
+
+.task-edit-btn:hover {
+    color: #a435f0;
+    background-color: rgba(164, 53, 240, 0.1);
+    border-radius: 4px;
+}
+
+.task-edit-btn i {
+    font-size: 13px;
+}
+
+/* Edit Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 12px;
+}
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #202020;
+    margin: 0;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
 /* Đảm bảo task-item là flexbox để nút remove nằm bên phải */
 .task-item {
     display: flex;

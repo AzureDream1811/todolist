@@ -36,7 +36,13 @@
 
                 <%-- CHỈ HIỂN THỊ CÁC TASK TRONG DANH SÁCH todayTasks --%>
                 <c:forEach var="task" items="${requestScope.todayTasks}">
-                    <div class="task-item" id="task-row-${task.id}">
+                    <div class="task-item" id="task-row-${task.id}"
+                         data-task-id="${task.id}"
+                         data-task-title="${task.title}"
+                         data-task-description="${task.description}"
+                         data-task-due-date="${task.dueDate}"
+                         data-task-priority="${task.priority}"
+                         data-task-project-id="${task.projectIdObject != null ? task.projectIdObject : 0}">
                         <button type="button" class="task-check-btn" title="Mark as complete"
                                 onclick="handleComplete(${task.id})"></button>
 
@@ -59,6 +65,17 @@
                         </span>
                                 </label>
                             </div>
+                        </div>
+
+                        <div class="task-actions">
+                            <button type="button" class="task-edit-btn" title="Edit task"
+                                    onclick="handleEdit(${task.id})">
+                                <i class="fas fa-pencil"></i>
+                            </button>
+                            <button type="button" class="task-remove-btn" title="Delete task"
+                                    onclick="handleDelete(${task.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 </c:forEach>
@@ -92,6 +109,9 @@
         </jsp:include>
     </div>
 </div>
+
+<%-- Edit Task Modal --%>
+<jsp:include page="../component/EditTask.jsp"/>
 
 <script>
     function handleComplete(taskId) {
@@ -173,6 +193,51 @@
             body: 'id=' + taskId + '&dueDate=' + newDate
         }).then(response => {
             if (response.ok) location.reload();
+        });
+    }
+
+    // Handle edit task
+    function handleEdit(taskId) {
+        const taskRow = document.getElementById('task-row-' + taskId);
+        if (taskRow) {
+            const title = taskRow.dataset.taskTitle;
+            const description = taskRow.dataset.taskDescription;
+            const dueDate = taskRow.dataset.taskDueDate;
+            const priority = taskRow.dataset.taskPriority;
+            const projectId = taskRow.dataset.taskProjectId;
+            openEditTaskModal(taskId, title, description, dueDate, priority, projectId);
+        }
+    }
+
+    // Handle delete task
+    function handleDelete(taskId) {
+        if (!confirm('Are you sure you want to delete this task?')) {
+            return;
+        }
+
+        const taskRow = document.getElementById('task-row-' + taskId);
+        if (taskRow) {
+            taskRow.classList.add('fade-out');
+        }
+
+        fetch('${pageContext.request.contextPath}/tasks/delete', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'taskId=' + taskId
+        })
+        .then(response => {
+            if (response.ok) {
+                setTimeout(() => {
+                    if (taskRow) taskRow.remove();
+                }, 400);
+            } else {
+                if (taskRow) taskRow.classList.remove('fade-out');
+                alert('Cannot delete task. Please try again!');
+            }
+        })
+        .catch(error => {
+            if (taskRow) taskRow.classList.remove('fade-out');
+            console.error('Error:', error);
         });
     }
 </script>

@@ -36,7 +36,7 @@ public class ProjectServlet extends HttpServlet {
         }
 
         if ("/add".equals(path)) {
-            request.getRequestDispatcher("/addProject.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/component/AddProject.jsp").forward(request, response);
             return;
         }
 
@@ -46,6 +46,9 @@ public class ProjectServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         String path = request.getPathInfo();
 
         if (path == null) {
@@ -79,11 +82,14 @@ public class ProjectServlet extends HttpServlet {
             return;
         }
 
-        try{
+        try {
             int projectId = Integer.parseInt(projectIdStr);
-            projectDAO.deleteProjectById(projectId);
-
-        } catch(NumberFormatException e){
+            // Security check: Only delete project if it belongs to the user
+            Project project = projectDAO.getProjectByIdAndUserId(projectId, user.getId());
+            if (project != null) {
+                projectDAO.deleteProjectById(projectId);
+            }
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
 
@@ -122,7 +128,7 @@ public class ProjectServlet extends HttpServlet {
 
         if (projectName == null || projectName.trim().isEmpty()) {
             request.setAttribute("error", "Project name is required");
-            request.getRequestDispatcher("/addProject.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/component/AddProject.jsp").forward(request, response);
 
             return;
         }

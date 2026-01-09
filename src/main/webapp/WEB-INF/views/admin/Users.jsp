@@ -10,7 +10,9 @@
 </head>
 <body>
 <div class="admin-layout">
-    <jsp:include page="/WEB-INF/views/admin/AdminSidebar.jsp"/>
+    <jsp:include page="/WEB-INF/views/admin/AdminSidebar.jsp">
+        <jsp:param name="active" value="users"/>
+    </jsp:include>
 
     <div class="admin-content">
         <div class="admin-page-header">

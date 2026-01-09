@@ -20,6 +20,7 @@ import web.utils.WebUtils;
 
 @WebServlet("/admin/*")
 public class AdminServlet extends HttpServlet {
+    private static final String ADMIN_DASHBOARD_PAGE = "/WEB-INF/views/admin/Dashboard.jsp";
     private static final String ADMIN_USERS_PAGE = "/WEB-INF/views/admin/Users.jsp";
     private static final String ADMIN_TASKS_PAGE = "/WEB-INF/views/admin/Tasks.jsp";
     private static final String ADMIN_PROJECTS_PAGE = "/WEB-INF/views/admin/Projects.jsp";
@@ -41,6 +42,11 @@ public class AdminServlet extends HttpServlet {
         String action = (pathInfo == null || pathInfo.equals("/")) ? "/" : pathInfo;
 
         switch (action) {
+            case "/":
+            case "/dashboard":
+                getDashboard(request, response);
+                break;
+
             case "/users":
                 getUsers(request, response);
                 break;
@@ -53,12 +59,54 @@ public class AdminServlet extends HttpServlet {
                 getProjects(request, response);
                 break;
 
-            case "/":
-                response.sendRedirect(request.getContextPath() + "/admin/users");
-                break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 break;
+        }
+    }
+
+    /**
+     * Handles the GET request for the admin dashboard.
+     * Retrieves statistics and recent data for display.
+     */
+    private void getDashboard(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            // Get statistics
+            List<User> allUsers = userDAO.getAllUsers();
+            List<Task> allTasks = taskDAO.getAllTasks();
+            List<Project> allProjects = projectDAO.getAllProjects();
+            
+            int totalUsers = allUsers.size();
+            int totalTasks = allTasks.size();
+            int totalProjects = allProjects.size();
+            int completedTasks = (int) allTasks.stream()
+                    .filter(t -> t.getCompletedAt() != null)
+                    .count();
+            
+            // Get recent users (last 5)
+            List<User> recentUsers = allUsers.size() > 5 
+                    ? allUsers.subList(allUsers.size() - 5, allUsers.size())
+                    : allUsers;
+            java.util.Collections.reverse(recentUsers);
+            
+            // Get recent tasks (last 5)
+            List<Task> recentTasks = allTasks.size() > 5
+                    ? allTasks.subList(allTasks.size() - 5, allTasks.size())
+                    : allTasks;
+            java.util.Collections.reverse(recentTasks);
+            
+            request.setAttribute("totalUsers", totalUsers);
+            request.setAttribute("totalTasks", totalTasks);
+            request.setAttribute("totalProjects", totalProjects);
+            request.setAttribute("completedTasks", completedTasks);
+            request.setAttribute("recentUsers", recentUsers);
+            request.setAttribute("recentTasks", recentTasks);
+            
+            request.getRequestDispatcher(ADMIN_DASHBOARD_PAGE).forward(request, response);
+        } catch (Exception e) {
+            request.setAttribute("error", "Error loading dashboard: " + e.getMessage());
+            request.getRequestDispatcher(ADMIN_DASHBOARD_PAGE).forward(request, response);
         }
     }
 

@@ -35,8 +35,7 @@
                 <c:choose>
                     <c:when test="${empty groupedTasks}">
                         <div class="empty-state" style="text-align: center; padding-top: 100px;">
-                            <img src="${pageContext.request.contextPath}/static/image/empty-completed.png" alt=""
-                                 style="width: 120px; opacity: 0.5;">
+                            <i class="fas fa-check-circle" style="font-size: 80px; color: #4caf50; opacity: 0.4;"></i>
                             <p style="color: #888; margin-top: 15px;">No completed tasks yet.</p>
                         </div>
                     </c:when>

@@ -5,15 +5,26 @@
   Time: 12:32 PM
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" isELIgnored="false" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/component/searchBar.css">
 <aside class="sidebar">
     <div class="user-profile-container">
         <div class="user-profile">
             <div class="user-info">
-                <div class="user-avatar">
-                    ${sessionScope.currentUser.username.substring(0,1).toUpperCase()}
-                </div>
+                <c:choose>
+                    <c:when test="${not empty sessionScope.currentUser.avatar}">
+                        <img src="${pageContext.request.contextPath}/${sessionScope.currentUser.avatar}" 
+                             alt="Avatar" 
+                             class="user-avatar-img"
+                             style="width: 26px; height: 26px; max-width: 26px; max-height: 26px; border-radius: 50%; object-fit: cover;">
+                    </c:when>
+                    <c:otherwise>
+                        <div class="user-avatar">
+                            ${sessionScope.currentUser.username.substring(0,1).toUpperCase()}
+                        </div>
+                    </c:otherwise>
+                </c:choose>
                 <span class="user-name">${sessionScope.currentUser.username}</span>
                 <i class="fa-solid fa-chevron-down toggle-icon"></i>
             </div>
@@ -29,10 +40,17 @@
                 <span class="task-summary">0/5 tasks</span>
             </div>
 
-            <div class="dropdown-divider"></div> <a href="${pageContext.request.contextPath}/auth/logout" class="dropdown-item logout-link">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span>Log out</span>
-        </a>
+            <div class="dropdown-divider"></div>
+            
+            <a href="${pageContext.request.contextPath}/app/profile" class="dropdown-item">
+                <i class="fa-solid fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+            
+            <a href="${pageContext.request.contextPath}/auth/logout" class="dropdown-item logout-link">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Log out</span>
+            </a>
         </div>
     </div>
 

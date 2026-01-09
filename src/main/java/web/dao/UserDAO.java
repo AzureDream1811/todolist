@@ -23,5 +23,7 @@ public interface UserDAO {
 
     void promoteUser(int id);
 
+    void updateAvatar(int userId, String avatarPath);
+
     User mapResultSetToUser(ResultSet rs) throws SQLException;
 }

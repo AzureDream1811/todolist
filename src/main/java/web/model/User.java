@@ -8,6 +8,7 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private String avatar;
     private LocalDate createdAt;
     private String role = "USER";
 
@@ -44,6 +45,14 @@ public class User {
         this.email = email;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -78,6 +87,7 @@ public class User {
                 "id=" + id +
                 ", name='" + username + '\'' +
                 ", email='" + email + '\'' +
+                ", avatar='" + avatar + '\'' +
                 ", password='" + password + '\'' +
                 ", createdAt=" + createdAt +
                 ", role='" + role + '\'' +

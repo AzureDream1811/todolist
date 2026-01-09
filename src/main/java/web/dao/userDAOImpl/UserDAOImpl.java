@@ -151,6 +151,13 @@ public class UserDAOImpl implements UserDAO {
         } catch (SQLException ignored) {
             // column might not exist in older schemas - ignore
         }
+        // populate avatar if present in the resultset
+        try {
+            String avatar = rs.getString("avatar");
+            user.setAvatar(avatar);
+        } catch (SQLException ignored) {
+            // column might not exist in older schemas - ignore
+        }
         return user;
     }
 
@@ -210,6 +217,25 @@ public class UserDAOImpl implements UserDAO {
             statement.setInt(1, id);
             statement.executeUpdate();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Updates the avatar path for a user.
+     *
+     * @param userId the ID of the user
+     * @param avatarPath the path to the avatar image
+     */
+    @Override
+    public void updateAvatar(int userId, String avatarPath) {
+        String sql = "UPDATE users SET avatar = ? WHERE id = ?";
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, avatarPath);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }

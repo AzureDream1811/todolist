@@ -73,6 +73,18 @@ aside.sidebar {
     font-size: 12px;
 }
 
+.user-avatar-img {
+    width: 26px !important;
+    height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
+    min-width: 26px;
+    min-height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-pink);
+}
+
 /* Style cho Thẻ giả Dropdown */
 .user-dropdown-card {
     position: absolute;

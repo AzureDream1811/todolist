@@ -86,7 +86,8 @@
 
                 <div id="inlineAddTaskForm" style="display: none;">
                     <jsp:include page="../component/AddTask.jsp">
-                        <jsp:param name="taskType" value="inbox"/>
+                        <jsp:param name="taskType" value="project"/>
+                        <jsp:param name="projectIdParam" value="${requestScope.project.id}"/>
                     </jsp:include>
                 </div>
             </div>
@@ -97,7 +98,8 @@
 <div id="sidebarAddTaskModal" class="modal-overlay">
     <div class="modal-box">
         <jsp:include page="../component/AddTask.jsp">
-            <jsp:param name="taskType" value="inbox"/>
+            <jsp:param name="taskType" value="project"/>
+            <jsp:param name="projectIdParam" value="${requestScope.project.id}"/>
         </jsp:include>
     </div>
 </div>

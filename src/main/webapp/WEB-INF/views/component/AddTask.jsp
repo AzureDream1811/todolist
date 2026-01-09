@@ -47,7 +47,7 @@
                     <select name="projectId" class="inline-select">
                         <option value="0">Inbox</option>
                         <c:forEach var="project" items="${requestScope.projects}">
-                            <option value="${project.id}">${project.name}</option>
+                            <option value="${project.id}" ${param.projectIdParam == project.id ? 'selected' : ''}>${project.name}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -59,6 +59,7 @@
             </div>
 
             <input type="hidden" name="taskType" value="${param.taskType}">
+            <input type="hidden" name="redirectProjectId" value="${param.projectIdParam}">
             <input type="hidden" name="completed" value="false">
         </form>
     </div>

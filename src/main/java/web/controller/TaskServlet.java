@@ -140,6 +140,7 @@ public class TaskServlet extends HttpServlet {
             String priorityParam = request.getParameter("priority");
             String projectIdParam = request.getParameter("projectId");
             String taskType = request.getParameter("taskType");
+            String redirectProjectIdParam = request.getParameter("redirectProjectId");
 
             Task task = new Task();
             task.setTitle(title);
@@ -185,7 +186,10 @@ public class TaskServlet extends HttpServlet {
                 EmailUtils.sendEmailAsync(currentUser.getEmail(), "Task Notification", mailContent);
             }
 
-            String redirectPath = determineRedirectPath(taskType);
+            // Use redirectProjectId for redirect (to stay on the same project page)
+            int redirectProjectId = (redirectProjectIdParam != null && !redirectProjectIdParam.isEmpty()) 
+                    ? Integer.parseInt(redirectProjectIdParam) : projectId;
+            String redirectPath = determineRedirectPath(taskType, redirectProjectId);
             response.sendRedirect(request.getContextPath() + redirectPath);
         } catch (Exception e) {
             e.printStackTrace();
@@ -203,13 +207,15 @@ public class TaskServlet extends HttpServlet {
      * to the inbox page. If the task type is "today", it returns the path to the
      * today
      * page. If the task type is "upcoming", it returns the path to the upcoming
-     * page. If
-     * the task type is anything else, it returns the path to the inbox page.
+     * page. If the task type is "project", it returns the path to the project
+     * detail page. If the task type is anything else, it returns the path to the
+     * inbox page.
      * 
      * @param taskType the task type to determine the redirect path for
+     * @param projectId the project ID to redirect to (used when taskType is "project")
      * @return the redirect path to the corresponding page
      */
-    private String determineRedirectPath(String taskType) {
+    private String determineRedirectPath(String taskType, int projectId) {
         if (taskType == null || taskType.isEmpty()) {
             return "/app/inbox";
         }
@@ -218,6 +224,8 @@ public class TaskServlet extends HttpServlet {
                 return "/app/today";
             case "upcoming":
                 return "/app/upcoming";
+            case "project":
+                return "/app/projects?id=" + projectId;
             case "inbox":
             default:
                 return "/app/inbox";

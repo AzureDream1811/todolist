@@ -223,6 +223,8 @@ aside.sidebar {
     background-color: var(--color-pink);
 }
 
+
+
 /* 3. Navigation */
 .sidebar-nav {
     flex: 1;
@@ -262,10 +264,10 @@ aside.sidebar {
 }
 
 /* Màu icon đặc trưng */
-.icon-inbox { color: #246fe0; }
-.icon-today { color: #058527; }
-.icon-upcoming { color: #692ec2; }
-.icon-completed { color: #808080; }
+/*.icon-inbox { color: #246fe0; }*/
+/*.icon-today { color: #058527; }*/
+/*.icon-upcoming { color: #692ec2; }*/
+/*.icon-completed { color: #808080; }*/
 
 .item-count {
     font-size: 12px;
@@ -330,6 +332,27 @@ aside.sidebar {
 .project-dot {
     color: #888;
     font-size: 14px !important;
+}
+
+/* Trạng thái bình thường của icon */
+.add-project-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Tạo hình tròn */
+    color: #666; /* Màu dấu cộng mặc định */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out; /* Hiệu ứng mượt mà */
+    font-size: 14px;
+}
+
+/* Trạng thái khi di chuột vào (Hover) giống ảnh image_1c6aaa.png */
+.add-project-icon:hover {
+    background-color: #a435f0; /* Màu tím đặc trưng của nút Add task */
+    color: #ffffff !important; /* Dấu cộng chuyển sang màu trắng */
+    transform: scale(1.1); /* Phóng to nhẹ một chút cho sinh động */
 }
 
 /* 5. Footer */

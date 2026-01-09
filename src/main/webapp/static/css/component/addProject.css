@@ -1,0 +1,109 @@
+/* ==========================================================================
+   ADD PROJECT STYLES - ĐỒNG BỘ HOÀN TOÀN VỚI ADD TASK
+   ========================================================================== */
+
+/* --- 1. LỚP PHỦ (OVERLAY) --- */
+/* Sử dụng ID cụ thể để ghi đè và đảm bảo căn giữa */
+#addProjectModal.modal-overlay {
+    display: none; /* Mặc định ẩn, JS sẽ chuyển thành flex */
+    position: fixed;
+    z-index: 10000; /* Cao hơn một chút so với task để ưu tiên hiển thị */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền tối mờ */
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px); /* Hiệu ứng mờ kính giống addTask */
+}
+
+/* --- 2. HỘP THOẠI CHÍNH (MODAL BOX) --- */
+.project-modal-box {
+    width: 100%;
+    max-width: 450px; /* Độ rộng nhỏ hơn Add Task (550px) để phân biệt loại dữ liệu */
+    background: #fff;
+    border-radius: 12px; /* Bo góc 12px đồng bộ với Task */
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    /* Sử dụng chung animation trượt lên của Task */
+    animation: modalSlideUp 0.3s ease-out;
+}
+
+/* Tái sử dụng Animation từ addTask.css nếu đã khai báo, hoặc khai báo lại ở đây */
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 3. NỘI DUNG BÊN TRONG (TÁI SỬ DỤNG CLASS CỦA TASK) --- */
+
+/* Đảm bảo padding 12px xung quanh form */
+#addProjectModal .task-modal-content {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Định dạng riêng cho ID projectName để đảm bảo nó giống input-title */
+#projectName.input-title {
+    width: 100%;
+    border: none !important;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    color: #202020;
+    padding: 4px 0;
+    background: transparent;
+}
+
+#projectName.input-title::placeholder {
+    color: #aaa;
+}
+
+/* Tùy chỉnh hàng Option của Project cho đẹp */
+#addProjectModal .task-options-row {
+    display: flex;
+    gap: 8px;
+    margin: 4px 0;
+}
+
+/* Tùy chỉnh Footer cho nút bấm */
+#addProjectModal .task-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+    margin-top: 5px;
+}
+
+/* Nút Submit riêng cho Project (Nếu muốn dùng màu tím của bạn) */
+#addProjectModal .btn-add {
+    background-color: #a435f0; /* Màu Deep Purple của Task */
+    color: white;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: opacity 0.2s;
+}
+
+#addProjectModal .btn-add:hover {
+    opacity: 0.9;
+}
+
+/* Nút Cancel */
+#addProjectModal .btn-cancel {
+    background: #f5f5f5;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    color: #444;
+}

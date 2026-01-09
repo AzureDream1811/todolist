@@ -258,3 +258,25 @@ aside.sidebar {
     transform: translateX(20px);
     transition: all 0.4s ease;
 }
+
+/* Sử dụng class cha .sidebar-section-title để định vị chính xác icon */
+/* Viết cụ thể kèm theo class cha của sidebar */
+/* Sử dụng selector trực tiếp và mạnh hơn */
+.add-project-icon {
+    width: 24px !important;
+    height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    color: #666; /* Màu dấu cộng mặc định */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out !important;
+    font-size: 14px !important;
+}
+
+/* Hiệu ứng Hover: Hình tròn màu tím, dấu cộng màu trắng */
+.add-project-icon:hover {
+    background-color: #a435f0 !important; /* Màu tím đặc trưng */
+    color: #ffffff !important;           /* Dấu cộng chuyển sang trắng */
+}

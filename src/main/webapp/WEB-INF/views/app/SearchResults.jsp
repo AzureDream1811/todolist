@@ -28,7 +28,6 @@
             <div class="search-results-container">
                 <!-- Search Header with Search Bar -->
                 <div class="search-results-header">
-                    <jsp:include page="/WEB-INF/views/component/SearchBar.jsp"/>
                     <h2>Search Results</h2>
                     <p>
                         <c:choose>

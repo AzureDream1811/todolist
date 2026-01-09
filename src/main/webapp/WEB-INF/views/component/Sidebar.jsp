@@ -8,6 +8,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" isELIgnored="false" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/component/searchBar.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/component/addProject.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app/app.css">
+
 <aside class="sidebar">
     <div class="user-profile-container">
         <div class="user-profile">
@@ -54,11 +57,6 @@
         </div>
     </div>
 
-    <!-- Global Search Bar -->
-    <div class="sidebar-search">
-        <jsp:include page="/WEB-INF/views/component/SearchBar.jsp"/>
-    </div>
-
     <div class="sidebar-actions">
         <a href="javascript:void(0)" onclick="openAddTaskModal()" class="btn-add-task-quick">
             <i class="fa-solid fa-circle-plus"></i> Add task
@@ -66,19 +64,25 @@
     </div>
 
     <nav class="sidebar-nav">
+        <!-- Global Search Bar -->
+        <a href="javascript:void(0)" onclick="openSearchModal()"
+           class="sidebar-item ${param.active == 'search' ? 'active' : ''}">
+            <div class="sidebar-item-content">
+                <i class="fa-solid fa-magnifying-glass icon-search"></i> Search
+            </div>
+        </a>
+
         <a href="${pageContext.request.contextPath}/app/inbox"
            class="sidebar-item ${param.active == 'inbox' ? 'active' : ''}">
             <div class="sidebar-item-content">
                 <i class="fa-solid fa-inbox icon-inbox"></i> Inbox
             </div>
-            <span class="item-count">4</span>
         </a>
         <a href="${pageContext.request.contextPath}/app/today"
            class="sidebar-item ${param.active == 'today' ? 'active' : ''}">
             <div class="sidebar-item-content">
                 <i class="fa-regular fa-calendar icon-today"></i> Today
             </div>
-            <span class="item-count">4</span>
         </a>
         <a href="${pageContext.request.contextPath}/app/upcoming"
            class="sidebar-item ${param.active == 'upcoming' ? 'active' : ''}">
@@ -95,14 +99,13 @@
 
         <div class="sidebar-section">
             <div class="sidebar-section-title">
-                <span>My Projects</span>
-                <i class="fa-solid fa-plus add-project-icon"></i>
+                <a href="${pageContext.request.contextPath}/app/projects"
+                   class="project-title-link"
+                   style="text-decoration: none; color: inherit;">
+                    <span>My Projects</span>
+                </a>
+                <i class="fa-solid fa-plus add-project-icon" onclick="openAddProjectModal()"></i>
             </div>
-            <a href="${pageContext.request.contextPath}/app/projects" class="sidebar-item">
-                <div class="sidebar-item-content">
-                    <i class="fa-solid fa-hashtag project-dot"></i> Projects
-                </div>
-            </a>
         </div>
     </nav>
 
@@ -112,3 +115,43 @@
         </a>
     </div>
 </aside>
+
+<script>
+    function toggleAddProject() {
+        const container = document.getElementById('add-project-container');
+        // Kiểm tra nếu container tồn tại để tránh lỗi console
+        if (container) {
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+    }
+
+    // Mở Modal Add Project
+    function openAddProjectModal() {
+        const modal = document.getElementById('addProjectModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            // Focus vào ô input ngay khi mở
+            setTimeout(() => {
+                document.getElementById('projectName').focus();
+            }, 100);
+        }
+    }
+
+    // Đóng Modal Add Project
+    function closeAddProjectModal(event) {
+        const modal = document.getElementById('addProjectModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+    // Đóng khi nhấn Esc
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAddProjectModal();
+        }
+    });
+</script>

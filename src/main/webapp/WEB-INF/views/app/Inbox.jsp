@@ -13,11 +13,12 @@
 <html>
 <head>
     <title>Inbox</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/global.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app/app.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app/inbox.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/component/sidebar.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/component/addTask.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app/inbox.css">
 </head>
 <body>
 <div class="app-container">
@@ -107,6 +108,20 @@
         <jsp:include page="../component/AddTask.jsp">
             <jsp:param name="taskType" value="inbox"/>
         </jsp:include>
+    </div>
+</div>
+
+<div id="addProjectModal" class="modal-overlay">
+    <div class="modal-box">
+        <jsp:include page="../component/AddProject.jsp">
+            <jsp:param name="taskType" value="project"/>
+        </jsp:include>
+    </div>
+</div>
+
+<div id="searchModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 600px;">
+        <jsp:include page="/WEB-INF/views/component/SearchBar.jsp" />
     </div>
 </div>
 
@@ -246,6 +261,74 @@
             openEditTaskModal(taskId, title, description, dueDate, priority, projectId);
         }
     }
+
+    // Mở Modal Add Project
+    function openAddProjectModal() {
+        const modal = document.getElementById('addProjectModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            // Focus vào ô input ngay khi mở
+            setTimeout(() => {
+                document.getElementById('projectName').focus();
+            }, 100);
+        }
+    }
+
+    // Đóng Modal Add Project
+    function closeAddProjectModal(event) {
+        const modal = document.getElementById('addProjectModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+    // Đóng khi nhấn Esc
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAddProjectModal();
+        }
+    });
+
+    // 1. Hàm mở Search (Gọi từ Sidebar)
+    function openSearchModal() {
+        const modal = document.getElementById('searchModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            // Focus vào ô input tìm kiếm ngay lập tức
+            setTimeout(() => {
+                const input = document.getElementById('globalSearchInput');
+                if (input) input.focus();
+            }, 100);
+        }
+    }
+
+    // 2. Hàm đóng Search
+    function closeSearchModal() {
+        document.getElementById('searchModal').style.display = 'none';
+    }
+
+    // 3. Cập nhật window.onclick để xử lý tất cả các Modal một cách độc lập
+    window.onclick = function (event) {
+        const taskModal = document.getElementById("sidebarAddTaskModal");
+        const projectModal = document.getElementById("addProjectModal");
+        const searchModal = document.getElementById("searchModal");
+
+        if (event.target == taskModal) {
+            taskModal.style.display = "none";
+        }
+        if (event.target == projectModal) {
+            projectModal.style.display = "none";
+        }
+        if (event.target == searchModal) {
+            searchModal.style.display = "none";
+        }
+    }
+
+    // 4. Hỗ trợ phím Esc để đóng Search cho nhanh
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSearchModal();
+        }
+    });
 </script>
 </body>
 </html>

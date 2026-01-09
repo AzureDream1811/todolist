@@ -1,0 +1,168 @@
+/* ==========================================================================
+   ADD TASK STYLES - GIAO DIỆN NHẬP LIỆU TASK (PHONG CÁCH TODOIST)
+   ========================================================================== */
+
+/* --- 1. PHẦN CHUNG: Cấu trúc lõi của Form nhập liệu --- */
+.task-modal-content {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Khu vực nhập tiêu đề và mô tả */
+.task-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.input-title {
+    width: 100%;
+    border: none !important;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    color: #202020;
+    padding: 4px 0;
+}
+
+.input-title::placeholder {
+    color: #aaa;
+}
+
+.input-desc {
+    width: 100%;
+    border: none !important;
+    font-size: 13px;
+    outline: none;
+    resize: none;
+    min-height: 40px;
+    color: #666;
+    font-family: inherit;
+}
+
+/* Hàng chứa các lựa chọn: Ngày, Ưu tiên, Dự án */
+.task-options-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0;
+}
+
+.option-item {
+    border: 1px solid #e0e0e0;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: #555;
+    transition: background 0.2s ease;
+}
+
+.option-item:hover {
+    background-color: #f3f3f3;
+}
+
+.option-item i {
+    font-size: 14px;
+}
+
+/* Ẩn giao diện gốc của input date/select để dùng icon đẹp hơn */
+.inline-select,
+.inline-date-picker {
+    border: none;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: inherit;
+}
+
+/* Footer chứa các nút bấm hành động */
+.task-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+}
+
+.btn-cancel {
+    background: #f5f5f5;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    color: #444;
+    transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #e5e5e5;
+}
+
+.btn-add {
+    background-color: var(--color-deep-purple, #a435f0);
+    color: white;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: opacity 0.2s;
+}
+
+.btn-add:hover {
+    opacity: 0.9;
+}
+
+/* --- 2. PHẦN RIÊNG: KIỂU MODAL (KHI BẤM Ở SIDEBAR) --- */
+.modal-overlay {
+    display: none; /* Mặc định ẩn, hiện bằng JavaScript flex */
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền tối mờ phía sau */
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px); /* Hiệu ứng mờ kính hiện đại */
+}
+
+.modal-box {
+    width: 550px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 3. PHẦN RIÊNG: KIỂU INLINE (KHI BẤM TRONG TRANG INBOX) --- */
+#inlineAddTaskForm .task-modal-content {
+    border: 1px solid #ddd;
+    box-shadow: none; /* Bỏ bóng để trông phẳng với mặt trang */
+    margin-top: 12px;
+    background-color: #ffffff;
+}
+
+/* Hiệu ứng focus nhẹ cho toàn bộ form khi nhập inline */
+#inlineAddTaskForm:focus-within .task-modal-content {
+    border-color: #999;
+}

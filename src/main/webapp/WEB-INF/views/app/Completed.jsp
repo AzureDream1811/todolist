@@ -7,61 +7,82 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="java.time.LocalDate" %>
+
 <html>
 <head>
-    <title>Completed Tasks</title>
+    <title>Completed Tasks - Todoist</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/global.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app/app.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app/completed.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<!-- add sidebar-->
-<jsp:include page="/WEB-INF/views/component/Sidebar.jsp">
-    <jsp:param name="active" value="completed"/>
-</jsp:include>
+<div class="app-container">
+    <jsp:include page="/WEB-INF/views/component/Sidebar.jsp">
+        <jsp:param name="active" value="completed"/>
+    </jsp:include>
 
-<h1>Completed Tasks</h1>
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="completed-container">
 
-<%-- error --%>
-<c:if test="${not empty requestScope.error}">
-    <p style="color: red">${requestScope.error}</p>
-</c:if>
+                <header class="activity-header">
+                    <h2>Activity: All projects</h2>
+                    <span class="total-counter">Completed tasks (${totalCompleted})</span>
+                </header>
 
-<!-- Completed Tasks Section -->
-<h2>Completed Tasks (${CompletedTasks.size()})</h2>
-<c:choose>
-    <c:when test="${empty CompletedTasks}">
-        <p>No completed tasks!</p>
-    </c:when>
-    <c:otherwise>
-        <table border="1" style="width: 50%; border-collapse: collapse;">
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Status</th>
-            </tr>
-            <c:forEach var="task" items="${CompletedTasks}">
-                <tr>
-                    <td>
-                        <h3>${task.title}</h3>
-                    </td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${not empty task.description}">
-                                <p>${task.description}</p>
-                            </c:when>
-                            <c:otherwise>
-                                <p>No description</p>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td>
-                        <span style="color: green; font-weight: bold;">COMPLETED</span>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
-    </c:otherwise>
-</c:choose>
+                <c:choose>
+                    <c:when test="${empty groupedTasks}">
+                        <div class="empty-state" style="text-align: center; padding-top: 100px;">
+                            <img src="${pageContext.request.contextPath}/static/image/empty-completed.png" alt=""
+                                 style="width: 120px; opacity: 0.5;">
+                            <p style="color: #888; margin-top: 15px;">No completed tasks yet.</p>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <%-- Duyệt qua từng nhóm ngày từ Servlet --%>
+                        <c:forEach var="entry" items="${groupedTasks}">
+                            <div class="date-group-header">
+                                <c:set var="groupDate" value="${entry.key}"/>
+                                <c:choose>
+                                    <c:when test="${groupDate == LocalDate.now()}">Today</c:when>
+                                    <c:when test="${groupDate == LocalDate.now().minusDays(1)}">Yesterday</c:when>
+                                    <c:otherwise>${groupDate}</c:otherwise>
+                                </c:choose>
+                            </div>
 
-<br>
+                            <%-- Duyệt các task trong ngày đó --%>
+                            <c:forEach var="task" items="${entry.value}">
+                                <div class="completed-task-item">
+                                    <div class="check-icon-wrapper">
+                                        <i class="fa-solid fa-check-circle"></i>
+                                    </div>
+
+                                    <div class="task-main-info">
+                                        <div class="action-text">
+                                            <span class="user-name">You</span>
+                                            <span class="action-desc">completed a task:</span>
+                                            <span class="completed-task-title">${task.title}</span>
+                                        </div>
+                                        <div class="completed-time">${task.completedAt}</div>
+                                    </div>
+
+                                    <div class="project-info">
+                                        <span class="project-name">
+                                                ${task.projectIdObject == null ? 'Inbox' : 'Project'}
+                                        </span>
+                                        <i class="fa-solid fa-inbox" style="font-size: 10px; opacity: 0.6;"></i>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
+
+            </div>
+        </div>
+    </main>
+</div>
 </body>
 </html>

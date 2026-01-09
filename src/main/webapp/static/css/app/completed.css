@@ -1,0 +1,108 @@
+/* ==========================================================================
+   COMPLETED TASKS STYLES (Todoist Style)
+   ========================================================================== */
+
+.completed-container {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.activity-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.total-counter {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* Grouping by Date */
+.date-group-header {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 16px 0 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    margin-top: 24px;
+    position: sticky;
+    top: 0;
+    background: var(--white);
+    z-index: 10;
+}
+
+/* Task Item Row */
+.completed-task-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #fafafa;
+    transition: background 0.2s;
+}
+
+.completed-task-item:hover {
+    background-color: #fcfcfc;
+}
+
+.check-icon-wrapper {
+    margin-right: 12px;
+    margin-top: 2px;
+}
+
+.check-icon-wrapper i {
+    color: #25b84c; /* Màu xanh lá đặc trưng hoàn thành */
+    font-size: 18px;
+}
+
+.task-main-info {
+    flex: 1;
+}
+
+.action-text {
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.user-name {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.action-desc {
+    color: var(--text-secondary);
+}
+
+.completed-task-title {
+    font-weight: 500;
+    color: var(--text-main);
+    text-decoration: none;
+}
+
+.completed-time {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 2px;
+}
+
+/* Project Tag */
+.project-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding-left: 15px;
+}
+
+.project-name {
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

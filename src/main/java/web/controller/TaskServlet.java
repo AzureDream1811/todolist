@@ -75,6 +75,23 @@ public class TaskServlet extends HttpServlet {
 
         if ("/update".equals(path)) {
             updateTask(request, response);
+            return;
+        }
+
+        if ("/complete".equals(path)) {
+            User currentUser = WebUtils.validateAndGetUser(request, response);
+            if (currentUser == null) return;
+            String taskIdStr = request.getParameter("taskId");
+            if (taskIdStr != null) {
+                try {
+                    int taskId = Integer.parseInt(taskIdStr);
+                    taskDAO.completeTask(taskId);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } catch (NumberFormatException e) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                }
+            }
+            return;
         }
     }
 

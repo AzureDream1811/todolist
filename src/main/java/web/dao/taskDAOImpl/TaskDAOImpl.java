@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import web.dao.TaskDAO;
 import web.model.Task;
+import web.model.Project;
 
 public class TaskDAOImpl implements TaskDAO {
 
@@ -63,7 +64,8 @@ public class TaskDAOImpl implements TaskDAO {
      */
     public List<Task> getTasksByUserId(int userId) {
         List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE user_id = ?";
+        // SỬA SQL: Thêm điều kiện lọc task chưa hoàn thành
+        String sql = "SELECT * FROM tasks WHERE user_id = ? AND completed_at IS NULL";
 
         try {
             Connection connection = ds.getConnection();
@@ -75,11 +77,9 @@ public class TaskDAOImpl implements TaskDAO {
                 Task task = mapResultSetToTask(rs);
                 tasks.add(task);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return tasks;
     }
 
@@ -251,26 +251,29 @@ public class TaskDAOImpl implements TaskDAO {
      * Retrieves a list of tasks by the given user ID which are completed.
      *
      * @param userId the user ID to search for
-     * @return a list of tasks associated with the given user ID which are completed
+     * @return a list of tasks associatecompleteTaskd with the given user ID which are completed
      * @throws RuntimeException if an SQL exception occurs
      */
     public List<Task> getCompletedTaskByUserId(int userId) {
         List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE completed_at IS NOT NULL AND user_id = ?";
+        // JOIN để lấy thêm cột name của project
+        String sql = "SELECT t.*, p.name as project_name " +
+                "FROM tasks t " +
+                "LEFT JOIN projects p ON t.project_id = p.id " +
+                "WHERE t.completed_at IS NOT NULL AND t.user_id = ? " +
+                "ORDER BY t.completed_at DESC";
 
         try (Connection connection = ds.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
-
             while (rs.next()) {
                 Task task = mapResultSetToTask(rs);
+                // Lưu tên project vào một field tạm thời (bạn có thể thêm field 'projectName' vào class Task)
+                // Hoặc đơn giản là kiểm tra project_id trong JSP
                 tasks.add(task);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
         return tasks;
     }
 
@@ -464,5 +467,16 @@ public class TaskDAOImpl implements TaskDAO {
             e.printStackTrace();
         }
         return tasks;
+    }
+
+    public void completeTask(int id) {
+        String sql = "UPDATE tasks SET completed_at = CURDATE() WHERE id = ?";
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

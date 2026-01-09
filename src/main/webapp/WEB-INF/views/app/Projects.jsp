@@ -32,7 +32,9 @@
             </tr>
           </c:forEach>
     </table>
-
+<jsp:include page="/WEB-INF/views/component/AddProject.jsp">
+    <jsp:param name="active" value="projects"/>
+</jsp:include>
 <script>
 </script>
 </body>

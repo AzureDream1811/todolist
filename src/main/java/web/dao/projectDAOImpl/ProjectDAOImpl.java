@@ -26,9 +26,9 @@ public class ProjectDAOImpl implements ProjectDAO {
    */
   public boolean createProject(Project project) {
     String sql = "INSERT INTO projects (name, user_id) VALUES (?, ?)";
-    try {
-      Connection connection = ds.getConnection();
-      PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+    try (Connection connection = ds.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+
       statement.setString(1, project.getName());
       statement.setInt(2, project.getUserId());
 
@@ -60,9 +60,9 @@ public class ProjectDAOImpl implements ProjectDAO {
   public List<Project> getProjectsByUserId(int userId) {
     List<Project> projects = new ArrayList<>();
     String sql = "SELECT * FROM projects WHERE user_id = ?";
-    try {
-      Connection connection = ds.getConnection();
-      PreparedStatement statement = connection.prepareStatement(sql);
+    try (Connection connection = ds.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);) {
+
       statement.setInt(1, userId);
       ResultSet rs = statement.executeQuery();
 
@@ -88,9 +88,9 @@ public class ProjectDAOImpl implements ProjectDAO {
    */
   public Project getProjectByIdAndUserId(int projectId, int userId) {
     String sql = "SELECT * FROM projects WHERE id = ? AND user_id = ?";
-    try {
-      Connection connection = ds.getConnection();
-      PreparedStatement statement = connection.prepareStatement(sql);
+    try (Connection connection = ds.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);) {
+
       statement.setInt(1, projectId);
       statement.setInt(2, userId);
       ResultSet rs = statement.executeQuery();

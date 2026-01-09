@@ -1,7 +1,0 @@
-CREATE DATABASE todolist_db;
-CREATE USER 'todolist'@'localhost' IDENTIFIED BY '1234';
-
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, REFERENCES
-ON todolist_db.*
-TO 'todolist'@'localhost';
-FLUSH PRIVILEGES;

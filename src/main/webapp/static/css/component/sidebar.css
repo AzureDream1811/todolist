@@ -1,0 +1,303 @@
+/* =========================================== */
+/* SIDEBAR TODOIST STYLE                       */
+/* =========================================== */
+
+aside.sidebar {
+    background-color: #faf9f8;
+    border-right: 1px solid #f0f0f0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+}
+
+/* 1. User Profile */
+.user-profile {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.user-profile:hover {
+    background-color: #eeeeee;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, var(--color-purple), var(--color-pink));
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #202020;
+}
+
+.profile-actions i {
+    color: #666;
+    margin-left: 8px;
+    font-size: 16px;
+}
+
+/* ========================================================================== */
+/* BỔ SUNG: USER DROPDOWN & LOGOUT CARD (Dán sau mục 1. User Profile)        */
+/* ========================================================================== */
+
+/* Container bao quanh để quản lý vị trí thẻ nổi */
+.user-profile-container {
+    position: relative;
+    width: 100%;
+}
+
+/* THẺ GIẢ (Dropdown Menu) - Hiệu ứng nổi lên trên bề mặt */
+.user-dropdown-card {
+    position: absolute;
+    top: calc(100% - 4px); /* Xuất hiện ngay sát dưới profile */
+    left: 12px;
+    width: 260px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08); /* Đổ bóng đa lớp */
+    border: 1px solid #e5e5e5;
+    z-index: 2000;
+    padding: 4px 0;
+    display: none; /* Mặc định ẩn, sẽ hiện bằng JS hoặc Hover */
+    animation: slideDown 0.2s ease-out; /* Hiệu ứng trượt nhẹ */
+}
+
+/* Hiệu ứng trượt khi xuất hiện */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header bên trong thẻ giả */
+.dropdown-header {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.full-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #202020;
+}
+
+.task-summary {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: #f0f0f0;
+    margin: 4px 0;
+}
+
+/* Item Log out trong menu */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #202020;
+    font-size: 14px;
+    transition: background 0.1s;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f3f3;
+}
+
+.dropdown-item i {
+    width: 18px;
+    text-align: center;
+    color: #666;
+}
+
+/* Hiển thị thẻ khi Hover vào container (Nếu bạn không dùng Click JS) */
+.user-profile-container:hover .user-dropdown-card {
+    display: block;
+}
+
+/* 2. Quick Actions */
+.sidebar-actions {
+    padding: 4px 12px;
+}
+
+.btn-add-task-quick {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-deep-purple);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.btn-add-task-quick i {
+    background-color: var(--color-deep-purple);
+    color: var(--white);
+    width: 24px;  /* Đảm bảo width = height */
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px; /* Chỉnh icon nhỏ lại cho vừa vòng tròn */
+    flex-shrink: 0;  /* Không cho icon bị bóp méo */
+}
+
+.btn-add-task-quick:hover {
+    background-color: var(--color-pink);
+}
+
+/* 3. Navigation */
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px; /* Tăng padding hàng một chút để dễ bấm */
+    margin: 2px 8px;    /* Thu hẹp margin để bo góc đẹp hơn */
+    border-radius: 8px; /* Bo góc hiện đại */
+    color: #444;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-item-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-item i {
+    font-size: 18px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* Màu icon đặc trưng */
+.icon-inbox { color: #246fe0; }
+.icon-today { color: #058527; }
+.icon-upcoming { color: #692ec2; }
+.icon-completed { color: #808080; }
+
+.item-count {
+    font-size: 12px;
+    color: #aaa;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+/* States */
+.sidebar-item:hover {
+    background-color: rgba(251, 207, 232, 0.3); /* Sử dụng màu pink với độ mờ 40% */
+    color: var(--color-deep-purple);
+}
+
+.sidebar-item.active {
+    background-color: rgba(165, 243, 252, 0.6); /* Màu xanh cyan chủ đạo */
+    color: var(--color-deep-purple);    /* Chữ tím đậm */
+    font-weight: 600;
+}
+
+.sidebar-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 20%;
+    height: 60%;
+    width: 3px;
+    background-color: var(--color-deep-purple);
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar-item.active .item-count {
+    color: var(--color-deep-purple);
+}
+
+.sidebar-section {
+    margin-top: 15px;
+    border-top: 1px solid #f0f0f0; /* Thêm đường kẻ mờ để phân cách với phần trên cho hài hòa */
+    padding-top: 10px;
+}
+
+/* 4. Sections & Projects */
+.sidebar-section-title {
+    padding: 10px 16px; /* Chỉnh lại padding cho cân đối với các item trên */
+    font-size: 13px;
+    font-weight: 700;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-section-title:hover .add-project-icon {
+    opacity: 1;
+}
+
+.add-project-icon {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.project-dot {
+    color: #888;
+    font-size: 14px !important;
+}
+
+/* 5. Footer */
+.sidebar-footer {
+    padding: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.footer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-item:hover {
+    color: #db4c3f;
+}

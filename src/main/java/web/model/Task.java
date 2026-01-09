@@ -12,6 +12,7 @@ public class Task {
     private Integer projectId; // nullable
     private int userId;
     private LocalDate createdAt;
+    private Project project;
 
     public Task() {
     }
@@ -96,6 +97,17 @@ public class Task {
         this.userId = userId;
     }
 
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
 
     @Override
     public String toString() {

@@ -201,55 +201,70 @@ public class AppServlet extends HttpServlet {
    *                          operations
    */
   private void addTaskPost(HttpServletRequest request, HttpServletResponse response, User currentUser)
-      throws ServletException, IOException {
-    try {
-      String title = request.getParameter("title");
-      String description = request.getParameter("description");
-      boolean completed = Boolean.parseBoolean(request.getParameter("completed"));
-      String dueDate = request.getParameter("dueDate");
-      String priorityParam = request.getParameter("priority");
-      int priority = (priorityParam != null && !priorityParam.isEmpty()) ? Integer.parseInt(priorityParam) : 1;
-      String projectIdParam = request.getParameter("projectId");
-      int projectId = (projectIdParam != null && !projectIdParam.isEmpty()) ? Integer.parseInt(projectIdParam) : 0;
+          throws ServletException, IOException {
+      try {
+          request.setCharacterEncoding("UTF-8");
 
-      String taskType = request.getParameter("taskType");
+          String title = request.getParameter("title");
+          String description = request.getParameter("description");
+          boolean completed = Boolean.parseBoolean(request.getParameter("completed"));
+          String dueDateStr = request.getParameter("dueDate");
+          String priorityParam = request.getParameter("priority");
+          String projectIdParam = request.getParameter("projectId");
+          String taskType = request.getParameter("taskType");
 
-      Task task = new Task();
-      task.setTitle(title);
-      task.setDescription(description.isEmpty() ? null : description);
-      if (completed) {
-        task.setCompletedAt(LocalDate.now());
-      } else {
-        task.setCompletedAt(null);
+          Task task = new Task();
+          task.setTitle(title);
+          task.setDescription((description == null || description.trim().isEmpty()) ? null : description);
+          task.setCompletedAt(completed ? LocalDate.now() : null);
+
+          // --- FIX 1: XỬ LÝ NGÀY THÁNG (BẮT BUỘC NOT NULL) ---
+          LocalDate finalDueDate;
+          if (dueDateStr != null && !dueDateStr.isEmpty()) {
+              finalDueDate = LocalDate.parse(dueDateStr);
+          } else {
+              // Mặc định là hôm nay cho mọi trường hợp để an toàn với DB
+              finalDueDate = LocalDate.now();
+          }
+          task.setDueDate(finalDueDate);
+
+          // --- FIX 2: XỬ LÝ PRIORITY (QUAN TRỌNG - KHÔNG ĐỂ QUÁ 3) ---
+          int priority;
+          try {
+              // Dựa trên bảng của bạn chỉ có 1, 2, 3. Mặc định gán là 3 (thấp nhất trong dải 1-3)
+              priority = (priorityParam != null && !priorityParam.isEmpty()) ? Integer.parseInt(priorityParam) : 3;
+              if (priority < 1 || priority > 3) {
+                  priority = 3;
+              }
+          } catch (NumberFormatException e) {
+              priority = 3;
+          }
+          task.setPriority(priority);
+
+          // --- FIX 3: XỬ LÝ PROJECT ID ---
+          int projectId = (projectIdParam != null && !projectIdParam.isEmpty()) ? Integer.parseInt(projectIdParam) : 0;
+          task.setProjectIdObject(projectId > 0 ? projectId : null);
+
+          task.setUserId(currentUser.getId());
+
+          // Thực thi lưu xuống Database
+          taskDAO.createTask(task);
+
+          // Gửi email thông báo
+          if (currentUser.getEmail() != null) {
+              String mailContent = "<h3>New Task Added!</h3>" +
+                      "<p>Title: <b>" + title + "</b></p>" +
+                      "<p>Priority: <b>" + priority + "</b></p>" +
+                      "<p>Due date: <b>" + finalDueDate + "</b></p>";
+              web.utils.EmailUtils.sendEmailAsync(currentUser.getEmail(), "Task Notification", mailContent);
+          }
+
+          String redirectPath = determineRedirectPath(taskType);
+          response.sendRedirect(request.getContextPath() + redirectPath);
+      } catch (Exception e) {
+          e.printStackTrace();
+          WebUtils.sendError(request, response, "Error: " + e.getMessage(), "/app/tasks");
       }
-      task.setDueDate(dueDate.isEmpty() ? null : LocalDate.parse(dueDate));
-      task.setPriority(Math.max(priority, 1));
-      if (projectId > 0) {
-        task.setProjectIdObject(projectId);
-      } else {
-        task.setProjectIdObject(null);
-      }
-      task.setUserId(currentUser.getId());
-
-      taskDAO.createTask(task);
-
-      if (currentUser.getEmail() != null) {
-          String mailContent = "<h3>You've just added a new job!</h3>" +
-                  "<p>Title: <b>" + title + "</b></p>" +
-                  "<p>Description: <b>"+ description + "<p><b>" +
-                  "<p>Due date: " + (dueDate.isEmpty() ? "Don't have" : dueDate) + "</p>";
-
-          web.utils.EmailUtils.sendEmailAsync(currentUser.getEmail(), "Thông báo Task mới", mailContent);
-      }
-
-      String redirectPath = determineRedirectPath(taskType);
-      response.sendRedirect(request.getContextPath() + redirectPath);
-      return;
-      //response.sendRedirect(request.getContextPath() + "/app/inbox");
-    } catch (Exception e) {
-      WebUtils.sendError(request, response, "Error adding task", "/app/tasks");
-    }
-
   }
 
   /**
@@ -258,7 +273,7 @@ public class AppServlet extends HttpServlet {
    * Otherwise, it returns the path corresponding to the task type.
    * For example, if the task type is "today", it returns "/app/today".
    * If the task type is not recognized, it returns the default path /app/inbox.
-   * 
+   *
    * @param taskType the task type to determine the redirect path
    * @return the redirect path based on the task type
    */
@@ -286,7 +301,7 @@ public class AppServlet extends HttpServlet {
    * It also fetches the projects of the current user and passes them to the jsp.
    * If an exception occurs during the processing, it sends an error response to
    * the client.
-   * 
+   *
    * @param request  the HttpServletRequest object containing the request
    *                 parameters
    * @param response the HttpServletResponse object to send the response back to
@@ -321,7 +336,7 @@ public class AppServlet extends HttpServlet {
    * the jsp.
    * If an exception occurs during the processing, it sends an error response to
    * the client.
-   * 
+   *
    * @param request  the HttpServletRequest object containing the request
    *                 parameters
    * @param response the HttpServletResponse object to send the response back to
@@ -350,7 +365,7 @@ public class AppServlet extends HttpServlet {
    * to the jsp.
    * If an exception occurs during the processing, it sends an error response to
    * the client.
-   * 
+   *
    * @param request  the HttpServletRequest object containing the request
    *                 parameters
    * @param response the HttpServletResponse object to send the response back to
@@ -360,17 +375,25 @@ public class AppServlet extends HttpServlet {
    *                          operations
    */
   private void showCompletedTask(HttpServletRequest request, HttpServletResponse response, User currentUser)
-      throws ServletException, IOException {
-    try {
-      List<Task> completedTasks = taskDAO.getCompletedTaskByUserId(currentUser.getId());
+          throws ServletException, IOException {
+      try {
+          List<Task> completedTasks = taskDAO.getCompletedTaskByUserId(currentUser.getId());
+          java.util.Map<java.time.LocalDate, List<Task>> groupedTasks = new java.util.LinkedHashMap<>();
+          completedTasks.sort((t1, t2) -> t2.getCompletedAt().compareTo(t1.getCompletedAt()));
 
-      request.setAttribute("CompletedTasks", completedTasks);
+          for (Task task : completedTasks) {
+              LocalDate date = task.getCompletedAt();
+              groupedTasks.computeIfAbsent(date, k -> new java.util.ArrayList<>()).add(task);
+          }
 
-      request.getRequestDispatcher(COMPLETED_PAGE).forward(request, response);
+          request.setAttribute("groupedTasks", groupedTasks);
+          request.setAttribute("totalCompleted", completedTasks.size());
 
-    } catch (Exception e) {
-      WebUtils.sendError(request, response, "Error loading completed tasks", "/app/inbox");
-    }
+          request.getRequestDispatcher(COMPLETED_PAGE).forward(request, response);
+
+      } catch (Exception e) {
+          WebUtils.sendError(request, response, "Error loading completed tasks", "/app/inbox");
+      }
   }
 
   /**
@@ -382,7 +405,7 @@ public class AppServlet extends HttpServlet {
    * details page.
    * If an exception occurs during the processing, it sends an error response to
    * the client.
-   * 
+   *
    * @param request  the HttpServletRequest object containing the request
    *                 parameters
    * @param response the HttpServletResponse object to send the response back to
@@ -416,7 +439,7 @@ public class AppServlet extends HttpServlet {
    * If the project is not found, it sends an error response to the client.
    * If an exception occurs during the processing, it sends an error response to
    * the client.
-   * 
+   *
    * @param request     the HttpServletRequest object containing the request
    *                    parameters
    * @param response    the HttpServletResponse object to send the response back
@@ -457,7 +480,7 @@ public class AppServlet extends HttpServlet {
    * If the task is not found, it sends an error response to the client.
    * If an exception occurs during the processing, it sends an error response to
    * the client.
-   * 
+   *
    * @param request     the HttpServletRequest object containing the request
    *                    parameters
    * @param response    the HttpServletResponse object to send the response back
@@ -512,7 +535,7 @@ public class AppServlet extends HttpServlet {
    * appropriate page based on the redirect path.
    * If an exception occurs during the processing, it sends an error response to
    * the client.
-   * 
+   *
    * @param request     the HttpServletRequest object containing the request
    *                    parameters
    * @param response    the HttpServletResponse object to send the response back
@@ -573,7 +596,7 @@ public class AppServlet extends HttpServlet {
    * If the current page path contains "/app/upcoming", it returns the upcoming
    * page.
    * Otherwise, it returns the inbox page.
-   * 
+   *
    * @param currentPagePath the current page path
    * @return the redirect path after deleting a task
    */

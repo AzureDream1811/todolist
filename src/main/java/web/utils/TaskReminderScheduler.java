@@ -47,7 +47,6 @@ public class TaskReminderScheduler implements ServletContextListener {
 
         System.out.println("==> [System] Scheduler starts. Email will be sent later. " + initialDelay + " second");
     }
-
     /**
      * Executes the core logic for daily reminders by scanning all users in the database.
      * For each user, it retrieves overdue tasks, tasks due today, and tasks due tomorrow.

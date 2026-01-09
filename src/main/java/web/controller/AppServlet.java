@@ -53,10 +53,7 @@ public class AppServlet extends HttpServlet {
     if (currentUser == null)
       return;
 
-    if (currentUser.isAdmin()) {
-      response.sendRedirect(request.getContextPath() + "/admin");
-      return;
-    }
+    // Admins can also use the app - no redirect needed
 
     String action = WebUtils.getActionFormPath(request, response);
     if (action == null) {

@@ -39,13 +39,14 @@
 
             <div class="task-list">
                 <%-- Khai báo ngày hiện tại một lần ở ngoài vòng lặp --%>
-                <c:set var="today" value="<%= LocalDate.now() %>" />
+                <c:set var="today" value="<%= LocalDate.now() %>"/>
 
                 <%-- BẮT BUỘC PHẢI CÓ VÒNG LẶP NÀY --%>
                 <c:forEach var="task" items="${requestScope.tasks}">
                     <div class="task-item" id="task-row-${task.id}">
                             <%-- Nút hoàn thành task --%>
-                        <button type="button" class="task-check-btn" title="Mark as complete" onclick="handleComplete(${task.id})"></button>
+                        <button type="button" class="task-check-btn" title="Mark as complete"
+                                onclick="handleComplete(${task.id})"></button>
 
                         <div class="task-info">
                             <div class="task-title">${task.title}</div>
@@ -65,6 +66,11 @@
                                 </div>
                             </c:if>
                         </div>
+
+                        <button type="button" class="task-remove-btn" title="Delete task"
+                                onclick="handleDelete(${task.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </c:forEach>
             </div>
@@ -168,11 +174,49 @@
         // Gửi fetch về AppServlet hoặc TaskServlet để update dueDate
         fetch('${pageContext.request.contextPath}/tasks/update', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'id=' + taskId + '&dueDate=' + newDate
         }).then(response => {
             if (response.ok) location.reload();
         });
+    }
+
+    function handleDelete(taskId) {
+        // Xác nhận trước khi xóa
+        if (!confirm('Are you sure you want to delete this task?')) {
+            return;
+        }
+
+        const taskRow = document.getElementById('task-row-' + taskId);
+
+        // 1. Chạy hiệu ứng mờ dần
+        if (taskRow) {
+            taskRow.classList.add('fade-out');
+        }
+
+        // 2. Gọi API xóa task
+        fetch('${pageContext.request.contextPath}/tasks/delete', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'taskId=' + taskId
+        })
+            .then(response => {
+                if (response.ok) {
+                    // 3. Đợi hiệu ứng CSS kết thúc rồi xóa phần tử
+                    setTimeout(() => {
+                        if (taskRow) taskRow.remove();
+                    }, 400);
+                } else {
+                    // Nếu lỗi, hiển thị lại task
+                    if (taskRow) taskRow.classList.remove('fade-out');
+                    alert("Không thể xóa task. Vui lòng thử lại!");
+                }
+            })
+            .catch(error => {
+                if (taskRow) taskRow.classList.remove('fade-out');
+                console.error("Lỗi kết nối:", error);
+                alert("Lỗi kết nối. Vui lòng thử lại!");
+            });
     }
 </script>
 </body>

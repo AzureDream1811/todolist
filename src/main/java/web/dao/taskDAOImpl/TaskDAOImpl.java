@@ -8,7 +8,6 @@ import javax.sql.DataSource;
 
 import web.dao.TaskDAO;
 import web.model.Task;
-import web.model.Project;
 
 public class TaskDAOImpl implements TaskDAO {
 

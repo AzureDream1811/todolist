@@ -41,7 +41,6 @@ public class ProjectServlet extends HttpServlet {
         }
 
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
-
     }
 
     @Override
@@ -58,13 +57,60 @@ public class ProjectServlet extends HttpServlet {
             case "/add":
                 handleAddProject(request, response);
                 break;
-
+            case "/delete":
+                handleDeleteProject(request, response);
+                break;
             default:
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
 
     }
 
+    private void handleDeleteProject(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        User user = WebUtils.validateAndGetUser(request, response);
+
+        if (user == null)
+            return;
+
+        String projectIdStr = request.getParameter("id");
+
+        if (projectIdStr == null || projectIdStr.trim().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/projects");
+            return;
+        }
+
+        try{
+            int projectId = Integer.parseInt(projectIdStr);
+            projectDAO.deleteProjectById(projectId);
+
+        } catch(NumberFormatException e){
+            e.printStackTrace();
+        }
+
+        response.sendRedirect(request.getContextPath() + "/projects");
+    }
+
+    /**
+     * Handles the add project request.
+     * <p>
+     * This method validates the user and extracts the project name from the
+     * request.
+     * If the project name is empty, it sets the error attribute to "Project name is
+     * required"
+     * and forwards the request to the add project page. If the user is valid and
+     * the
+     * project name is not empty, it creates a new project with the given name and
+     * the user's ID and adds it to the database. Finally, it redirects the user to
+     * the projects page.
+     * 
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back to
+     *                 the client
+     * @throws IOException      if an exception occurs during the input/output
+     *                          operations
+     * @throws ServletException if an exception occurs during the servlet processing
+     */
     private void handleAddProject(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         User user = WebUtils.validateAndGetUser(request, response);

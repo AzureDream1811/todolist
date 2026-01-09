@@ -134,3 +134,36 @@
     align-items: center;
     gap: 6px;
 }
+
+/* Nút xóa task */
+.task-remove-btn {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 8px 12px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    margin-left: auto;
+}
+
+.task-item:hover .task-remove-btn {
+    opacity: 1;
+}
+
+.task-remove-btn:hover {
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+    border-radius: 4px;
+}
+
+.task-remove-btn i {
+    font-size: 14px;
+}
+
+/* Đảm bảo task-item là flexbox để nút remove nằm bên phải */
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}

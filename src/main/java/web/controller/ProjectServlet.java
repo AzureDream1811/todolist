@@ -69,6 +69,23 @@ public class ProjectServlet extends HttpServlet {
 
     }
 
+    /**
+     * Handles the DELETE request to delete a project.
+     * <p>
+     * This method validates the user and extracts the project ID from the request.
+     * If the project ID is empty, it redirects the user to the projects page.
+     * If the user is valid and the project ID is not empty, it checks if the project
+     * belongs to the user. If it does, it deletes the project from the database.
+     * Finally, it redirects the user to the projects page.
+     * 
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back to
+     *                 the client
+     * @throws IOException      if an exception occurs during the input/output
+     *                          operations
+     * @throws ServletException if an exception occurs during the servlet processing
+     */
     private void handleDeleteProject(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         User user = WebUtils.validateAndGetUser(request, response);
 

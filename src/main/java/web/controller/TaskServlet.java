@@ -22,7 +22,7 @@ import web.utils.WebUtils;
 @WebServlet("/tasks/*")
 public class TaskServlet extends HttpServlet {
     private static final String ADD_TASK_PAGE = "/WEB-INF/views/component/AddTask.jsp";
-    
+
     private final DAOFactory factory = DAOFactory.getInstance();
     private final TaskDAO taskDAO = factory.getTaskDAO();
     private final ProjectDAO projectDAO = factory.getProjectDAO();
@@ -31,7 +31,7 @@ public class TaskServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getPathInfo();
-        
+
         if (path == null || "/".equals(path)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -53,7 +53,7 @@ public class TaskServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         String path = request.getPathInfo();
-        
+
         if (path == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -78,12 +78,25 @@ public class TaskServlet extends HttpServlet {
     }
 
     /**
-     * Shows the add task form page.
+     * Handles the GET request for the add task page.
+     * <p>
+     * This method validates the user, fetches all projects of the current user, and
+     * passes them to the jsp. If an exception occurs during the processing, it
+     * sends an error response to the client.
+     *
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back to
+     *                 the client
+     * @throws ServletException if an exception occurs during the servlet processing
+     * @throws IOException      if an exception occurs during the input/output
+     *                          operations
      */
     private void showAddTaskForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         User currentUser = WebUtils.validateAndGetUser(request, response);
-        if (currentUser == null) return;
+        if (currentUser == null)
+            return;
 
         try {
             List<Project> projects = projectDAO.getProjectsByUserId(currentUser.getId());
@@ -95,12 +108,29 @@ public class TaskServlet extends HttpServlet {
     }
 
     /**
-     * Handles the POST request to add a new task.
+     * Handles the add task request.
+     * <p>
+     * This method validates the user, extracts the task parameters from the
+     * request,
+     * creates a new task with the given parameters, and adds it to the database.
+     * It also sends an email notification to the user if the user's email is not
+     * null.
+     * Finally, it redirects the user to the appropriate page based on the task
+     * type.
+     * 
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back to
+     *                 the client
+     * @throws IOException      if an exception occurs during the input/output
+     *                          operations
+     * @throws ServletException if an exception occurs during the servlet processing
      */
     private void handleAddTask(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         User currentUser = WebUtils.validateAndGetUser(request, response);
-        if (currentUser == null) return;
+        if (currentUser == null)
+            return;
 
         try {
             String title = request.getParameter("title");
@@ -138,7 +168,8 @@ public class TaskServlet extends HttpServlet {
             task.setPriority(priority);
 
             // Handle project ID
-            int projectId = (projectIdParam != null && !projectIdParam.isEmpty()) ? Integer.parseInt(projectIdParam) : 0;
+            int projectId = (projectIdParam != null && !projectIdParam.isEmpty()) ? Integer.parseInt(projectIdParam)
+                    : 0;
             task.setProjectIdObject(projectId > 0 ? projectId : null);
 
             task.setUserId(currentUser.getId());
@@ -163,7 +194,20 @@ public class TaskServlet extends HttpServlet {
     }
 
     /**
-     * Determines the redirect path based on the task type.
+     * Determines the redirect path given the task type.
+     * <p>
+     * Given the task type parameter, this method returns the corresponding redirect
+     * path
+     * to the corresponding page. If the task type is null or empty, it returns the
+     * path
+     * to the inbox page. If the task type is "today", it returns the path to the
+     * today
+     * page. If the task type is "upcoming", it returns the path to the upcoming
+     * page. If
+     * the task type is anything else, it returns the path to the inbox page.
+     * 
+     * @param taskType the task type to determine the redirect path for
+     * @return the redirect path to the corresponding page
      */
     private String determineRedirectPath(String taskType) {
         if (taskType == null || taskType.isEmpty()) {
@@ -181,12 +225,29 @@ public class TaskServlet extends HttpServlet {
     }
 
     /**
-     * Handles the complete task request.
+     * Completes a task given its ID.
+     * <p>
+     * This method takes the task ID parameter from the request and completes the
+     * task
+     * with the given ID from the database. If the task ID is null or empty, it
+     * sends an error response to the client. If the task ID is invalid, it sends
+     * a bad request response to the client. If an exception occurs during the
+     * completion, it sends a bad request response to the client.
+     * <p>
+     * Security check: Only complete task if it belongs to the user
+     * 
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back
+     *                 to the client
+     * @throws IOException if an exception occurs during the input/output
+     *                     operations
      */
     private void completeTask(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         User currentUser = WebUtils.validateAndGetUser(request, response);
-        if (currentUser == null) return;
+        if (currentUser == null)
+            return;
 
         String taskIdStr = request.getParameter("taskId");
         if (taskIdStr != null) {
@@ -206,6 +267,24 @@ public class TaskServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Deletes a task from the database given its ID.
+     * <p>
+     * This method takes the task ID parameter from the request and deletes the task
+     * with the given ID from the database. If the task ID is null or empty, it
+     * sends a 400 Bad Request response to the client. If the task ID is invalid, it
+     * sends a 400 Bad Request response to the client. If an exception occurs during
+     * the deletion, it sends a 400 Bad Request response to the client.
+     * <p>
+     * Security check: Only delete task if it belongs to the user
+     * 
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back
+     *                 to the client
+     * @throws IOException if an exception occurs during the input/output
+     *                     operations
+     */
     private void deleteTask(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User user = WebUtils.validateAndGetUser(request, response);
         if (user == null) {
@@ -237,96 +316,97 @@ public class TaskServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Updates a task in the database based on the given parameters.
+     * Supports both full page form submissions and AJAX requests.
+     *
+     * @param request  the HttpServletRequest object containing the request
+     *                 parameters
+     * @param response the HttpServletResponse object to send the response back to
+     *                 the client
+     * @throws IOException if an exception occurs during the input/output operations
+     */
+    private void updateTask(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User currentUser = WebUtils.validateAndGetUser(request, response);
+        if (currentUser == null)
+            return;
 
-
-/**
- * Updates a task in the database based on the given parameters.
- * Supports both full page form submissions and AJAX requests.
- *
- * @param request     the HttpServletRequest object containing the request parameters
- * @param response    the HttpServletResponse object to send the response back to the client
- * @throws IOException if an exception occurs during the input/output operations
- */
-private void updateTask(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    User currentUser = WebUtils.validateAndGetUser(request, response);
-    if (currentUser == null) return;
-
-    String taskIdStr = request.getParameter("id");
-    if (taskIdStr == null || taskIdStr.isEmpty()) {
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        return;
-    }
-
-    int taskId = Integer.parseInt(taskIdStr);
-    
-    // Security check: Only update task if it belongs to the user
-    Task existingTask = taskDAO.getTaskById(taskId);
-    if (existingTask == null || existingTask.getUserId() != currentUser.getId()) {
-        response.sendError(HttpServletResponse.SC_FORBIDDEN);
-        return;
-    }
-
-    // Update task with provided values, keep existing values if not provided
-    String title = request.getParameter("title");
-    if (title != null && !title.isEmpty()) {
-        existingTask.setTitle(title);
-    }
-
-    String description = request.getParameter("description");
-    if (description != null) {
-        existingTask.setDescription(description.isEmpty() ? null : description);
-    }
-
-    String priorityStr = request.getParameter("priority");
-    if (priorityStr != null && !priorityStr.isEmpty()) {
-        int priority = Integer.parseInt(priorityStr);
-        if (priority >= 1 && priority <= 3) {
-            existingTask.setPriority(priority);
+        String taskIdStr = request.getParameter("id");
+        if (taskIdStr == null || taskIdStr.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
-    }
 
-    String dueDateStr = request.getParameter("dueDate");
-    if (dueDateStr != null && !dueDateStr.isEmpty()) {
-        existingTask.setDueDate(LocalDate.parse(dueDateStr));
-    }
+        int taskId = Integer.parseInt(taskIdStr);
 
-    String completedAtStr = request.getParameter("completedAt");
-    if (completedAtStr != null && !completedAtStr.isEmpty()) {
-        existingTask.setCompletedAt(LocalDate.parse(completedAtStr));
-    }
+        // Security check: Only update task if it belongs to the user
+        Task existingTask = taskDAO.getTaskById(taskId);
+        if (existingTask == null || existingTask.getUserId() != currentUser.getId()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
 
-    String projectIdStr = request.getParameter("projectId");
-    if (projectIdStr != null) {
-        if (projectIdStr.isEmpty() || "0".equals(projectIdStr)) {
-            existingTask.setProjectIdObject(null);
+        // Update task with provided values, keep existing values if not provided
+        String title = request.getParameter("title");
+        if (title != null && !title.isEmpty()) {
+            existingTask.setTitle(title);
+        }
+
+        String description = request.getParameter("description");
+        if (description != null) {
+            existingTask.setDescription(description.isEmpty() ? null : description);
+        }
+
+        String priorityStr = request.getParameter("priority");
+        if (priorityStr != null && !priorityStr.isEmpty()) {
+            int priority = Integer.parseInt(priorityStr);
+            if (priority >= 1 && priority <= 3) {
+                existingTask.setPriority(priority);
+            }
+        }
+
+        String dueDateStr = request.getParameter("dueDate");
+        if (dueDateStr != null && !dueDateStr.isEmpty()) {
+            existingTask.setDueDate(LocalDate.parse(dueDateStr));
+        }
+
+        String completedAtStr = request.getParameter("completedAt");
+        if (completedAtStr != null && !completedAtStr.isEmpty()) {
+            existingTask.setCompletedAt(LocalDate.parse(completedAtStr));
+        }
+
+        String projectIdStr = request.getParameter("projectId");
+        if (projectIdStr != null) {
+            if (projectIdStr.isEmpty() || "0".equals(projectIdStr)) {
+                existingTask.setProjectIdObject(null);
+            } else {
+                existingTask.setProjectIdObject(Integer.parseInt(projectIdStr));
+            }
+        }
+
+        taskDAO.updateTask(existingTask);
+
+        // Send email notification
+        if (currentUser.getEmail() != null && !currentUser.getEmail().isEmpty()) {
+            EmailUtils.sendEmailAsync(
+                    currentUser.getEmail(),
+                    "Task updated successfully",
+                    "<h3>TodoList Notification</h3>" +
+                            "<p>You have updated the task: <b>" + existingTask.getTitle() + "</b></p>");
+        }
+
+        // Check if this is an AJAX request
+        String isAjax = request.getHeader("X-Requested-With");
+        if ("XMLHttpRequest".equals(isAjax) || request.getContentType() != null
+                && request.getContentType().contains("application/x-www-form-urlencoded")) {
+            response.setStatus(HttpServletResponse.SC_OK);
         } else {
-            existingTask.setProjectIdObject(Integer.parseInt(projectIdStr));
+            String redirect = request.getParameter("redirect");
+            if (redirect != null && !redirect.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + redirect);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/app/inbox");
+            }
         }
     }
-
-    taskDAO.updateTask(existingTask);
-
-    // Send email notification
-    if (currentUser.getEmail() != null && !currentUser.getEmail().isEmpty()) {
-        EmailUtils.sendEmailAsync(
-                currentUser.getEmail(),
-                "Task updated successfully",
-                "<h3>TodoList Notification</h3>" +
-                        "<p>You have updated the task: <b>" + existingTask.getTitle() + "</b></p>"
-        );
-    }
-
-    // Check if this is an AJAX request
-    String isAjax = request.getHeader("X-Requested-With");
-    if ("XMLHttpRequest".equals(isAjax) || request.getContentType() != null && request.getContentType().contains("application/x-www-form-urlencoded")) {
-        response.setStatus(HttpServletResponse.SC_OK);
-    } else {
-        String redirect = request.getParameter("redirect");
-        if (redirect != null && !redirect.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + redirect);
-        } else {
-            response.sendRedirect(request.getContextPath() + "/app/inbox");
-        }
-    }
-}
 }

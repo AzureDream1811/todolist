@@ -176,8 +176,8 @@ public class AuthServlet extends HttpServlet {
             if (user.getEmail() != null && !user.getEmail().isEmpty()) {
                 web.dao.TaskDAO taskDAO = factory.getTaskDAO();
                 java.time.LocalDate today = java.time.LocalDate.now();
-                java.util.List<web.model.Task> overdue = taskDAO.getOverdueTaskByUserID(user.getId());
-                java.util.List<web.model.Task> todayTasks = taskDAO.getTodayTaskByUserID(user.getId());
+                java.util.List<web.model.Task> overdue = taskDAO.getOverdueTasksByUserId(user.getId());
+                java.util.List<web.model.Task> todayTasks = taskDAO.getTodayTasksByUserId(user.getId());
                 java.util.List<web.model.Task> tomorrow = taskDAO.getTasksDueOn(user.getId(), today.plusDays(1));
                 if (!overdue.isEmpty() || !todayTasks.isEmpty() || !tomorrow.isEmpty()) {
                     web.utils.EmailUtils.sendTaskReminder(user, overdue, todayTasks, tomorrow);

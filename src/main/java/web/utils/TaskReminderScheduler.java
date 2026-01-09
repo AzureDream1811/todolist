@@ -61,8 +61,8 @@ public class TaskReminderScheduler implements ServletContextListener {
         if (users == null || users.isEmpty()) return;
 
         for (User user : users) {
-            List<Task> overdue = taskDAO.getOverdueTaskByUserID(user.getId());
-            List<Task> today = taskDAO.getTodayTaskByUserID(user.getId());
+            List<Task> overdue = taskDAO.getOverdueTasksByUserId(user.getId());
+            List<Task> today = taskDAO.getTodayTasksByUserId(user.getId());
             List<Task> tomorrow = taskDAO.getTasksDueOn(user.getId(), LocalDate.now().plusDays(1));
 
             if (!overdue.isEmpty() || !today.isEmpty() || !tomorrow.isEmpty()) {

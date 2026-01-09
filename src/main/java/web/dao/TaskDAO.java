@@ -13,19 +13,15 @@ public interface TaskDAO {
 
     List<Task> getTasksByUserId(int userId);
 
-    List<Task> getTodayTaskByUserID(int userId);
+    List<Task> getTodayTasksByUserId(int userId);
 
-    List<Task> getOverdueTaskByUserID(int userId);
+    List<Task> getOverdueTasksByUserId(int userId);
 
     List<Task> getUpcomingTasksByUserId(int userId);
 
     List<Task> getTasksByProjectIdAndUserId(int projectId, int userId);
 
     List<Task> getCompletedTaskByUserId(int userId);
-
-    List<Task> getTaskByIdAndUserId(int taskID, int userID);
-
-    boolean deleteTask(Task task);
 
     Task getTaskById(int id);
     

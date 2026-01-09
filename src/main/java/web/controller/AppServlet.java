@@ -149,8 +149,8 @@ public class AppServlet extends HttpServlet {
   private void showToday(HttpServletRequest request, HttpServletResponse response, User currentUser)
       throws ServletException, IOException {
     try {
-      List<Task> overdueTasks = taskDAO.getOverdueTaskByUserID(currentUser.getId());
-      List<Task> todayTasks = taskDAO.getTodayTaskByUserID(currentUser.getId());
+      List<Task> overdueTasks = taskDAO.getOverdueTasksByUserId(currentUser.getId());
+      List<Task> todayTasks = taskDAO.getTodayTasksByUserId(currentUser.getId());
 
       request.setAttribute("overdueTasks", overdueTasks);
       request.setAttribute("todayTasks", todayTasks);

@@ -136,7 +136,7 @@ public class TaskDAOImpl implements TaskDAO {
      * @param userId the user ID to search for
      * @return a list of tasks associated with the given user ID which are due today
      */
-    public List<Task> getTodayTaskByUserID(int userId) {
+    public List<Task> getTodayTasksByUserId(int userId) {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date = CURDATE() AND completed_at IS NULL";
 
@@ -163,7 +163,7 @@ public class TaskDAOImpl implements TaskDAO {
      * @param userId the user ID to search for
      * @return a list of tasks associated with the given user ID which are overdue
      */
-    public List<Task> getOverdueTaskByUserID(int userId) {
+    public List<Task> getOverdueTasksByUserId(int userId) {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date < CURDATE() AND completed_at IS NULL";
 
@@ -274,61 +274,6 @@ public class TaskDAOImpl implements TaskDAO {
             }
         } catch (Exception e) { e.printStackTrace(); }
         return tasks;
-    }
-
-    /**
-     * Retrieves a list of tasks by the given task ID and user ID.
-     *
-     * @param taskID the task ID to search for
-     * @param userID the user ID to search for
-     * @return a list of tasks associated with the given task ID and user ID
-     * @throws RuntimeException if an SQL exception occurs
-     */
-    public List<Task> getTaskByIdAndUserId(int taskID, int userID) {
-        List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
-
-        try (Connection connection = ds.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, taskID);
-            statement.setInt(2, userID);
-
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-                Task task = mapResultSetToTask(rs);
-                tasks.add(task);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return tasks;
-    }
-
-    /**
-     * Deletes a task from the database given its ID and user ID.
-     *
-     * @param task the task object to delete
-     * @return true if the task was successfully deleted, false otherwise
-     * @throws RuntimeException if an SQL exception occurs
-     */
-    public boolean deleteTask(Task task) {
-        String sql = "DELETE FROM tasks WHERE id = ? AND user_id = ?";
-
-        try (Connection connection = ds.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, task.getId());
-            statement.setInt(2, task.getUserId());
-
-            int affectRow = statement.executeUpdate();
-            return affectRow > 0;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     /**

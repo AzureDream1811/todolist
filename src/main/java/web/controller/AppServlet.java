@@ -298,8 +298,12 @@ public class AppServlet extends HttpServlet {
       // get tasks for the project and current user
       List<Task> projectTasks = taskDAO.getTasksByProjectIdAndUserId(projectId, currentUser.getId());
 
+      // get all projects for the AddTask dropdown
+      List<Project> projects = projectDAO.getProjectsByUserId(currentUser.getId());
+
       // set attributes and forward to project detail page
-      request.setAttribute("currentProject", project);
+      request.setAttribute("project", project);
+      request.setAttribute("projects", projects);
       request.setAttribute("projectTasks", projectTasks);
       request.getRequestDispatcher(PROJECT_DETAIL_PAGE).forward(request, response);
 

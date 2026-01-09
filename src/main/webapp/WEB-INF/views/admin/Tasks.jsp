@@ -1,67 +1,93 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: ducph
-  Date: 12/17/2025
-  Time: 4:01 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Tasks</title>
+    <title>Tasks - Admin</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/global.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/admin/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<c:if test="${not empty requestScope.error}">
-    <p style="color: red">${requestScope.error}</p>
-</c:if>
-<jsp:include page="/WEB-INF/views/admin/AdminSidebar.jsp" />
+<div class="admin-layout">
+    <jsp:include page="/WEB-INF/views/admin/AdminSidebar.jsp"/>
 
-<div style="margin-left:220px;">
-<h2>All Tasks</h2>
-<c:choose>
-    <c:when test="${empty requestScope.tasks}">
-        <h2>No tasks</h2>
-    </c:when>
-    <c:otherwise>
-        <table>
-            <thead>
-            <tr>
-                <th>id</th>
-                <th>title</th>
-                <th>description</th>
-                <th>priority</th>
-                <th>dueDate</th>
-                <th>completedAt</th>
-                <th>projectId</th>
-                <th>userId</th>
-                <th>createdAt</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="task" items="${requestScope.tasks}">
-                <tr>
-                    <td>${task.id}</td>
-                    <td>${task.title}</td>
-                    <td>${task.description}</td>
-                    <td>${task.priority}</td>
-                    <td>${task.dueDate}</td>
-                    <td>${task.completedAt}</td>
-                    <td>${task.projectId}</td>
-                    <td>${task.userId}</td>
-                    <td>${task.createdAt}</td>
-                    <td>
-                        <form action="${pageContext.request.contextPath}/admin/tasks/delete" method="post">
-                            <input type="hidden" name="taskId" value="${task.id}">
-                            <button type="submit">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-</c:otherwise>
-</c:choose>
+    <div class="admin-content">
+        <div class="admin-page-header">
+            <h1><i class="fas fa-tasks"></i> Tasks Management</h1>
+            <p>View and manage all tasks across users</p>
+        </div>
+
+        <c:if test="${not empty requestScope.error}">
+            <div class="admin-alert error">
+                <i class="fas fa-exclamation-circle"></i> ${requestScope.error}
+            </div>
+        </c:if>
+
+        <div class="admin-table-container">
+            <div class="admin-table-header">
+                <h2>All Tasks</h2>
+            </div>
+            
+            <c:choose>
+                <c:when test="${empty requestScope.tasks}">
+                    <div class="admin-empty">
+                        <i class="fas fa-tasks"></i>
+                        <h3>No tasks found</h3>
+                        <p>There are no tasks in the system yet.</p>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Priority</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>User ID</th>
+                                <th>Project</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="task" items="${requestScope.tasks}">
+                                <tr>
+                                    <td>${task.id}</td>
+                                    <td>${task.title}</td>
+                                    <td>
+                                        <span class="priority-${task.priority}">
+                                            <i class="fas fa-flag"></i> P${task.priority}
+                                        </span>
+                                    </td>
+                                    <td>${task.dueDate}</td>
+                                    <td>
+                                        <span class="status-badge ${task.completedAt != null ? 'completed' : 'pending'}">
+                                            ${task.completedAt != null ? 'Completed' : 'Pending'}
+                                        </span>
+                                    </td>
+                                    <td>${task.userId}</td>
+                                    <td>${task.projectId != null ? task.projectId : '-'}</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <form action="${pageContext.request.contextPath}/admin/tasks/delete" method="post" style="display:inline;"
+                                                  onsubmit="return confirm('Are you sure you want to delete this task?');">
+                                                <input type="hidden" name="taskId" value="${task.id}">
+                                                <button type="submit" class="table-btn delete" title="Delete Task">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </div>
 </div>
 </body>
 </html>

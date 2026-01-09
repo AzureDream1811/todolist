@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/component/sidebar.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/component/searchBar.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app/app.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app/searchResults.css">
 </head>
 <body>
     <div class="app-layout">

@@ -1,0 +1,90 @@
+/* ==========================================================================
+   EDIT TASK MODAL STYLES
+   Extends addTask.css with edit-specific styles
+   ========================================================================== */
+
+/* Edit Modal uses same base styles as Add Task Modal */
+/* These are additional/override styles for edit functionality */
+
+/* Modal Header for Edit */
+#editTaskModal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 12px;
+}
+
+#editTaskModal .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #202020;
+    margin: 0;
+}
+
+#editTaskModal .modal-close-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-size: 16px;
+}
+
+#editTaskModal .modal-close-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Save Button Styling */
+#editTaskModal .btn-add {
+    background-color: var(--color-deep-purple, #a435f0);
+}
+
+/* Ensure edit modal has proper z-index */
+#editTaskModal {
+    z-index: 10000;
+}
+
+#editTaskModal .modal-box {
+    width: 550px;
+    max-width: 95%;
+}
+
+/* Loading state for edit form */
+#editTaskForm.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+#editTaskForm.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    border: 2px solid #f0f0f0;
+    border-top-color: var(--color-deep-purple, #a435f0);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Edit success animation */
+.edit-success {
+    animation: editSuccess 0.3s ease-out;
+}
+
+@keyframes editSuccess {
+    0% { background-color: #fff; }
+    50% { background-color: #e8f5e9; }
+    100% { background-color: #fff; }
+}

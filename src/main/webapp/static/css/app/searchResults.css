@@ -1,0 +1,249 @@
+/* ==========================================================================
+   SEARCH RESULTS PAGE STYLES
+   ========================================================================== */
+
+/* Page Layout */
+.app-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+}
+
+.search-results-container {
+    padding: 40px 50px;
+    max-width: 900px;
+}
+
+/* Search Results Header */
+.search-results-header {
+    margin-bottom: 32px;
+}
+
+.search-results-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #202020;
+    margin: 16px 0 8px 0;
+}
+
+.search-results-header p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.search-results-header strong {
+    color: #202020;
+}
+
+/* Search Results Sections */
+.search-results-section {
+    margin-bottom: 32px;
+}
+
+.search-results-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.search-results-section h3 i {
+    color: var(--color-deep-purple, #a435f0);
+    font-size: 18px;
+}
+
+/* Search Results List */
+.search-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Search Result Card */
+.search-result-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+}
+
+.search-result-card:hover {
+    background: #fafafa;
+    border-color: #ccc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.search-result-card > i:first-child {
+    font-size: 16px;
+    color: #999;
+    width: 20px;
+    text-align: center;
+}
+
+.result-content {
+    flex: 1;
+}
+
+.result-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #202020;
+    margin-bottom: 4px;
+}
+
+.result-meta {
+    font-size: 12px;
+    color: #808080;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.result-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.result-meta i {
+    font-size: 11px;
+}
+
+/* Priority Colors in Results */
+.result-meta .priority-1 { color: #e74c3c; }
+.result-meta .priority-2 { color: #f39c12; }
+.result-meta .priority-3 { color: #3498db; }
+
+/* No Results State */
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.no-results-icon {
+    font-size: 64px;
+    color: #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.no-results h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 8px 0;
+}
+
+.no-results p {
+    font-size: 14px;
+    color: #808080;
+    margin: 0 0 24px 0;
+}
+
+/* Search Suggestions */
+.search-suggestions {
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.search-suggestions h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin: 0 0 12px 0;
+}
+
+.search-suggestions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.search-suggestions li {
+    font-size: 13px;
+    color: #666;
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-suggestions li i {
+    color: #999;
+    font-size: 12px;
+}
+
+/* Highlighted Search Term */
+.highlight {
+    background: #fff59d;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+/* Result Type Badge */
+.result-type-badge {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #f0f0f0;
+    color: #666;
+}
+
+.result-type-badge.task {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.result-type-badge.project {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+/* Loading State */
+.search-loading {
+    text-align: center;
+    padding: 40px;
+}
+
+.search-loading i {
+    font-size: 32px;
+    color: var(--color-deep-purple, #a435f0);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-results-container {
+        padding: 20px;
+    }
+    
+    .result-meta {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

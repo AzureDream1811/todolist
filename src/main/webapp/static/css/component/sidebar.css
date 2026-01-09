@@ -140,6 +140,48 @@ aside.sidebar {
     display: block;
 }
 
+/* Sidebar Search Section */
+.sidebar-search {
+    padding: 8px 12px;
+}
+
+.sidebar-search .search-container {
+    max-width: 100%;
+}
+
+.sidebar-search .search-form {
+    flex-direction: column;
+    gap: 0;
+}
+
+.sidebar-search .search-input-wrapper {
+    width: 100%;
+}
+
+.sidebar-search .search-input {
+    padding: 8px 32px 8px 32px;
+    font-size: 13px;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    border: 1px solid transparent;
+}
+
+.sidebar-search .search-input:focus {
+    background-color: #fff;
+    border-color: #dc4c3e;
+}
+
+.sidebar-search .search-submit-btn {
+    display: none;
+}
+
+.sidebar-search .search-dropdown {
+    position: fixed;
+    left: 12px;
+    width: 300px;
+    top: auto;
+}
+
 /* 2. Quick Actions */
 .sidebar-actions {
     padding: 4px 12px;

@@ -160,4 +160,33 @@ public class ProjectDAOImpl implements ProjectDAO {
       e.printStackTrace();
     }
   }
+
+  /**
+   * Searches for projects by name matching the query.
+   *
+   * @param userId the user ID to filter projects
+   * @param query the search query string
+   * @return a list of projects matching the search criteria
+   */
+  @Override
+  public List<Project> searchProjects(int userId, String query) {
+    List<Project> projects = new ArrayList<>();
+    String sql = "SELECT * FROM projects WHERE user_id = ? AND name LIKE ? ORDER BY created_at DESC";
+
+    try (Connection connection = ds.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setInt(1, userId);
+      String searchPattern = "%" + query + "%";
+      statement.setString(2, searchPattern);
+      ResultSet rs = statement.executeQuery();
+
+      while (rs.next()) {
+        Project project = mapResultSetToProject(rs);
+        projects.add(project);
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return projects;
+  }
 }

@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" isELIgnored="false" %>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/component/searchBar.css">
 <aside class="sidebar">
     <div class="user-profile-container">
         <div class="user-profile">
@@ -33,6 +34,11 @@
             <span>Log out</span>
         </a>
         </div>
+    </div>
+
+    <!-- Global Search Bar -->
+    <div class="sidebar-search">
+        <jsp:include page="/WEB-INF/views/component/SearchBar.jsp"/>
     </div>
 
     <div class="sidebar-actions">

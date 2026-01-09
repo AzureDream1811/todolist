@@ -478,4 +478,34 @@ public class TaskDAOImpl implements TaskDAO {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Searches for tasks by title or description matching the query.
+     *
+     * @param userId the user ID to filter tasks
+     * @param query the search query string
+     * @return a list of tasks matching the search criteria
+     */
+    @Override
+    public List<Task> searchTasks(int userId, String query) {
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE user_id = ? AND (title LIKE ? OR description LIKE ?) ORDER BY created_at DESC";
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            String searchPattern = "%" + query + "%";
+            statement.setString(2, searchPattern);
+            statement.setString(3, searchPattern);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Task task = mapResultSetToTask(rs);
+                tasks.add(task);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tasks;
+    }
 }

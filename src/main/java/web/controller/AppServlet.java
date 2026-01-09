@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class AppServlet extends HttpServlet {
   private static final String PROJECTS_PAGE = "/WEB-INF/views/app/Projects.jsp";
   private static final String PROJECT_DETAIL_PAGE = "/WEB-INF/views/app/ProjectDetail.jsp";
   private static final String DELETE_TASK_PAGE = "/WEB-INF/views/component/DeleteTask.jsp";
+  private static final String SEARCH_RESULTS_PAGE = "/WEB-INF/views/app/SearchResults.jsp";
 
   private final DAOFactory factory = DAOFactory.getInstance();
   private final TaskDAO taskDAO = factory.getTaskDAO();
@@ -83,6 +85,9 @@ public class AppServlet extends HttpServlet {
         break;
       case "delete-task":
         deleteTaskGet(request, response, currentUser);
+        break;
+      case "search":
+        handleSearch(request, response, currentUser);
         break;
       case "inbox":
       default:
@@ -612,5 +617,103 @@ public class AppServlet extends HttpServlet {
     } else {
       return "/app/inbox";
     }
+  }
+
+  /**
+   * Handles the search request for tasks and projects.
+   * Supports both AJAX requests (returns JSON) and regular requests (returns HTML page).
+   *
+   * @param request     the HttpServletRequest object
+   * @param response    the HttpServletResponse object
+   * @param currentUser the current logged-in user
+   * @throws ServletException if an exception occurs during the servlet processing
+   * @throws IOException      if an exception occurs during the input/output operations
+   */
+  private void handleSearch(HttpServletRequest request, HttpServletResponse response, User currentUser)
+      throws ServletException, IOException {
+    String query = request.getParameter("q");
+    String isAjax = request.getParameter("ajax");
+
+    if (query == null || query.trim().isEmpty()) {
+      if ("true".equals(isAjax)) {
+        sendJsonResponse(response, "{\"tasks\":[],\"projects\":[]}");
+      } else {
+        response.sendRedirect(request.getContextPath() + "/app/inbox");
+      }
+      return;
+    }
+
+    query = query.trim();
+
+    try {
+      // Search tasks and projects
+      List<Task> tasks = taskDAO.searchTasks(currentUser.getId(), query);
+      List<Project> projects = projectDAO.searchProjects(currentUser.getId(), query);
+
+      if ("true".equals(isAjax)) {
+        // Return JSON for AJAX requests (quick search dropdown)
+        StringBuilder json = new StringBuilder();
+        json.append("{\"tasks\":[");
+        for (int i = 0; i < tasks.size(); i++) {
+          Task task = tasks.get(i);
+          json.append("{\"id\":").append(task.getId())
+              .append(",\"title\":\"").append(escapeJson(task.getTitle())).append("\"}");
+          if (i < tasks.size() - 1) json.append(",");
+        }
+        json.append("],\"projects\":[");
+        for (int i = 0; i < projects.size(); i++) {
+          Project project = projects.get(i);
+          json.append("{\"id\":").append(project.getId())
+              .append(",\"name\":\"").append(escapeJson(project.getName())).append("\"}");
+          if (i < projects.size() - 1) json.append(",");
+        }
+        json.append("]}");
+        sendJsonResponse(response, json.toString());
+      } else {
+        // Return HTML page for regular requests
+        request.setAttribute("tasks", tasks);
+        request.setAttribute("projects", projects);
+        request.setAttribute("searchQuery", query);
+        request.setAttribute("totalResults", tasks.size() + projects.size());
+        request.getRequestDispatcher(SEARCH_RESULTS_PAGE).forward(request, response);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      if ("true".equals(isAjax)) {
+        sendJsonResponse(response, "{\"error\":\"Search failed\",\"tasks\":[],\"projects\":[]}");
+      } else {
+        WebUtils.sendError(request, response, "Error performing search", "/app/inbox");
+      }
+    }
+  }
+
+  /**
+   * Sends a JSON response to the client.
+   *
+   * @param response the HttpServletResponse object
+   * @param json     the JSON string to send
+   * @throws IOException if an exception occurs during writing the response
+   */
+  private void sendJsonResponse(HttpServletResponse response, String json) throws IOException {
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+    PrintWriter out = response.getWriter();
+    out.print(json);
+    out.flush();
+  }
+
+  /**
+   * Escapes special characters in a string for JSON output.
+   *
+   * @param text the string to escape
+   * @return the escaped string
+   */
+  private String escapeJson(String text) {
+    if (text == null) return "";
+    return text.replace("\\", "\\\\")
+               .replace("\"", "\\\"")
+               .replace("\n", "\\n")
+               .replace("\r", "\\r")
+               .replace("\t", "\\t");
   }
 }

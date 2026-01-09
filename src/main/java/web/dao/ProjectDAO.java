@@ -19,4 +19,5 @@ public interface ProjectDAO {
 
     Project mapResultSetToProject(ResultSet rs) throws SQLException;
 
+    List<Project> searchProjects(int userId, String query);
 }

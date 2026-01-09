@@ -38,4 +38,6 @@ public interface TaskDAO {
     List<Task> getTasksDueOn(int userId, java.time.LocalDate date);
 
     void completeTask(int id);
+
+    List<Task> searchTasks(int userId, String query);
 }

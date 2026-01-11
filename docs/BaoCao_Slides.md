@@ -14,13 +14,12 @@
 - Hệ thống nhắc nhở qua email
 
 ### **Thành viên nhóm:**
-| STT | Họ và Tên | MSSV | Vai trò |
-|-----|-----------|------|---------|
-| 1   | [Tên TV1] | [MSSV] | Trưởng nhóm / Backend |
-| 2   | [Tên TV2] | [MSSV] | Frontend / UI-UX |
-| 3   | [Tên TV3] | [MSSV] | Database / Testing |
+| STT | Họ và Tên | GitHub Username | Vai trò |
+|-----|-----------|-----------------|---------|
+| 1   | [Họ tên] | **AzureDream / PhamDuc** | Trưởng nhóm / Backend / Code Review |
+| 2   | [Họ tên] | **HieuHiu0512** | Frontend / Email Service |
 
-> *(Cập nhật thông tin thành viên của bạn)*
+> *(Điền thêm họ tên và MSSV thực tế)*
 
 ---
 
@@ -192,22 +191,59 @@ todolist/
 
 ## 📌 Slide 6: Phân công công việc nhóm
 
-| Thành viên | Nhiệm vụ | Hoàn thành |
-|------------|----------|------------|
-| **[Tên TV1]** | - Thiết kế database schema | ✅ |
-|               | - Xây dựng DAO layer | ✅ |
-|               | - Backend AuthServlet, UserDAO | ✅ |
-| **[Tên TV2]** | - Frontend UI/UX design | ✅ |
-|               | - Các trang JSP (Login, Register, Inbox) | ✅ |
-|               | - CSS styling toàn ứng dụng | ✅ |
-| **[Tên TV3]** | - TaskServlet, ProjectServlet | ✅ |
-|               | - Email notification system | ✅ |
-|               | - Testing & Bug fixing | ✅ |
-| **Cả nhóm**   | - Admin module | ✅ |
-|               | - Documentation | ✅ |
-|               | - Deployment | ✅ |
+### **Thống kê Commit:**
+| Thành viên | Số commit | Tỷ lệ |
+|------------|-----------|-------|
+| **AzureDream / PhamDuc** | 89 | 78% |
+| **HieuHiu0512** | 25 | 22% |
 
-> *(Cập nhật thông tin phân công thực tế của nhóm)*
+---
+
+### **Chi tiết phân công theo commit history:**
+
+#### 👨‍💻 **AzureDream / PhamDuc** (Trưởng nhóm - Backend Developer & Code Reviewer)
+| Công việc | Commits tiêu biểu |
+|-----------|-------------------|
+| **Database & DAO Layer** | Thiết kế schema, DAOFactory, UserDAO, TaskDAO, ProjectDAO |
+| **Authentication System** | LoginServlet, RegisterServlet → AuthServlet |
+| **Task Management** | TaskServlet (CRUD), AddTask, EditTask, DeleteTask |
+| **Project Management** | ProjectServlet, ProjectDetail, AddProject |
+| **Admin Module** | AdminServlet, Dashboard, Users/Tasks/Projects management |
+| **User Profile** | ProfileServlet, Avatar upload |
+| **Search Feature** | SearchBar component |
+| **Code Refactoring** | Standardize method names, add Javadoc comments |
+| **Documentation** | README.md, code comments |
+| **Code Review & Merge** | Review và merge tất cả Pull Requests (#2-#10) |
+
+#### 🎨 **HieuHiu0512** (Frontend & Email Developer)
+| Công việc | Commits tiêu biểu |
+|-----------|-------------------|
+| **CSS Styling** | `done all css` - Toàn bộ giao diện ứng dụng |
+| **Auth Pages CSS** | `css for login and register` |
+| **App Pages CSS** | `css for inbox, today, completed, sidebar, addTask, Upcoming` |
+| **Email Service** | `add feature send email, and tested` - EmailUtils |
+| **Register Feature** | `Wrote RegisterServlet and Register.jsp` |
+| **Today View** | `finish show Today, tested` |
+| **Completed View** | `finished completed` |
+| **Delete Task** | `finish delete task` |
+| **AddTask Inside** | `complete addtask inside` |
+
+---
+
+### **Tổng hợp theo Module:**
+
+| Module | Người phụ trách chính | Hỗ trợ |
+|--------|----------------------|--------|
+| **Authentication** | AzureDream | HieuHiu0512 |
+| **Task CRUD** | AzureDream | HieuHiu0512 |
+| **Project CRUD** | AzureDream | - |
+| **Email Service** | HieuHiu0512 | - |
+| **CSS/UI Design** | HieuHiu0512 | - |
+| **Admin Panel** | AzureDream | - |
+| **Profile/Avatar** | AzureDream | - |
+| **Search Feature** | AzureDream | - |
+| **Code Review/Merge** | AzureDream/PhamDuc | - |
+| **Database Design** | AzureDream | - |
 
 ---
 

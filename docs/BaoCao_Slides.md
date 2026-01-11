@@ -277,34 +277,66 @@ todolist/
 
 ## 📌 Slide 8: Kết quả đạt được
 
-### **✅ Hoàn thành:**
-1. **Hệ thống xác thực** hoàn chỉnh (Login/Register/Logout)
-2. **CRUD đầy đủ** cho Task và Project
-3. **Phân quyền** User/Admin rõ ràng
-4. **Hệ thống email** thông báo và nhắc nhở
-5. **Giao diện** responsive, thân thiện
-6. **Admin panel** quản lý toàn bộ hệ thống
-7. **Search functionality** tìm kiếm task
-8. **Upload avatar** cho profile người dùng
+### **✅ Tính năng hoàn thành:**
 
-### **📊 Thống kê code:**
-| Thành phần | Số file | Lines of Code (ước tính) |
-|------------|---------|--------------------------|
-| Servlets (Controller) | 6 | ~1,500 |
-| DAO (Model) | 7 | ~800 |
-| JSP (View) | 15+ | ~2,000 |
-| CSS | 15+ | ~1,500 |
-| SQL | 4 | ~100 |
-| **Tổng** | **45+** | **~6,000** |
+| # | Tính năng | Mô tả | Trạng thái |
+|---|-----------|-------|------------|
+| 1 | **Authentication** | Đăng ký, đăng nhập, đăng xuất với session | ✅ Hoàn thành |
+| 2 | **Task CRUD** | Thêm, sửa, xóa, đánh dấu hoàn thành task | ✅ Hoàn thành |
+| 3 | **Project CRUD** | Tạo, xóa project, xem task theo project | ✅ Hoàn thành |
+| 4 | **Task Views** | Inbox, Today, Upcoming, Completed | ✅ Hoàn thành |
+| 5 | **Search** | Tìm kiếm task theo tiêu đề | ✅ Hoàn thành |
+| 6 | **Email Notification** | Gửi email chào mừng, nhắc nhở task | ✅ Hoàn thành |
+| 7 | **Admin Panel** | Dashboard, quản lý Users/Tasks/Projects | ✅ Hoàn thành |
+| 8 | **User Profile** | Xem và upload avatar | ✅ Hoàn thành |
+| 9 | **Role-based Access** | Phân quyền User/Admin | ✅ Hoàn thành |
+| 10 | **Responsive UI** | Giao diện thân thiện, responsive | ✅ Hoàn thành |
+
+---
+
+### **📊 Thống kê dự án (Số liệu thực tế):**
+
+| Thành phần | Số file | Lines of Code |
+|------------|---------|---------------|
+| **Java (Servlet, DAO, Model, Utils)** | 20 | 3,063 |
+| **JSP (Views)** | 20 | 3,364 |
+| **CSS (Stylesheets)** | 17 | 3,256 |
+| **SQL (Database scripts)** | 4 | 100 |
+| **Tổng cộng** | **61** | **9,783** |
+
+### **📈 Thống kê Git:**
+| Metric | Số lượng |
+|--------|----------|
+| Tổng commits | 106 |
+| Pull Requests merged | 10+ |
+| Contributors | 2 |
+| Branches | main + feature branches |
+
+---
 
 ### **🎯 Kỹ năng đạt được:**
-- Hiểu và áp dụng mô hình **MVC**
-- Sử dụng **Java Servlet** xử lý HTTP
-- Thiết kế **database** và viết **SQL**
-- Áp dụng **Design Pattern** (DAO, Factory)
-- Xây dựng hệ thống **xác thực & phân quyền**
-- Tích hợp **email service** với JavaMail
-- **Responsive design** với CSS
+
+#### **Backend Development:**
+- ✅ Hiểu và áp dụng mô hình **MVC** (Model-View-Controller)
+- ✅ Sử dụng **Java Servlet 4.0** xử lý HTTP Request/Response
+- ✅ Áp dụng **Design Pattern**: DAO Pattern, Factory Pattern
+- ✅ Xây dựng hệ thống **xác thực & phân quyền** (Session-based)
+- ✅ Tích hợp **JavaMail API** gửi email SMTP
+
+#### **Database:**
+- ✅ Thiết kế **database schema** với các quan hệ 1-N
+- ✅ Viết **SQL** với indexes, foreign keys, constraints
+- ✅ Sử dụng **Prepared Statement** chống SQL Injection
+
+#### **Frontend:**
+- ✅ Xây dựng giao diện với **JSP + JSTL**
+- ✅ **CSS styling** responsive design
+- ✅ Tổ chức code với component-based approach
+
+#### **Tools & Workflow:**
+- ✅ Sử dụng **Git** với branching strategy
+- ✅ **Pull Request** workflow, code review
+- ✅ Build với **Maven**, deploy trên **Tomcat**
 
 ---
 

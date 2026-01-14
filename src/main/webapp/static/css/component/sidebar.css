@@ -143,6 +143,20 @@ aside.sidebar {
     color: #666;
 }
 
+/* Admin link styling */
+.dropdown-item.admin-link {
+    color: #d32f2f;
+    font-weight: 600;
+}
+
+.dropdown-item.admin-link i {
+    color: #d32f2f;
+}
+
+.dropdown-item.admin-link:hover {
+    background-color: #ffebee;
+}
+
 /* Hiển thị thẻ khi Hover vào container (Nếu bạn không dùng Click JS) */
 .user-profile-container:hover .user-dropdown-card {
     display: block;

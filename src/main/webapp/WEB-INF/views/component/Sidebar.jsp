@@ -45,6 +45,14 @@
 
             <div class="dropdown-divider"></div>
             
+            <%-- Admin Panel Link (only visible to admins) --%>
+            <c:if test="${sessionScope.currentUser.role eq 'ADMIN'}">
+                <a href="${pageContext.request.contextPath}/admin/dashboard" class="dropdown-item admin-link">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Admin Panel</span>
+                </a>
+            </c:if>
+            
             <a href="${pageContext.request.contextPath}/app/profile" class="dropdown-item">
                 <i class="fa-solid fa-user-circle"></i>
                 <span>My Profile</span>

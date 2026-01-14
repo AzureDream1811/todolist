@@ -67,12 +67,23 @@
                                         <div class="table-actions">
                                             <c:choose>
                                                 <c:when test="${user.role eq 'ADMIN'}">
-                                                    <form action="${pageContext.request.contextPath}/admin/users/demote" method="post" style="display:inline;">
-                                                        <input type="hidden" name="userId" value="${user.id}">
-                                                        <button type="submit" class="table-btn edit" title="Demote to User">
-                                                            <i class="fas fa-arrow-down"></i> Demote
-                                                        </button>
-                                                    </form>
+                                                    <%-- Disable demote button if admin is demoting themselves --%>
+                                                    <c:choose>
+                                                        <c:when test="${user.id == sessionScope.currentUser.id}">
+                                                            <button type="button" class="table-btn edit" disabled 
+                                                                    title="Cannot demote yourself" style="opacity: 0.5; cursor: not-allowed;">
+                                                                <i class="fas fa-arrow-down"></i> Demote
+                                                            </button>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <form action="${pageContext.request.contextPath}/admin/users/demote" method="post" style="display:inline;">
+                                                                <input type="hidden" name="userId" value="${user.id}">
+                                                                <button type="submit" class="table-btn edit" title="Demote to User">
+                                                                    <i class="fas fa-arrow-down"></i> Demote
+                                                                </button>
+                                                            </form>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <form action="${pageContext.request.contextPath}/admin/users/promote" method="post" style="display:inline;">
@@ -83,13 +94,25 @@
                                                     </form>
                                                 </c:otherwise>
                                             </c:choose>
-                                            <form action="${pageContext.request.contextPath}/admin/users/delete" method="post" style="display:inline;" 
-                                                  onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                                <input type="hidden" name="userId" value="${user.id}">
-                                                <button type="submit" class="table-btn delete" title="Delete User">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
+                                            
+                                            <%-- Disable delete button if user is deleting themselves --%>
+                                            <c:choose>
+                                                <c:when test="${user.id == sessionScope.currentUser.id}">
+                                                    <button type="button" class="table-btn delete" disabled 
+                                                            title="Cannot delete yourself" style="opacity: 0.5; cursor: not-allowed;">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <form action="${pageContext.request.contextPath}/admin/users/delete" method="post" style="display:inline;" 
+                                                          onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                        <input type="hidden" name="userId" value="${user.id}">
+                                                        <button type="submit" class="table-btn delete" title="Delete User">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </td>
                                 </tr>

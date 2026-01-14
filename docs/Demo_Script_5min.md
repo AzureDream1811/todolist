@@ -6,13 +6,14 @@
 ## 📋 CHUẨN BỊ TRƯỚC KHI DEMO (Checklist)
 
 ```
-✅ Tomcat đã chạy
+✅ Tomcat đã chạy (startup.bat)
 ✅ Database có sample data
+✅ Password đã migrate (tất cả user dùng: password123)
 ✅ Mở trình duyệt ở trang login: http://localhost:8080/todolist/
-✅ Mở Gmail tab khác (để show email nếu cần)
-✅ Đã có sẵn account: admin/admin
+✅ Đã có sẵn account test: AzureDream/password123 hoặc admin/password123
 ✅ Slide PowerPoint đã mở sẵn (nếu trình bày trước)
-✅ Đóng các ứng dụng không cần thiết
+✅ Đóng các ứng dụng không cần thiết để tránh lag
+✅ VS Code mở sẵn project (có thể cần show code)
 ```
 
 ---
@@ -51,13 +52,15 @@
 #### **A. Đăng nhập (10s)**
 
 **📢 Nói:**
-> "Đầu tiên, em đăng nhập với tài khoản user."
+> "Đầu tiên, em đăng nhập với tài khoản user. **Password được hash bằng BCrypt** trước khi lưu database."
 
 **🖱️ Thao tác:**
-1. Nhập username: `user1` (hoặc tạo mới nhanh)
-2. Nhập password: `password`
+1. Nhập username: `AzureDream` (hoặc user có sẵn)
+2. Nhập password: `password123`
 3. Click **Đăng nhập**
 4. → Vào trang **Inbox**
+
+*💡 Nếu login fail: Restart Tomcat, kiểm tra password đã migrate chưa*
 
 ---
 
@@ -89,7 +92,7 @@
 4. → Task xuất hiện trong danh sách
 
 **📢 Nói:**
-> "Task vừa được thêm thành công. Dữ liệu được lưu vào database qua **TaskDAO** sử dụng **PreparedStatement** để chống SQL Injection."
+> "Task vừa được thêm thành công. Dữ liệu được lưu vào database qua **TaskDAO** sử dụng **PreparedStatement** để chống SQL Injection. Em dùng **HikariCP connection pool** để tối ưu performance với concurrent users."
 
 ---
 
@@ -204,8 +207,11 @@
 1. Click **Logout**
 2. Đăng nhập lại:
    - Username: `admin`
-   - Password: `admin`
+   - Password: `password123`
 3. → Tự động redirect đến **/admin/dashboard**
+
+**📢 Nói:**
+> "Em check role trong session, nếu là ADMIN thì redirect đến admin panel."
 
 ---
 
@@ -320,10 +326,11 @@
 ## 🎯 LƯU Ý QUAN TRỌNG
 
 ### **Nếu bị thiếu thời gian, ƯU TIÊN:**
-1. ✅ **Task CRUD** (phần quan trọng nhất - 90s)
-2. ✅ **Admin Panel** (thể hiện phân quyền - 60s)
-3. ✅ **Upload/Email** (kỹ thuật nâng cao - 45s)
-4. ⚠️ Skip: Project, Filter views (có thể giải thích bằng lời)
+1. ✅ **Task CRUD** (phần quan trọng nhất - 90s) - Thể hiện PreparedStatement & BCrypt
+2. ✅ **Admin Panel** (thể hiện phân quyền role-based - 60s)
+3. ✅ **Giải thích Connection Pooling** (1 câu khi add task: "Em dùng HikariCP pool 10 connections")
+4. ⚠️ Skip: Upload Avatar nếu thiếu thời gian
+5. ⚠️ Email chỉ nói không cần show thật
 
 ### **Nếu thừa thời gian:**
 - Mở code để show:
@@ -345,7 +352,9 @@
 
 ### **3. Khi có lỗi:**
 - **ĐỪNG HOẢNG LOẠN**
-- Nói: "Đây là lỗi X, nguyên nhân là Y, em sẽ fix bằng cách Z"
+- **Login không được?** → "Password đã được hash bằng BCrypt, cần dùng: password123"
+- **Task không hiện?** → "Do connection pool đang bận, em reload lại" (F5)
+- **Lag/Loading lâu?** → "Em vừa fix connection leak bằng try-with-resources, nhưng có thể do database busy"
 - Hoặc skip sang phần khác: "Do giới hạn thời gian, em xin phép tiếp tục phần tiếp theo"
 
 ### **4. Ngôn ngữ cơ thể:**

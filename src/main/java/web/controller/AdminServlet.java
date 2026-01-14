@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import web.dao.DAOFactory;
 import web.dao.ProjectDAO;
@@ -282,10 +283,11 @@ public class AdminServlet extends HttpServlet {
      * with the given ID from the database. If the user ID is null or empty, it
      * sets the error attribute to "missing user ID" and returns. If the user ID is
      * invalid, it sets the error attribute to "invalid user ID" and returns. If
-     * the user is an admin, it sets the error attribute to "cannot delete admin"
-     * and
-     * returns. If an exception occurs during the deletion, it sets the error
-     * attribute to "failed to delete user" and returns.
+     * the user is trying to delete themselves, it sets the error attribute to
+     * "cannot delete yourself" and returns. If the user is an admin, it sets the
+     * error attribute to "cannot delete admin" and returns. If an exception occurs
+     * during the deletion, it sets the error attribute to "failed to delete user"
+     * and returns.
      * 
      * @param request the HttpServletRequest object containing the request
      *                parameters
@@ -299,6 +301,17 @@ public class AdminServlet extends HttpServlet {
 
         try {
             int userId = Integer.parseInt(userIdStr);
+            
+            // Get current logged-in admin from session
+            HttpSession session = request.getSession(false);
+            User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
+            
+            // Prevent admin from deleting themselves
+            if (currentUser != null && currentUser.getId() == userId) {
+                request.setAttribute("error", "cannot delete yourself");
+                return;
+            }
+            
             User user = userDAO.getUserById(userId);
             if (user == null) {
                 request.setAttribute("error", "user not found");
@@ -326,8 +339,9 @@ public class AdminServlet extends HttpServlet {
      * with the given ID from the database. If the user ID is null or empty, it
      * sets the error attribute to "missing user ID" and returns. If the user ID is
      * invalid, it sets the error attribute to "invalid user ID" and returns. If
-     * an exception occurs during the demotion, it sets the error attribute to
-     * "failed to demote user" and returns.
+     * the user is trying to demote themselves, it sets the error attribute to
+     * "cannot demote yourself" and returns. If an exception occurs during the
+     * demotion, it sets the error attribute to "failed to demote user" and returns.
      * 
      * @param request the HttpServletRequest object containing the request
      *                parameters
@@ -341,9 +355,21 @@ public class AdminServlet extends HttpServlet {
 
         try {
             int userId = Integer.parseInt(userIdStr);
+            
+            // Get current logged-in admin from session
+            HttpSession session = request.getSession(false);
+            User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
+            
+            // Prevent admin from demoting themselves
+            if (currentUser != null && currentUser.getId() == userId) {
+                request.setAttribute("error", "cannot demote yourself");
+                return;
+            }
+            
             User user = userDAO.getUserById(userId);
             if (user == null) {
                 request.setAttribute("error", "user not found");
+                return;
             }
 
             userDAO.demoteUser(userId);

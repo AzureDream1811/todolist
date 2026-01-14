@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserDAOImpl implements UserDAO {
 
@@ -19,6 +20,7 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * Creates a new user with the given details.
+     * Password is automatically hashed using BCrypt before storing.
      *
      * @param user the user to create
      * @return the created user if successful, null otherwise
@@ -29,8 +31,12 @@ public class UserDAOImpl implements UserDAO {
         try {
             Connection connection = ds.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            
+            // Hash password using BCrypt
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+            
             statement.setString(1, user.getUsername());
-            statement.setString(2, user.getPassword());
+            statement.setString(2, hashedPassword);
             statement.setString(3, user.getEmail());
 
             int affectedRows = statement.executeUpdate();
@@ -92,6 +98,7 @@ public class UserDAOImpl implements UserDAO {
 
     /**
      * Authenticates a user by checking their username and password.
+     * Uses BCrypt to verify the password hash.
      *
      * @param username the username to authenticate
      * @param password the password to authenticate
@@ -99,7 +106,19 @@ public class UserDAOImpl implements UserDAO {
      */
     public boolean authenticate(String username, String password) {
         User user = getUserByUsername(username);
-        return user != null && user.getPassword().equals(password);
+        if (user == null) {
+            return false;
+        }
+        
+        // Verify password using BCrypt
+        try {
+            return BCrypt.checkpw(password, user.getPassword());
+        } catch (IllegalArgumentException e) {
+            // Handle case where stored password is not a valid BCrypt hash (legacy plaintext)
+            // For backward compatibility during migration
+            System.err.println("Warning: User " + username + " has non-BCrypt password. Please update.");
+            return user.getPassword().equals(password);
+        }
     }
 
     /**

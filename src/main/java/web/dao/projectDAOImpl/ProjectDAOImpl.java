@@ -132,14 +132,12 @@ public class ProjectDAOImpl implements ProjectDAO {
   public List<Project> getAllProjects() {
     List<Project> projects = new ArrayList<>();
     String sql = "SELECT * FROM projects";
-    try (
-        Connection connection = ds.getConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);) {
-      ResultSet resultSet = statement.executeQuery();
+    try (Connection connection = ds.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql);
+         ResultSet resultSet = statement.executeQuery()) {
       while (resultSet.next()) {
         Project project = mapResultSetToProject(resultSet);
         projects.add(project);
-
       }
     } catch (Exception e) {
       e.printStackTrace();

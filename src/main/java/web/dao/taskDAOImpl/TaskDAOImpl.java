@@ -24,9 +24,8 @@ public class TaskDAOImpl implements TaskDAO {
      */
     public void createTask(Task task) { //
         String sql = "INSERT INTO tasks (title, description, priority, due_date, completed_at, user_id, project_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try {
-            Connection connection = ds.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, task.getTitle());
             statement.setString(2, task.getDescription());
             statement.setInt(3, task.getPriority());
@@ -66,15 +65,14 @@ public class TaskDAOImpl implements TaskDAO {
         // SỬA SQL: Thêm điều kiện lọc task chưa hoàn thành
         String sql = "SELECT * FROM tasks WHERE user_id = ? AND completed_at IS NULL";
 
-        try {
-            Connection connection = ds.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, userId);
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-                Task task = mapResultSetToTask(rs);
-                tasks.add(task);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    Task task = mapResultSetToTask(rs);
+                    tasks.add(task);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -194,19 +192,17 @@ public class TaskDAOImpl implements TaskDAO {
      */
     public List<Task> getUpcomingTasksByUserId(int userId) {
         List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date > CURDATE() AND completed_at IS NULL";
+        String sql = "SELECT * FROM tasks WHERE user_id = ? AND due_date > CURDATE() AND completed_at IS NULL ORDER BY due_date ASC";
 
-        try {
-            Connection connection = ds.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, userId);
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-                Task task = mapResultSetToTask(rs);
-                tasks.add(task);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    Task task = mapResultSetToTask(rs);
+                    tasks.add(task);
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -225,20 +221,17 @@ public class TaskDAOImpl implements TaskDAO {
     public List<Task> getTasksByProjectIdAndUserId(int projectId, int userId) {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE project_id = ? AND user_id = ?";
-        try {
-            Connection connection = ds.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, projectId);
             statement.setInt(2, userId);
 
-            ResultSet rs = statement.executeQuery();
-
-            while (rs.next()) {
-                Task task = mapResultSetToTask(rs);
-
-                tasks.add(task);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    Task task = mapResultSetToTask(rs);
+                    tasks.add(task);
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

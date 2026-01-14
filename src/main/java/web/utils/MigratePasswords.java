@@ -2,7 +2,6 @@ package web.utils;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

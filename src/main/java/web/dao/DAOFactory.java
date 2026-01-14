@@ -29,6 +29,7 @@ public class DAOFactory {
 
             // Configure HikariCP Connection Pool
             HikariConfig config = new HikariConfig();
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver"); // Explicitly set MySQL driver
             config.setJdbcUrl(props.getProperty("db.url"));
             config.setUsername(props.getProperty("db.user"));
             config.setPassword(props.getProperty("db.password"));

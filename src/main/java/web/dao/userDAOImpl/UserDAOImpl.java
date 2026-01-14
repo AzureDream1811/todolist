@@ -28,9 +28,8 @@ public class UserDAOImpl implements UserDAO {
      */
     public User createUser(User user) {
         String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        try {
-            Connection connection = ds.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             // Hash password using BCrypt
             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
@@ -65,9 +64,8 @@ public class UserDAOImpl implements UserDAO {
      */
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
-        try {
-            Connection connection = ds.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.next() ? mapResultSetToUser(rs) : null;
@@ -107,17 +105,31 @@ public class UserDAOImpl implements UserDAO {
     public boolean authenticate(String username, String password) {
         User user = getUserByUsername(username);
         if (user == null) {
+            System.out.println("[AUTH] User not found: " + username);
             return false;
         }
         
+        String storedPassword = user.getPassword();
+        System.out.println("[AUTH] Username: " + username);
+        System.out.println("[AUTH] Input password: '" + password + "'");
+        System.out.println("[AUTH] Input password length: " + password.length());
+        System.out.println("[AUTH] Input password bytes: " + java.util.Arrays.toString(password.getBytes()));
+        System.out.println("[AUTH] Stored password length: " + storedPassword.length());
+        System.out.println("[AUTH] Stored password: " + storedPassword);
+        System.out.println("[AUTH] Is BCrypt format: " + storedPassword.startsWith("$2a$"));
+        
         // Verify password using BCrypt
         try {
-            return BCrypt.checkpw(password, user.getPassword());
+            boolean result = BCrypt.checkpw(password, storedPassword);
+            System.out.println("[AUTH] BCrypt check result: " + result);
+            return result;
         } catch (IllegalArgumentException e) {
             // Handle case where stored password is not a valid BCrypt hash (legacy plaintext)
             // For backward compatibility during migration
-            System.err.println("Warning: User " + username + " has non-BCrypt password. Please update.");
-            return user.getPassword().equals(password);
+            System.err.println("[AUTH] Warning: User " + username + " has non-BCrypt password. Using plaintext comparison.");
+            boolean result = storedPassword.equals(password);
+            System.out.println("[AUTH] Plaintext check result: " + result);
+            return result;
         }
     }
 

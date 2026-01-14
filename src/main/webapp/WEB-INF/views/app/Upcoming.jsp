@@ -42,8 +42,8 @@
                 <%-- Khai báo ngày hiện tại một lần ở ngoài vòng lặp --%>
                 <c:set var="today" value="<%= LocalDate.now() %>"/>
 
-                <%-- CHỈ HIỂN THỊ CÁC TASK TRONG DANH SÁCH todayTasks --%>
-                <c:forEach var="task" items="${requestScope.todayTasks}">
+                <%-- CHỈ HIỂN THỊ CÁC TASK TRONG DANH SÁCH upcomingTasks --%>
+                <c:forEach var="task" items="${requestScope.upcomingTasks}">
                     <div class="task-item" id="task-row-${task.id}"
                          data-task-id="${task.id}"
                          data-task-title="${task.title}"
@@ -84,9 +84,9 @@
                     </div>
                 </c:forEach>
 
-                <c:if test="${empty requestScope.todayTasks}">
+                <c:if test="${empty requestScope.upcomingTasks}">
                     <div class="empty-state" style="text-align: center; padding: 20px; color: #808080;">
-                        <p>All clear for today!</p>
+                        <p>No upcoming tasks!</p>
                     </div>
                 </c:if>
             </div>

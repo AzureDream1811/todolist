@@ -241,4 +241,102 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    /**
+     * Retrieves a user by their email address.
+     *
+     * @param email the email to search for
+     * @return the user object if found, null otherwise
+     */
+    @Override
+    public User getUserByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = ?";
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, email);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? mapResultSetToUser(rs) : null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching user by email", e);
+        }
+    }
+
+    /**
+     * Updates the password for a user.
+     *
+     * @param userId the ID of the user
+     * @param newPassword the new password
+     */
+    @Override
+    public void updatePassword(int userId, String newPassword) {
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, newPassword);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Saves a password reset token for a user.
+     *
+     * @param userId the ID of the user
+     * @param token the reset token
+     */
+    @Override
+    public void saveResetToken(int userId, String token) {
+        String sql = "UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?";
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, token);
+            // Token expires in 1 hour
+            statement.setTimestamp(2, new Timestamp(System.currentTimeMillis() + 3600000));
+            statement.setInt(3, userId);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Retrieves a user by their reset token if it's still valid.
+     *
+     * @param token the reset token
+     * @return the user object if found and token is valid, null otherwise
+     */
+    @Override
+    public User getUserByResetToken(String token) {
+        String sql = "SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > ?";
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, token);
+            statement.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? mapResultSetToUser(rs) : null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching user by reset token", e);
+        }
+    }
+
+    /**
+     * Clears the reset token for a user after password reset.
+     *
+     * @param userId the ID of the user
+     */
+    @Override
+    public void clearResetToken(int userId) {
+        String sql = "UPDATE users SET reset_token = NULL, reset_token_expiry = NULL WHERE id = ?";
+        try (Connection connection = ds.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

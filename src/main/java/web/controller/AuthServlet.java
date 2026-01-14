@@ -3,6 +3,7 @@ package web.controller;
 import web.model.User;
 import web.dao.DAOFactory;
 import web.dao.UserDAO;
+import web.utils.EmailUtils;
 import web.utils.ValidationUtils;
 import web.utils.WebUtils;
 
@@ -13,11 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.UUID;
 
 @WebServlet("/auth/*")
 public class AuthServlet extends HttpServlet {
   private static final String LOGIN_PAGE = "/WEB-INF/views/auth/Login.jsp";
   private static final String REGISTER_PAGE = "/WEB-INF/views/auth/Register.jsp";
+  private static final String FORGOT_PASSWORD_PAGE = "/WEB-INF/views/auth/ForgotPassword.jsp";
+  private static final String RESET_PASSWORD_PAGE = "/WEB-INF/views/auth/ResetPassword.jsp";
   private final DAOFactory factory = DAOFactory.getInstance();
   private final UserDAO userDAO = factory.getUserDAO();
 
@@ -35,6 +39,12 @@ public class AuthServlet extends HttpServlet {
         break;
       case "/logout":
         logoutHandler(request, response);
+        break;
+      case "/forgot-password":
+        request.getRequestDispatcher(FORGOT_PASSWORD_PAGE).forward(request, response);
+        break;
+      case "/reset-password":
+        showResetPasswordPage(request, response);
         break;
       default:
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -60,6 +70,12 @@ public class AuthServlet extends HttpServlet {
         break;
       case "register":
         registerHandler(request, response);
+        break;
+      case "forgot-password":
+        forgotPasswordHandler(request, response);
+        break;
+      case "reset-password":
+        resetPasswordHandler(request, response);
         break;
       default:
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -221,5 +237,166 @@ public class AuthServlet extends HttpServlet {
     } catch (IOException e) {
         e.printStackTrace();
     }
+  }
+
+  /**
+   * Shows the reset password page.
+   * Validates the token from the URL and displays the form if valid.
+   */
+  private void showResetPasswordPage(HttpServletRequest request, HttpServletResponse response)
+          throws ServletException, IOException {
+    String token = request.getParameter("token");
+    
+    if (token == null || token.isEmpty()) {
+      request.setAttribute("invalidToken", true);
+      request.getRequestDispatcher(RESET_PASSWORD_PAGE).forward(request, response);
+      return;
+    }
+
+    User user = userDAO.getUserByResetToken(token);
+    if (user == null) {
+      request.setAttribute("invalidToken", true);
+    } else {
+      request.setAttribute("token", token);
+      request.setAttribute("invalidToken", false);
+    }
+    
+    request.getRequestDispatcher(RESET_PASSWORD_PAGE).forward(request, response);
+  }
+
+  /**
+   * Handles the forgot password request.
+   * Generates a reset token, saves it to the database, and sends an email with the reset link.
+   */
+  private void forgotPasswordHandler(HttpServletRequest request, HttpServletResponse response)
+          throws ServletException, IOException {
+    String email = request.getParameter("email");
+    request.setAttribute("email", email);
+
+    if (email == null || email.trim().isEmpty()) {
+      request.setAttribute("error", "Vui lòng nhập email");
+      request.getRequestDispatcher(FORGOT_PASSWORD_PAGE).forward(request, response);
+      return;
+    }
+
+    if (!ValidationUtils.isValidEmail(email)) {
+      request.setAttribute("error", "Email không hợp lệ");
+      request.getRequestDispatcher(FORGOT_PASSWORD_PAGE).forward(request, response);
+      return;
+    }
+
+    User user = userDAO.getUserByEmail(email.trim());
+    
+    // Always show success message to prevent email enumeration attacks
+    if (user != null) {
+      // Generate a unique token
+      String token = UUID.randomUUID().toString();
+      
+      // Save token to database
+      userDAO.saveResetToken(user.getId(), token);
+      
+      // Build reset link
+      String resetLink = request.getScheme() + "://" + request.getServerName() 
+              + ":" + request.getServerPort() + request.getContextPath() 
+              + "/auth/reset-password?token=" + token;
+      
+      // Send email
+      String subject = "TodoList - Đặt lại mật khẩu";
+      String content = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>"
+              + "<h2 style='color: #8b5cf6;'>Đặt lại mật khẩu</h2>"
+              + "<p>Xin chào <b>" + user.getUsername() + "</b>,</p>"
+              + "<p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản TodoList của mình.</p>"
+              + "<p>Nhấn vào nút bên dưới để đặt lại mật khẩu:</p>"
+              + "<div style='text-align: center; margin: 30px 0;'>"
+              + "<a href='" + resetLink + "' style='background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); "
+              + "color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold;'>"
+              + "Đặt lại mật khẩu</a></div>"
+              + "<p style='color: #666; font-size: 14px;'>Link này sẽ hết hạn sau 1 giờ.</p>"
+              + "<p style='color: #666; font-size: 14px;'>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>"
+              + "<hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'>"
+              + "<p style='color: #999; font-size: 12px;'>Email này được gửi tự động từ TodoList.</p>"
+              + "</div>";
+      
+      EmailUtils.sendEmailAsync(email, subject, content);
+    }
+    
+    // Always show success to prevent email enumeration
+    request.setAttribute("successMessage", "Nếu email tồn tại trong hệ thống, bạn sẽ nhận được link đặt lại mật khẩu.");
+    request.getRequestDispatcher(FORGOT_PASSWORD_PAGE).forward(request, response);
+  }
+
+  /**
+   * Handles the reset password request.
+   * Validates the token, updates the password, and clears the token.
+   */
+  private void resetPasswordHandler(HttpServletRequest request, HttpServletResponse response)
+          throws ServletException, IOException {
+    String token = request.getParameter("token");
+    String password = request.getParameter("password");
+    String confirmPassword = request.getParameter("confirmPassword");
+
+    if (token == null || token.isEmpty()) {
+      request.setAttribute("invalidToken", true);
+      request.getRequestDispatcher(RESET_PASSWORD_PAGE).forward(request, response);
+      return;
+    }
+
+    request.setAttribute("token", token);
+
+    // Validate password
+    if (password == null || password.isEmpty()) {
+      request.setAttribute("error", "Vui lòng nhập mật khẩu mới");
+      request.getRequestDispatcher(RESET_PASSWORD_PAGE).forward(request, response);
+      return;
+    }
+
+    if (!ValidationUtils.isValidPassword(password, 8)) {
+      request.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự");
+      request.getRequestDispatcher(RESET_PASSWORD_PAGE).forward(request, response);
+      return;
+    }
+
+    if (!password.equals(confirmPassword)) {
+      request.setAttribute("error", "Mật khẩu xác nhận không khớp");
+      request.getRequestDispatcher(RESET_PASSWORD_PAGE).forward(request, response);
+      return;
+    }
+
+    // Validate token and get user
+    User user = userDAO.getUserByResetToken(token);
+    if (user == null) {
+      request.setAttribute("invalidToken", true);
+      request.getRequestDispatcher(RESET_PASSWORD_PAGE).forward(request, response);
+      return;
+    }
+
+    // Update password
+    userDAO.updatePassword(user.getId(), password);
+    
+    // Clear the reset token
+    userDAO.clearResetToken(user.getId());
+
+    // Send confirmation email
+    String subject = "TodoList - Mật khẩu đã được thay đổi";
+    String content = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>"
+            + "<h2 style='color: #8b5cf6;'>Mật khẩu đã được thay đổi</h2>"
+            + "<p>Xin chào <b>" + user.getUsername() + "</b>,</p>"
+            + "<p>Mật khẩu của bạn đã được thay đổi thành công.</p>"
+            + "<p>Nếu bạn không thực hiện thay đổi này, vui lòng liên hệ với chúng tôi ngay.</p>"
+            + "<div style='text-align: center; margin: 30px 0;'>"
+            + "<a href='" + request.getScheme() + "://" + request.getServerName() 
+            + ":" + request.getServerPort() + request.getContextPath() + "/auth/login' "
+            + "style='background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); "
+            + "color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold;'>"
+            + "Đăng nhập ngay</a></div>"
+            + "</div>";
+    
+    if (user.getEmail() != null) {
+      EmailUtils.sendEmailAsync(user.getEmail(), subject, content);
+    }
+
+    // Redirect to login with success message
+    request.getSession().setAttribute("successMessage", "Mật khẩu đã được đặt lại thành công! Vui lòng đăng nhập.");
+    response.sendRedirect(request.getContextPath() + "/auth/login");
   }
 }

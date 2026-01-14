@@ -23,6 +23,14 @@
             </div>
             <!-- Login Form -->
             <form method="post" action="${pageContext.request.contextPath}/auth/login" class="login-form">
+                <!-- Success Message (e.g., after password reset) -->
+                <c:if test="${not empty sessionScope.successMessage}">
+                    <div class="success-message" style="background: #d4edda; color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 15px; width: 100%; text-align: center;">
+                        <i class="fas fa-check-circle"></i> ${sessionScope.successMessage}
+                    </div>
+                    <c:remove var="successMessage" scope="session"/>
+                </c:if>
+
                 <!-- Username Field -->
                 <div class="form-group">
                     <div class="input-wrapper">
@@ -47,10 +55,13 @@
                     </div>
                 </div>
 
-                <!-- Register -->
-                <div class="register-prompt">
+                <!-- Register & Forgot Password -->
+                <div class="register-prompt" style="display: flex; justify-content: space-between;">
                     <a href="${pageContext.request.contextPath}/auth/register" class="register-link-prompt">
                         Đăng ký tài khoản?
+                    </a>
+                    <a href="${pageContext.request.contextPath}/auth/forgot-password" class="register-link-prompt">
+                        Quên mật khẩu?
                     </a>
                 </div>
 

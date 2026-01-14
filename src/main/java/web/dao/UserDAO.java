@@ -13,6 +13,8 @@ public interface UserDAO {
 
     User getUserById(int id);
 
+    User getUserByEmail(String email);
+
     boolean authenticate(String username, String password);
 
     List<User> getAllUsers();
@@ -24,6 +26,15 @@ public interface UserDAO {
     void promoteUser(int id);
 
     void updateAvatar(int userId, String avatarPath);
+
+    void updatePassword(int userId, String newPassword);
+
+    // Reset token methods
+    void saveResetToken(int userId, String token);
+
+    User getUserByResetToken(String token);
+
+    void clearResetToken(int userId);
 
     User mapResultSetToUser(ResultSet rs) throws SQLException;
 }

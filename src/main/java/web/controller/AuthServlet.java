@@ -1,7 +1,9 @@
 package web.controller;
 
+import web.model.Task;
 import web.model.User;
 import web.dao.DAOFactory;
+import web.dao.TaskDAO;
 import web.dao.UserDAO;
 import web.utils.EmailUtils;
 import web.utils.ValidationUtils;
@@ -14,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet("/auth/*")
@@ -190,11 +194,11 @@ public class AuthServlet extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("currentUser", user);
             if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-                web.dao.TaskDAO taskDAO = factory.getTaskDAO();
-                java.time.LocalDate today = java.time.LocalDate.now();
-                java.util.List<web.model.Task> overdue = taskDAO.getOverdueTasksByUserId(user.getId());
-                java.util.List<web.model.Task> todayTasks = taskDAO.getTodayTasksByUserId(user.getId());
-                java.util.List<web.model.Task> tomorrow = taskDAO.getTasksDueOn(user.getId(), today.plusDays(1));
+                TaskDAO taskDAO = factory.getTaskDAO();
+                LocalDate today = java.time.LocalDate.now();
+                List<Task> overdue = taskDAO.getOverdueTasksByUserId(user.getId());
+                List<Task> todayTasks = taskDAO.getTodayTasksByUserId(user.getId());
+                List<Task> tomorrow = taskDAO.getTasksDueOn(user.getId(), today.plusDays(1));
                 if (!overdue.isEmpty() || !todayTasks.isEmpty() || !tomorrow.isEmpty()) {
                     web.utils.EmailUtils.sendTaskReminder(user, overdue, todayTasks, tomorrow);
                 }

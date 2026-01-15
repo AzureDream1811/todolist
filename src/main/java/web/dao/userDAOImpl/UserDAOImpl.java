@@ -110,18 +110,10 @@ public class UserDAOImpl implements UserDAO {
         }
         
         String storedPassword = user.getPassword();
-        System.out.println("[AUTH] Username: " + username);
-        System.out.println("[AUTH] Input password: '" + password + "'");
-        System.out.println("[AUTH] Input password length: " + password.length());
-        System.out.println("[AUTH] Input password bytes: " + java.util.Arrays.toString(password.getBytes()));
-        System.out.println("[AUTH] Stored password length: " + storedPassword.length());
-        System.out.println("[AUTH] Stored password: " + storedPassword);
-        System.out.println("[AUTH] Is BCrypt format: " + storedPassword.startsWith("$2a$"));
         
         // Verify password using BCrypt
         try {
             boolean result = BCrypt.checkpw(password, storedPassword);
-            System.out.println("[AUTH] BCrypt check result: " + result);
             return result;
         } catch (IllegalArgumentException e) {
             // Handle case where stored password is not a valid BCrypt hash (legacy plaintext)
